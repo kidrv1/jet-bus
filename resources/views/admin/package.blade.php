@@ -88,7 +88,7 @@
                       <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Package Name</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Price</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Inclusions</th>
-                      
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Time</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Actions</th>
                       <th class="text-secondary opacity-7"></th>
                     </tr>
@@ -121,6 +121,9 @@
                           </span>
                         </td>
                          <td class="align-middle text-center">
+                          <span class="text-secondary text-xs font-weight-bold">{{date('h:i A', strtotime($package->start_time))}} -  {{date('h:i A', strtotime($package->end_time))}}</span>
+                        </td>
+                         <td class="align-middle text-center">
                           <button class="btn btn-danger btn-xs">DELETE</button>
                         </td>
 
@@ -144,7 +147,7 @@
 
         <!-- Modal Header -->
         <div class="modal-header">
-          <h4 class="modal-title">Enter Bus Informations</h4>
+          <h4 class="modal-title">Enter Package Informations</h4>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
 
@@ -154,6 +157,22 @@
            
         @csrf
           <input type="hidden" name="bus_id" id="bus_id" value="{{Request::segment(3)}}">
+
+         <div class="row">
+            <div class="col-6">
+              <div class="mb-3">
+                <label>Depart Time</label>
+                <input type="time" class="form-control" name="start_time" required>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="mb-3">
+                <label>Arrive Time</label>
+                <input type="time" class="form-control" name="end_time" required>
+              </div>
+            </div>
+          </div>
+
          <div class="mb-3">
           <label>Package Name</label>
           <input type="text" name="package_name" class="form-control" required>

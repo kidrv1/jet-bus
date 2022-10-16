@@ -20,6 +20,9 @@ class CreatePackagesTable extends Migration
             $table->string('package_name');
             $table->string('package_rate');
             $table->json('inclusion');
+            $table->string('start_time');
+            $table->string('end_time');
+            $table->integer('max_booking')->nullable();
             $table->timestamps();
         });
     }

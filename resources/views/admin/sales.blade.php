@@ -141,6 +141,7 @@
             </div>
              <div class="container-fluid">
                 <h5>Total Sales: P{{number_format($total)}}</h5>
+                <button onclick="window.print()" class="btn btn-primary btn-xxs">Print</button>
               </div>
           </div>
         </div>

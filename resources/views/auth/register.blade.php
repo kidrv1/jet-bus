@@ -36,8 +36,22 @@
         </center>
         <h4 class="font-weight-bolder text-center">Sign In</h4>      
         @include('shared.notification')
-        <form role="form" action="{{route('register')}}" method="POST">
+        <form role="form" action="{{route('register')}}" method="POST" enctype="multipart/form-data">
           @csrf
+          <div class="row">
+            <div class="col-6">
+              <div class="mb-3">
+                <label>VALID ID</label>
+                <input type="file" class="form-control" name="valid_id" required>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="mb-3">
+                <label>VACINATION ID</label>
+                <input type="file" class="form-control" name="vaccine_id" required>
+              </div>
+            </div>
+          </div>
           <div class="mb-3">
             <input type="text" class="form-control" placeholder="First Name" aria-label="Name" name="first_name" required id="first_name">
           </div>
@@ -77,7 +91,7 @@
 
           <div class="mb-3">
             <label>Enter Password</label>
-            <input type="text" class="form-control" placeholder="Enter Password" aria-label="Password" name="password" required>
+            <input type="password" class="form-control" placeholder="Enter Password" aria-label="Password" name="password" required>
           </div>
                   
    

@@ -25,6 +25,7 @@ Route::group(['prefix'=> 'dashboard','middleware'=> ['auth']], function(){
     Route::post('/find-user',[AdminController::class, 'findUser'])->name('admin_find_user');
     Route::post('/update-user',[AdminController::class, 'updateUser'])->name('admin_update_user');
     Route::post('/delete-user',[AdminController::class, 'deleteUser'])->name('admin_delete_user');
+    Route::get('/user-approve/{id}',[AdminController::class, 'userApprove'])->name('admin_user_approve')->middleware(['role:admin']);
 
     //Bus
 

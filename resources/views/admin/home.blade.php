@@ -86,12 +86,14 @@
                 <table class="table align-items-center mb-0">
                   <thead>
                     <tr>
-                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"> Name</th>
-                     
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Name</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Valid ID</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Vaccinaiton Id</th>
                       <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Gender</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Contact</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Email</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">User Type</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Actions</th>
                      
                       <th class="text-secondary opacity-7"></th>
@@ -107,7 +109,16 @@
                         </div>
                       </td>
                      
-                       <td>
+                       <td class="align-middle text-center text-sm">
+                        
+                        <img src="{{URL::to('public')}}/{{$user->valid_id}}" alt="Card image" width="120px" height="120px">
+                        
+                      </td>
+                       <td class="align-middle text-center text-sm">
+                        <img src="{{URL::to('public')}}/{{$user->vaccine_id}}" alt="Card image" width="120px" height="120px">
+                        
+                      </td>
+                       <td class="align-middle text-center text-sm">
                         <p class="text-xs text-secondary mb-0">{{$user->gender}}</p>
                         
                       </td>
@@ -122,10 +133,20 @@
                       <td class="align-middle text-center text-sm">
                         <span class="badge badge-sm bg-gradient-info">{{$user->getRoleNames()[0]}}</span>
                       </td>
+
+                      <td class="align-middle text-center text-sm">
+                        @if($user->status_id == 1)
+                          <span class="badge badge-sm bg-gradient-secondary">{{$user->status->name}}</span>
+                        @elseif($user->status_id == 2)
+                          <span class="badge badge-sm bg-gradient-success">{{$user->status->name}}</span>
+                        @endif
+                        
+                      </td>
                      
                       <td class="align-middle">
                         <button class="btn btn-info btn-xs edit" data-bs-toggle="modal" data-bs-target="#editModal" value="{{$user->id}}">Edit</button>
                         <button class="btn btn-danger btn-xs archive" value="{{$user->id}}" data-bs-toggle="modal" data-bs-target="#deleteModal" value="{{$user->id}}">Delete</button>
+                        <a href="{{route('admin_user_approve',$user->id)}}" class="btn btn-warning btn-xs">Approve</a>
                       </td>
                     </tr>
 
@@ -251,11 +272,25 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
 
-        <form role="form" action="{{route('register')}}" method="POST">
+        <form role="form" action="{{route('register')}}" method="POST" enctype="multipart/form-data">
         <!-- Modal body -->
         <div class="modal-body">
            
                   @csrf
+                  <div class="row">
+                    <div class="col-6">
+                      <div class="mb-3">
+                        <label>VALID ID</label>
+                        <input type="file" class="form-control" name="valid_id" required>
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <div class="mb-3">
+                        <label>VACINATION ID</label>
+                        <input type="file" class="form-control" name="vaccine_id" required>
+                      </div>
+                    </div>
+                  </div>
                   
                   <div class="mb-3">
                     <input type="text" class="form-control" placeholder="First Name" aria-label="Name" name="first_name" required id="first_name">
@@ -352,6 +387,7 @@
               $("#mobile").val(data.mobile);
               $("#gender").val(data.gender);
               $("#user_id").val(user_id);
+              $("#position").val(data.position)
            }
         });
 

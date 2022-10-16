@@ -21,6 +21,9 @@ class CreateUsersTable extends Migration
             $table->string('email')->unique();
             $table->string('password');
             $table->string('mobile');
+            $table->string('valid_id');
+            $table->string('vaccine_id');
+            $table->unsignedBigInteger('status_id');
             $table->rememberToken();
             $table->timestamps();
         });

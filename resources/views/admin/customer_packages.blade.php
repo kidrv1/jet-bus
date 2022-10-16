@@ -95,7 +95,8 @@
                         <img class="card-img-top" src="{{URL::to('storage')}}/{{$file_name[1]}}" alt="Card image" width="80px" height="200px">
                         <div class="card-body">
                           <h4 class="card-title">{{$package->package_name}}</h4>
-                          <p class="card-text">P{{$package->package_rate}}</p>
+                          <p class="card-text">P{{number_format($package->package_rate)}}</p>
+                          <p>Time: {{date('h:i A', strtotime($package->start_time))}} - {{date('h:i A', strtotime($package->end_time))}}</p>
                           <h6>Inclusions:</h6>
                           <p class="card-text">
                             <?php 

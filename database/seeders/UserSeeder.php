@@ -20,23 +20,15 @@ class UserSeeder extends Seeder
             'gender'        => 'male',
             'email'         => 'admin@yahoo.com',
             'password'      => bcrypt('admin123'),
-            'mobile'        => '09650918852'
+            'mobile'        => '09650918852',
+            'valid_id'      => 'admin',
+            'vaccine_id'    => 'admin',
+            'status_id'     => 2
         ]);
 
          $admin->assignRole('admin');
 
-         $staff = User::create([
-            'first_name'    => 'Me',
-            'last_name'     => 'Staff',
-            'gender'        => 'female',
-            'email'         => 'staff@yahoo.com',
-            'password'      => bcrypt('staff123'),
-            'mobile'        => '09650918852'
-        ]);
-
-         $staff->assignRole('staff');
-
-
+         
 
     }
 }

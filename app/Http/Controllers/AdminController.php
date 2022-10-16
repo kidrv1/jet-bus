@@ -25,16 +25,33 @@ class AdminController extends Controller
 
     public function home()
     {
-        $users = User::with(array('Roles' => function($query) {
-            $query->where('name','!=','admin');
-        }))
-        ->get();
+        $users = User::whereHas('roles', function ($query) {
+            $query->where('name','!=', 'admin');
+        })->get();
         return view('admin.home',compact('users'));
     }
 
     public function findUser(Request $request)
     {
-        return response()->json(User::find($request->user_id));
+        $user = User::find($request->user_id);
+        if( $user->getRoleNames()[0] == 'staff' )
+        {
+            $user->position = 1;
+        }else if( $user->getRoleNames()[0] == 'customer' )
+        {
+            $user->position = 2;
+        }
+        
+        return response()->json($user);
+    }
+
+    public function userApprove($id)
+    {
+        $user = User::find($id);
+        $user->status_id = 2;
+        $user->save();
+        return back()->with('success','User Approved Successfully');
+
     }
 
     public function findBus(Request $request)
@@ -55,6 +72,7 @@ class AdminController extends Controller
         ]);
 
         $user = User::find($request->user_id);
+        $user->roles()->detach();
 
 
         if($validatedData['position'] == 1)
@@ -123,7 +141,7 @@ class AdminController extends Controller
 
         unset($validatedData['image']);
 
-        $cover = $request->file('image')->getClientOriginalName();;
+        $cover = $request->file('image')->getClientOriginalName();
        
         $url = Storage::putFileAs('public', $request->file('image'),$cover);
 
@@ -207,6 +225,8 @@ class AdminController extends Controller
     public function busPackageCheck(Request $request)
     {
         $validatedData = $request->validate([
+            'start_time'      => ['required'],
+            'end_time'      => ['required'],
             'bus_id'      => ['required'],
             'package_name'      => ['required'],
             'package_rate'     => ['required'],
@@ -226,7 +246,7 @@ class AdminController extends Controller
     {
          $packages = DB::table('packages')
                    ->join('buses','buses.id','=','packages.bus_id')
-                   ->select('packages.id','packages.package_name','packages.package_rate','packages.inclusion','buses.image')
+                   ->select('packages.id','packages.package_name','packages.package_rate','packages.inclusion','buses.image','packages.start_time','packages.end_time')
                    ->get();
         return view('admin.customer_packages',compact('packages'));
     }

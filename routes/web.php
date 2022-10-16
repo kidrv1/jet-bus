@@ -40,6 +40,9 @@ Route::group(['prefix'=> 'dashboard','middleware'=> ['auth']], function(){
 
     //Booking
     Route::get('/admin-booking-list',[AdminController::class, 'bookingList'])->name('admin_booking_list');
+    Route::post('/admin-booking-set-date',[AdminController::class, 'bookingSetDate'])->name('admin_set_date');
+    Route::get('/admin-booking-cancel/{id}',[AdminController::class, 'bookingCancel'])->name('admin_booking_cancel');
+    Route::get('/admin-booking-approve/{id}',[AdminController::class, 'bookingApprove'])->name('admin_booking_approve');
 
     //Sales
     Route::get('/sales',[AdminController::class, 'sales'])->name('admin_sales');

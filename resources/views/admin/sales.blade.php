@@ -77,7 +77,12 @@
           <div class="card mb-4">
             <div class="card-header pb-0">
               <h6>Sales Report</h6>
-              
+              <form method="GET">
+                @csrf
+                <input type="date" name="from_date" required>
+                <input type="date" name="to_date" required>
+                <button type="submit">Submit</button>
+              </form>
               @include('shared.notification')
             </div>
             <div class="card-body px-0 pt-0 pb-2">
@@ -87,20 +92,56 @@
                     <tr>
                       <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Bus Plate</th>
                      
-                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Package</th>
-                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Date</th>
-                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Payment</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Package Name</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tour Date</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Created</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Price</th>
                       
                       <th class="text-secondary opacity-7"></th>
                     </tr>
                   </thead>
                   <tbody>
-                    
-                    
+                    <?php $total = 0; ?>
+                    @foreach($packages as $package)
+                      <tr>
+
+                        <td>
+                          <div class="d-flex px-2 py-1">
+                            
+                            <div class="d-flex flex-column justify-content-center">
+                              <span class="text-secondary text-xs font-weight-bold">{{$package->plate}}</span>
+                            </div>
+                          </div>
+                        </td>
+
+                        <td class="align-middle text-center">
+                          <span class="text-secondary text-xs font-weight-bold">{{$package->package_name}}</span>
+                        </td>
+
+                        
+                        <td class="align-middle text-center">
+                          <span class="text-secondary text-xs font-weight-bold">{{$package->booking_date}}</span>
+                        </td>
+                        <td class="align-middle text-center">
+                          <span class="text-secondary text-xs font-weight-bold">{{$package->created_at}}</span>
+                        </td>
+                         <td class="align-middle text-center">
+                          <span class="text-secondary text-xs font-weight-bold">P{{number_format($package->package_rate)}}</span>
+                        </td>
+                         <?php $total += $package->package_rate; ?> 
+                     
+
+                      </tr>
+                    @endforeach
+                   
                   </tbody>
+
                 </table>
               </div>
             </div>
+             <div class="container-fluid">
+                <h5>Total Sales: P{{number_format($total)}}</h5>
+              </div>
           </div>
         </div>
       </div>

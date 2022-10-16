@@ -106,7 +106,7 @@
                              @endforeach
                           </p>
                           <center>
-                            <a href="#" class="btn btn-primary">BOOKING</a>
+                            <button class="btn btn-primary btn-xs setDate" value="{{$package->id}}" data-bs-toggle="modal" data-bs-target="#setDate">BOOKING</button>
                           </center>
                         </div>
                       </div>
@@ -131,27 +131,28 @@
   </main>
   
 
-  <div class="modal" id="statusModal">
+  <div class="modal" id="setDate">
     <div class="modal-dialog">
       <div class="modal-content">
 
         <!-- Modal Header -->
         <div class="modal-header">
-          <h4 class="modal-title">Change Status?</h4>
+          <h4 class="modal-title">Select Date</h4>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
 
-        <form role="form" action="#" method="POST">
+        <form role="form" action="{{route('admin_set_date')}}" method="POST">
         <!-- Modal body -->
         <div class="modal-body">
            
         @csrf
-        <input type="hidden" name="project_id" id="statusProjectId">
+        <input type="date" name="booking_date" class="form-control" required>
+        <input type="hidden" name="package_id" id="packageId">
         </div>
 
         <!-- Modal footer -->
         <div class="modal-footer">
-          <button type="submit" class="btn bg-gradient-primary">Yes</button>
+          <button type="submit" class="btn bg-gradient-primary">Submit</button>
           <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
         </div>
         </form>
@@ -185,44 +186,16 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
   <script type="text/javascript">
     $(document).ready(function(){
-      var find_project_url = "#";
-      var token = "{{Session::token()}}";
+     
 
-      $(".archive").click(function(){
-        var project_id = $(this).val();
-        $("#statusProjectId").val(project_id);
-
-      });
-
-      $(".completed").click(function(){
-        var project_id = $(this).val();
-        $("#completedProject").val(project_id);
+      $(".setDate").click(function(){
+        var package_id = $(this).val();
+        $("#packageId").val(package_id);
 
       });
 
-      $(".assign").click(function(){
-        var project_id = $(this).val();
-        $("#assignTask").val(project_id);
+     
 
-      });
-
-      $(".updateProject").click(function(){
-          var project_id = $(this).val();
-          $("#updateProjectId").val(project_id);
-          $.ajax({
-           type:'POST',
-           url:find_project_url,
-           data:{_token: token, project_id : project_id},
-           success:function(data) {
-              console.log(data);
-              $("#editTitle").val(data.title);
-              $("#editDescription").val(data.description);
-              
-           }
-        });
-
-
-      });
 
     });
   </script>

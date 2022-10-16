@@ -87,15 +87,64 @@
                     <tr>
                       <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Bus Plate</th>
                      
-                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Package</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Package Name</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Inclusions</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tour Date</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Created</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Price</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Actions</th>
                       
                       <th class="text-secondary opacity-7"></th>
                     </tr>
                   </thead>
                   <tbody>
-                    
+                    @foreach($packages as $package)
+                      <tr>
+
+                        <td>
+                          <div class="d-flex px-2 py-1">
+                            
+                            <div class="d-flex flex-column justify-content-center">
+                              <span class="text-secondary text-xs font-weight-bold">{{$package->plate}}</span>
+                            </div>
+                          </div>
+                        </td>
+
+                        <td class="align-middle text-center">
+                          <span class="text-secondary text-xs font-weight-bold">{{$package->package_name}}</span>
+                        </td>
+
+                        <td class="align-middle text-center">
+                          <span class="text-secondary text-xs font-weight-bold">
+                            <?php 
+                                $inclusions = json_decode($package->inclusion);
+                            ?>    
+                             @foreach($inclusions as $inc)
+                              {{$inc}}<br>
+                             @endforeach
+                          </span>
+                        </td>
+                        <td class="align-middle text-center">
+                          <span class="text-secondary text-xs font-weight-bold">{{$package->booking_date}}</span>
+                        </td>
+                        <td class="align-middle text-center">
+                          <span class="text-secondary text-xs font-weight-bold">{{$package->created_at}}</span>
+                        </td>
+                         <td class="align-middle text-center">
+                          <span class="text-secondary text-xs font-weight-bold">{{number_format($package->package_rate)}}</span>
+                        </td>
+                         <td class="align-middle text-center">
+                          <span class="text-secondary text-xs font-weight-bold">{{$package->status_name}}</span>
+                        </td>
+                         <td class="align-middle text-center">
+                          @if($package->status_id == 1)
+                            <a href="{{route('admin_booking_cancel',$package->booking_id)}}" class="btn btn-danger btn-xs">CANCEL</a>
+                          @endif
+                        </td>
+
+                      </tr>
+                    @endforeach
                     
                   </tbody>
                 </table>

@@ -215,8 +215,9 @@ class AdminController extends Controller
                    ->join('packages','packages.id','=','bookings.package_id')
                    ->join('buses','buses.id','=','packages.bus_id')
                    ->join('statuses','statuses.id','=','bookings.status_id')
+                   ->join('users','users.id','=','bookings.user_id')
                    
-                   ->select('buses.plate','packages.package_name','packages.inclusion','packages.package_rate','bookings.status_id','bookings.created_at','statuses.name as status_name','bookings.id as booking_id','bookings.booking_date as booking_date','bookings.created_at')
+                   ->select('buses.plate','packages.package_name','packages.inclusion','packages.package_rate','bookings.status_id','bookings.created_at','statuses.name as status_name','bookings.id as booking_id','bookings.booking_date as booking_date','bookings.created_at','users.first_name as first_name','users.last_name as last_name')
                    ->orderBy('bookings.id','DESC')
                    ->get();
         return view('admin.booking',compact('packages'));

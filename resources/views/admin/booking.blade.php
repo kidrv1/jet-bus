@@ -85,6 +85,7 @@
                 <table class="table align-items-center mb-0">
                   <thead>
                     <tr>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Customer</th>
                       <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Bus Plate</th>
                      
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Package Name</th>
@@ -107,9 +108,12 @@
                           <div class="d-flex px-2 py-1">
                             
                             <div class="d-flex flex-column justify-content-center">
-                              <span class="text-secondary text-xs font-weight-bold">{{$package->plate}}</span>
+                              <span class="text-secondary text-xs font-weight-bold">{{$package->first_name}} {{$package->last_name}}</span>
                             </div>
                           </div>
+                        </td>
+                        <td class="align-middle text-center">
+                          <span class="text-secondary text-xs font-weight-bold">{{$package->plate}}</span>
                         </td>
 
                         <td class="align-middle text-center">

@@ -6,9 +6,12 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\CustomerController;
 
+
 Route::get('/', function () {
     return redirect('/login');
 });
+
+
 
 Route::get('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/login', [AuthController::class, 'loginCheck'])->name('login_check');
@@ -47,6 +50,7 @@ Route::group(['prefix'=> 'dashboard','middleware'=> ['auth']], function(){
 
     //Sales
     Route::get('/sales',[AdminController::class, 'sales'])->name('admin_sales');
+    Route::get('/report',[AdminController::class, 'report'])->name('admin_report');
 
 
     //Customer

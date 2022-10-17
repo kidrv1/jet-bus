@@ -210,9 +210,33 @@ class AdminController extends Controller
                ->select('buses.plate','packages.package_name','packages.inclusion','packages.package_rate','bookings.status_id','bookings.created_at','statuses.name as status_name','bookings.id as booking_id','bookings.booking_date as booking_date','bookings.created_at')
                ->get(); 
         }
+
+        
        
 
         return view('admin.sales',compact('packages'));
+    }
+
+    public function report()
+    {
+        $graph = DB::table('bookings')
+          ->select(DB::raw('DATE_FORMAT(created_at, "%m") as date'), DB::raw('count(*) as views'))
+          ->groupBy('date')
+
+          ->get();
+
+          $labels = [];
+          $data = [];
+
+          foreach($graph as $g)
+          {
+            array_push($labels, $g->date);
+            array_push($data, $g->views);
+          }
+
+          return view('admin.report',compact('labels','data'));
+
+
     }
 
     public function busPackage($id)

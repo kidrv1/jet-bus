@@ -37,6 +37,15 @@
             <span class="nav-link-text ms-1">SALES</span>
           </a>
         </li>
+
+        <li class="nav-item">
+          <a class="nav-link active" href="{{route('admin_report')}}">
+            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+              <i class="ni ni-chart-bar-32 text-warning text-sm opacity-10"></i>
+            </div>
+            <span class="nav-link-text ms-1">REPORT</span>
+          </a>
+        </li>
       @endif
 
       @if(Auth::user()->getRoleNames()[0] == 'customer')

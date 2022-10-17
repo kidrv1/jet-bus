@@ -47,7 +47,7 @@
             <li class="breadcrumb-item text-sm"><a class="opacity-5 text-white" href="javascript:;">Pages</a></li>
             <li class="breadcrumb-item text-sm text-white active" aria-current="page">Tables</li>
           </ol>
-          <h6 class="font-weight-bolder text-white mb-0">Tables</h6>
+         
         </nav>
         <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
           <div class="ms-md-auto pe-md-3 d-flex align-items-center">
@@ -76,74 +76,19 @@
         <div class="col-12">
           <div class="card mb-4">
             <div class="card-header pb-0">
-              <h6>Sales Report</h6>
-              <form method="GET">
-                @csrf
-                <input type="date" name="from_date" required>
-                <input type="date" name="to_date" required>
-                <button type="submit">Submit</button>
-              </form>
+              <h6>Sales Visual Report</h6>
+              
               @include('shared.notification')
             </div>
             <div class="card-body px-0 pt-0 pb-2">
               <div class="table-responsive p-0">
-                <table class="table align-items-center mb-0">
-                  <thead>
-                    <tr>
-                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Bus Plate</th>
-                     
-                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Package Name</th>
-                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tour Date</th>
-                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Created</th>
-                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Price</th>
-                      
-                      <th class="text-secondary opacity-7"></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <?php $total = 0; ?>
-                    @foreach($packages as $package)
-                      <tr>
-
-                        <td>
-                          <div class="d-flex px-2 py-1">
-                            
-                            <div class="d-flex flex-column justify-content-center">
-                              <span class="text-secondary text-xs font-weight-bold">{{$package->plate}}</span>
-                            </div>
-                          </div>
-                        </td>
-
-                        <td class="align-middle text-center">
-                          <span class="text-secondary text-xs font-weight-bold">{{$package->package_name}}</span>
-                        </td>
-
-                        
-                        <td class="align-middle text-center">
-                          <span class="text-secondary text-xs font-weight-bold">{{$package->booking_date}}</span>
-                        </td>
-                        <td class="align-middle text-center">
-                          <span class="text-secondary text-xs font-weight-bold">{{$package->created_at}}</span>
-                        </td>
-                         <td class="align-middle text-center">
-                          <span class="text-secondary text-xs font-weight-bold">P{{number_format($package->package_rate)}}</span>
-                        </td>
-                         <?php $total += $package->package_rate; ?> 
-                     
-
-                      </tr>
-                    @endforeach
-                   
-                  </tbody>
-
-                </table>
+                 <div>
+                <canvas id="myChart"></canvas>
+              </div>
               </div>
             </div>
-             <div class="container-fluid">
-                <h5>Total Sales: P{{number_format($total)}}</h5>
-                <button onclick="window.print()" class="btn btn-primary btn-xxs">Print</button>
-              </div>
-               
+            
+              
           </div>
         </div>
       </div>
@@ -194,7 +139,43 @@
   <script src="{{URL::to('/assets/js/core/bootstrap.min.js')}}"></script>
   <script src="{{URL::to('/assets/js/plugins/perfect-scrollbar.min.js')}}"></script>
   <script src="{{URL::to('/assets/js/plugins/smooth-scrollbar.min.js')}}"></script>
- 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+<script type="text/javascript">
+  
+      var labels =  {{ Js::from($labels) }};
+      var users =  {{ Js::from($data) }};
+  
+      const data = {
+        labels: labels,
+        datasets: [{
+          label: 'Monthly Report of Year: '+new Date().getFullYear(),
+          backgroundColor: 'rgb(255, 99, 132)',
+          borderColor: 'rgb(255, 99, 132)',
+          data: users,
+        }]
+      };
+  
+      const config = {
+        type: 'bar',
+        data: data,
+        options: {}
+      };
+  
+      const myChart = new Chart(
+        document.getElementById('myChart'),
+        config
+      );
+  
+</script>
+  <script>
+    var win = navigator.platform.indexOf('Win') > -1;
+    if (win && document.querySelector('#sidenav-scrollbar')) {
+      var options = {
+        damping: '0.5'
+      }
+      Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
+    }
   </script>
   <!-- Github buttons -->
   <script async defer src="https://buttons.github.io/buttons.js"></script>

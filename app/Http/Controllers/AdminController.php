@@ -185,9 +185,16 @@ class AdminController extends Controller
     public function findBooking(Request $request)
     {
         $booked = Payment::where('book_id',$request->book_id)->first();
+        if($booked)
+        {
+            $file_name = explode("/",$booked->payment_receipt);
+            return response()->json($file_name[1]);
+        }else 
+        {
+            return response()->json("null");
+        }
 
-       $file_name = explode("/",$booked->payment_receipt);
-        return response()->json($file_name[1]);
+        
     }
 
     public function updateBus(Request $request)

@@ -236,8 +236,16 @@
            data:{_token: token, book_id : book_id},
            success:function(data) {
               console.log(data);
-              $( ".receiptclass" ).remove();
-              $( "#displayImage" ).append( "<img class='receiptclass' src='{{URL::to('storage')}}/"+data+"' width='450px' height='400px'>" );
+               $( ".receiptclass" ).remove();
+              if(data == "null")
+              {
+                $( "#displayImage" ).append( "<h3 class='receiptclass'>NO RECEIPT</h2>" );
+              }else 
+              {
+                 $( "#displayImage" ).append( "<img class='receiptclass' src='{{URL::to('storage')}}/"+data+"' width='450px' height='400px'>" );
+              }
+             
+             
               
            }
         });

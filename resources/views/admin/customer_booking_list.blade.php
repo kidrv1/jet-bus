@@ -140,6 +140,7 @@
                          <td class="align-middle text-center">
                           @if($package->status_id == 1)
                             <a href="{{route('admin_booking_cancel',$package->booking_id)}}" class="btn btn-danger btn-xs">CANCEL</a>
+                            <button class="btn btn-primary btn-xs payment" data-bs-toggle="modal" data-bs-target="#paymentModal" value="{{$package->booking_id}}">Payment</button>
                           @endif
                         </td>
 
@@ -159,28 +160,37 @@
   </main>
   
 
-  <div class="modal" id="statusModal">
+  <div class="modal" id="paymentModal">
     <div class="modal-dialog">
       <div class="modal-content">
 
         <!-- Modal Header -->
         <div class="modal-header">
-          <h4 class="modal-title">Change Status?</h4>
+          <h4 class="modal-title">Upload Payment Receipt</h4>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
 
-        <form role="form" action="#" method="POST">
+        <form role="form" action="{{route('admin_payment')}}" method="POST" enctype="multipart/form-data">
         <!-- Modal body -->
         <div class="modal-body">
            
         @csrf
-        <input type="hidden" name="project_id" id="statusProjectId">
+        <input type="hidden" name="book_id" id="bookId">
+        <input type="file" name="payment_receipt" class="form-control" required>
+
+        <div class="form-group text-center">
+            <h4>Gcash Information</h4>
+            <p>09179072108</p>
+            <img src="{{URL::to('gcash.png')}}" width="300px" height="300px">
         </div>
+        
+        </div>
+
 
         <!-- Modal footer -->
         <div class="modal-footer">
-          <button type="submit" class="btn bg-gradient-primary">Yes</button>
-          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn bg-gradient-primary">Submit</button>
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
         </div>
         </form>
 
@@ -216,9 +226,10 @@
       var find_project_url = "#";
       var token = "{{Session::token()}}";
 
-      $(".archive").click(function(){
-        var project_id = $(this).val();
-        $("#statusProjectId").val(project_id);
+      $(".payment").click(function(){
+        var book_id = $(this).val();
+        console.log(book_id);
+        $("#bookId").val(book_id);
 
       });
 

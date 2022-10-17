@@ -47,6 +47,8 @@ Route::group(['prefix'=> 'dashboard','middleware'=> ['auth']], function(){
     Route::post('/admin-booking-set-date',[AdminController::class, 'bookingSetDate'])->name('admin_set_date');
     Route::get('/admin-booking-cancel/{id}',[AdminController::class, 'bookingCancel'])->name('admin_booking_cancel');
     Route::get('/admin-booking-approve/{id}',[AdminController::class, 'bookingApprove'])->name('admin_booking_approve');
+    Route::post('/admin-booking-payment',[AdminController::class, 'bookingPayment'])->name('admin_payment');
+    Route::post('/admin-find-booking',[AdminController::class, 'findBooking'])->name('admin_find_booking');
 
     //Sales
     Route::get('/sales',[AdminController::class, 'sales'])->name('admin_sales');

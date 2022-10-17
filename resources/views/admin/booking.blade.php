@@ -142,6 +142,7 @@
                           @if($package->status_id == 1)
                             <a href="{{route('admin_booking_cancel',$package->booking_id)}}" class="btn btn-danger btn-xs">CANCEL</a>
                             <a href="{{route('admin_booking_approve',$package->booking_id)}}" class="btn btn-primary btn-xs">APPROVE</a>
+                            <button class="btn btn-warning btn-xs receipt" data-bs-toggle="modal" data-bs-target="#viewReceipt" value="{{$package->booking_id}}">View Receipt</button>
                           @endif
                         </td>
 
@@ -162,13 +163,13 @@
   </main>
   
 
-  <div class="modal" id="statusModal">
+  <div class="modal" id="viewReceipt">
     <div class="modal-dialog">
       <div class="modal-content">
 
         <!-- Modal Header -->
         <div class="modal-header">
-          <h4 class="modal-title">Change Status?</h4>
+          <h4 class="modal-title">Payment Receipt</h4>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
 
@@ -177,12 +178,13 @@
         <div class="modal-body">
            
         @csrf
-        <input type="hidden" name="project_id" id="statusProjectId">
+        <div id="displayImage">
+          
+        </div>
         </div>
 
         <!-- Modal footer -->
         <div class="modal-footer">
-          <button type="submit" class="btn bg-gradient-primary">Yes</button>
           <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
         </div>
         </form>
@@ -216,38 +218,22 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
   <script type="text/javascript">
     $(document).ready(function(){
-      var find_project_url = "#";
+      var find_project_url = "{{route('admin_find_booking')}}";
       var token = "{{Session::token()}}";
 
-      $(".archive").click(function(){
-        var project_id = $(this).val();
-        $("#statusProjectId").val(project_id);
+      
 
-      });
-
-      $(".completed").click(function(){
-        var project_id = $(this).val();
-        $("#completedProject").val(project_id);
-
-      });
-
-      $(".assign").click(function(){
-        var project_id = $(this).val();
-        $("#assignTask").val(project_id);
-
-      });
-
-      $(".updateProject").click(function(){
-          var project_id = $(this).val();
-          $("#updateProjectId").val(project_id);
+      $(".receipt").click(function(){
+          var book_id = $(this).val();
+         
           $.ajax({
            type:'POST',
            url:find_project_url,
-           data:{_token: token, project_id : project_id},
+           data:{_token: token, book_id : book_id},
            success:function(data) {
               console.log(data);
-              $("#editTitle").val(data.title);
-              $("#editDescription").val(data.description);
+              $( ".receiptclass" ).remove();
+              $( "#displayImage" ).append( "<img class='receiptclass' src='{{URL::to('storage')}}/"+data+"' width='450px' height='400px'>" );
               
            }
         });

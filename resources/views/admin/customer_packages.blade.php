@@ -149,6 +149,13 @@
         @csrf
         <input type="date" name="booking_date" class="form-control" required>
         <input type="hidden" name="package_id" id="packageId">
+
+        <div class="form-group text-center">
+            <h4>Gcash Information</h4>
+            <p>09179072108</p>
+            <img src="{{URL::to('gcash.png')}}" width="300px" height="300px">
+        </div>
+
         </div>
 
         <!-- Modal footer -->

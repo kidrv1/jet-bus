@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Bus;
 use App\Models\Package;
 use App\Models\Booking;
+use App\Models\Payment;
 
 use Illuminate\Support\Facades\Auth;
 use Validator;
@@ -153,6 +154,42 @@ class AdminController extends Controller
         return back()->with('success','Bus Created Successfully');
     }
 
+    public function bookingPayment(Request $request)
+    {
+        $validatedData = $request->validate([
+            'payment_receipt'        =>  'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'book_id'               => 'required'
+                
+        ]);
+
+        $check_book = Booking::find($request->book_id);
+
+        if($check_book)
+        {
+            $cover = $request->file('payment_receipt')->getClientOriginalName();
+       
+            $url = Storage::putFileAs('public', $request->file('payment_receipt'),$cover);
+
+            Payment::create(['payment_receipt'=> $url, 'book_id'=> $validatedData['book_id']]);
+
+            return back()->with('success','Payment Sent Successfully');
+
+        }
+
+        
+
+        
+
+    }
+
+    public function findBooking(Request $request)
+    {
+        $booked = Payment::where('book_id',$request->book_id)->first();
+
+       $file_name = explode("/",$booked->payment_receipt);
+        return response()->json($file_name[1]);
+    }
+
     public function updateBus(Request $request)
     {
         $validatedData = $request->validate([
@@ -180,6 +217,7 @@ class AdminController extends Controller
                    ->join('statuses','statuses.id','=','bookings.status_id')
                    
                    ->select('buses.plate','packages.package_name','packages.inclusion','packages.package_rate','bookings.status_id','bookings.created_at','statuses.name as status_name','bookings.id as booking_id','bookings.booking_date as booking_date','bookings.created_at')
+                   ->orderBy('bookings.id','DESC')
                    ->get();
         return view('admin.booking',compact('packages'));
     }
@@ -283,6 +321,7 @@ class AdminController extends Controller
                    ->join('statuses','statuses.id','=','bookings.status_id')
                    ->where('bookings.user_id', Auth::id())
                    ->select('buses.plate','packages.package_name','packages.inclusion','packages.package_rate','bookings.status_id','bookings.created_at','statuses.name as status_name','bookings.id as booking_id','bookings.booking_date as booking_date','bookings.created_at')
+                   ->orderBy('bookings.id','desc')
                    ->get();
         return view('admin.customer_booking_list',compact('packages'));
     }

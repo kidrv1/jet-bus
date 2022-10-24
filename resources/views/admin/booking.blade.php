@@ -29,14 +29,14 @@
       <a class="navbar-brand m-0" href=" # " target="_blank">
         <img src="../assets/img/logo-ct-dark.png" class="navbar-brand-img h-100" alt="main_logo">
         <span class="ms-1 font-weight-bold">{{Auth::user()->first_name}} {{Auth::user()->last_name}}</span>
-        
+
       </a>
     </div>
     <hr class="horizontal dark mt-0">
     <div class="collapse navbar-collapse  w-auto " id="sidenav-collapse-main">
       @include('shared.side')
     </div>
-    
+
   </aside>
   <main class="main-content position-relative border-radius-lg ">
     <!-- Navbar -->
@@ -51,10 +51,10 @@
         </nav>
         <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
           <div class="ms-md-auto pe-md-3 d-flex align-items-center">
-            
+
           </div>
           <ul class="navbar-nav  justify-content-end">
-            
+
             <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
               <a href="javascript:;" class="nav-link text-white p-0" id="iconNavbarSidenav">
                 <div class="sidenav-toggler-inner">
@@ -64,8 +64,8 @@
                 </div>
               </a>
             </li>
-            
-          
+
+
           </ul>
         </div>
       </div>
@@ -77,7 +77,7 @@
           <div class="card mb-4">
             <div class="card-header pb-0">
               <h6>Booking Lists</h6>
-              
+
               @include('shared.notification')
             </div>
             <div class="card-body px-0 pt-0 pb-2">
@@ -87,7 +87,7 @@
                     <tr>
                       <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Customer</th>
                       <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Bus Plate</th>
-                     
+
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Package Name</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Inclusions</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tour Date</th>
@@ -95,7 +95,7 @@
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Price</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Actions</th>
-                      
+
                       <th class="text-secondary opacity-7"></th>
                     </tr>
                   </thead>
@@ -106,7 +106,7 @@
 
                         <td>
                           <div class="d-flex px-2 py-1">
-                            
+
                             <div class="d-flex flex-column justify-content-center">
                               <span class="text-secondary text-xs font-weight-bold">{{$package->first_name}} {{$package->last_name}}</span>
                             </div>
@@ -122,9 +122,9 @@
 
                         <td class="align-middle text-center">
                           <span class="text-secondary text-xs font-weight-bold">
-                            <?php 
+                            <?php
                                 $inclusions = json_decode($package->inclusion);
-                            ?>    
+                            ?>
                              @foreach($inclusions as $inc)
                               {{$inc}}<br>
                              @endforeach
@@ -152,8 +152,8 @@
 
                       </tr>
                     @endforeach
-                    
-                    
+
+
                   </tbody>
                 </table>
               </div>
@@ -161,11 +161,11 @@
           </div>
         </div>
       </div>
-      
-      
+
+
     </div>
   </main>
-  
+
 
   <div class="modal" id="viewReceipt">
     <div class="modal-dialog">
@@ -180,10 +180,10 @@
         <form role="form" action="#" method="POST">
         <!-- Modal body -->
         <div class="modal-body">
-           
+
         @csrf
         <div id="displayImage">
-          
+
         </div>
         </div>
 
@@ -197,10 +197,10 @@
     </div>
   </div>
 
-  
 
-    
-  
+
+
+
   <!--   Core JS Files   -->
   <script src="{{URL::to('/assets/js/core/popper.min.js')}}"></script>
   <script src="{{URL::to('/assets/js/core/bootstrap.min.js')}}"></script>
@@ -225,11 +225,11 @@
       var find_project_url = "{{route('admin_find_booking')}}";
       var token = "{{Session::token()}}";
 
-      
+
 
       $(".receipt").click(function(){
           var book_id = $(this).val();
-         
+
           $.ajax({
            type:'POST',
            url:find_project_url,
@@ -240,13 +240,13 @@
               if(data == "null")
               {
                 $( "#displayImage" ).append( "<h3 class='receiptclass'>NO RECEIPT</h2>" );
-              }else 
+              }else
               {
                  $( "#displayImage" ).append( "<img class='receiptclass' src='{{URL::to('storage')}}/"+data+"' width='450px' height='400px'>" );
               }
-             
-             
-              
+
+
+
            }
         });
 

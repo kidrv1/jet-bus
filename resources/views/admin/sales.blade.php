@@ -142,7 +142,7 @@
 
                                     </p>
                                 </div>
-                                <table class="table align-items-center mb-0">
+                                <table id="sales-table" class="table align-items-center mb-0">
                                     <thead>
                                         <tr>
                                             <th
@@ -194,7 +194,8 @@
 
                                             <td class="align-middle text-center">
                                                 <span
-                                                    class="text-secondary text-xs font-weight-bold">{{$package->customer_name ?? "WIP"}}</span>
+                                                    class="text-secondary text-xs font-weight-bold">{{$package->customer_name
+                                                    ?? "WIP"}}</span>
                                             </td>
 
                                             <td class="align-middle text-center">
@@ -223,6 +224,7 @@
                         <div class="container-fluid">
                             <h5>Total Sales: P{{number_format($total)}}</h5>
                             <button onclick="window.print()" class="btn btn-primary btn-xxs">Print</button>
+                            <button onclick="exportTable()" class="btn btn-success btn-xxs">Export To Excel</button>
                         </div>
 
                     </div>
@@ -283,7 +285,18 @@
     <script src="{{URL::to('/assets/js/argon-dashboard.min.js?v=2.0.4')}}"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
         integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="//cdn.rawgit.com/rainabba/jquery-table2excel/1.1.0/dist/jquery.table2excel.min.js"></script>
+
     <script type="text/javascript">
+    const exportTable = () => {
+        $("#sales-table").table2excel({
+            // exclude: ".excludeThisClass",
+            name: "Sales",
+            filename: "sales_export.xls", // do include extension
+            preserveColors: false // set to true if you want background colors and font colors preserved
+        });
+    }
+
         $(document).ready(function(){
       var find_project_url = "#";
       var token = "{{Session::token()}}";

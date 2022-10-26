@@ -50,4 +50,14 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Status::class);
     }
+
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class);
+    }
+
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
 }

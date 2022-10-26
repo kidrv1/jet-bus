@@ -5,24 +5,24 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Booking extends Model
+class Feedback extends Model
 {
     use HasFactory;
 
-    protected $guarded = [];
+    protected $fillable = [
+        "user_id",
+        "booking_id",
+        "subject",
+        "message",
+    ];
 
-    public function status()
+    public function booking()
     {
-        return $this->belongsTo(Status::class);
+        return $this->belongsTo(Booking::class);
     }
 
     public function user()
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function package()
-    {
-        return $this->belongsTo(Package::class);
     }
 }

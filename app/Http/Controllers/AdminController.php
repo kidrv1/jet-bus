@@ -2,18 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\User;
-use App\Models\Bus;
-use App\Models\Package;
-use App\Models\Booking;
-use App\Models\Payment;
-
-use Illuminate\Support\Facades\Auth;
 use Validator;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
+use App\Models\Bus;
+use App\Models\User;
+use App\Models\Booking;
+use App\Models\Package;
+
+use App\Models\Payment;
+use Illuminate\Http\Request;
+use App\Service\NotifService;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
 {
@@ -323,14 +324,20 @@ class AdminController extends Controller
         $validatedData['user_id'] = Auth::id();
         $validatedData['status_id'] = 1;
 
-        Booking::create($validatedData);
+        $booking = Booking::create($validatedData);
+
+        (new NotifService())->sendNotification(
+            $validatedData['user_id'],
+            "Booking Created",
+            "Your " . $booking->package()->first()->package_name . " booking for " . date("M d, Y", strtotime($validatedData['booking_date'])) . " has been created."
+        );
 
         return back()->with('success', 'You have Booked Successfully');
     }
 
     public function bookingCancel($id)
     {
-        $check = Booking::where('id', $id)->first();
+        $check = Booking::with(['package'])->where('id', $id)->first();
 
         if (!$check) {
             abort(404);
@@ -338,12 +345,18 @@ class AdminController extends Controller
 
         $check->update(['status_id' => 3]);
 
+        (new NotifService())->sendNotification(
+            $check->user_id,
+            "Booking Cancelled",
+            "Your " . $check->package->package_name . " booking for " . date("M d, Y", strtotime($check->booking_date)) . " has been cancelled."
+        );
+
         return back()->with('success', 'Booked Canceled Successfully');
     }
 
     public function bookingApprove($id)
     {
-        $check = Booking::where('id', $id)->first();
+        $check = Booking::with(['package'])->where('id', $id)->first();
 
         if (!$check) {
             abort(404);
@@ -351,6 +364,21 @@ class AdminController extends Controller
 
         $check->update(['status_id' => 2]);
 
+        (new NotifService())->sendNotification(
+            $check->user_id,
+            "Booking Approved",
+            "Your " . $check->package->package_name . " booking for " . date("M d, Y", strtotime($check->booking_date))  . " has been approved."
+        );
+
         return back()->with('success', 'Booked Approved Successfully');
+    }
+
+    public function public_packages()
+    {
+        $randomPackages = Package::inRandomOrder()->limit(10)->get();
+
+        return response()->json([
+            "packages" => $randomPackages
+        ], 200);
     }
 }

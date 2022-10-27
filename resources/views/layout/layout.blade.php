@@ -82,13 +82,8 @@
                 </a>
                 <nav class="collapse position-absolute navbar navbar-vertical navbar-light align-items-start p-0 bg-light"
                     id="navbar-vertical" style="width: calc(100% - 30px); z-index: 999;">
-                    <div class="navbar-nav w-100">
-                        {{-- Replace with list of packages --}}
-                        <a href="" class="nav-item nav-link">Dingalan</a>
-                        <a href="" class="nav-item nav-link">Baguio</a>
-                        <a href="" class="nav-item nav-link">Batangas</a>
-                        <a href="{{ route('customer_booking_packages') }}"
-                            class="nav-item nav-link btn btn-primary">View More</a>
+                    <div id="package-dropdown-public" class="navbar-nav w-100">
+
                     </div>
                 </nav>
             </div>
@@ -107,7 +102,6 @@
                             <a href="{{ route('home') }}" class="nav-item nav-link active">Home</a>
                             <a href="{{ route('customer_booking_packages') }}" class="nav-item nav-link">Book</a>
                             <a href="{{ route('feedback.create') }}" class="nav-item nav-link">Feedback(Temp Route)</a>
-                            <a href="{{ route('notifications') }}" class="nav-item nav-link">Notifs(Temp Route)</a>
                             <div class="dropdown-divider"></div>
                             @guest
                                 <a href="{{ route('login') }}" class="nav-item nav-link d-block d-lg-none">Login</a>
@@ -139,36 +133,21 @@
                                         id="notificationDropDown" data-toggle="dropdown" aria-haspopup="true"
                                         aria-expanded="false">
                                         <i class="fas fa-bell text-white"></i>
-                                        <span class="badge text-secondary border border-secondary rounded-circle"
+                                        <span id="unread-count-notif" class="badge text-secondary border border-secondary rounded-circle"
                                             style="padding-bottom: 2px;">0</span>
                                     </button>
                                     <div style="width: 400px;" class="dropdown-menu"
                                         aria-labelledby="notificationDropDown">
                                         <h5 class="dropdown-header">Notifications</h5>
-                                        <a class="dropdown-item" href="{{ route('notifications') }}">
-                                            <div class="card border-0">
-                                                <div class="d-flex justify-content-between  align-items-center">
-                                                    <div class="d-flex  align-items-center">
-                                                        <i style="font-size: 1.6em;"
-                                                            class="fas fa-check-circle mr-2 text-primary"></i>
-                                                        <small>Your booking has been approved.</small>
+                                        <div id="notif-dropdown-container">
+                                            <a class="dropdown-item" href="#">
+                                                <div class="card border-0">
+                                                    <div class="d-flex justify-content-between align-items-center mx-auto">
+                                                        <p class="m-auto p-2">No New Notifications</p>
                                                     </div>
-                                                    <small class="text-info">◉</small>
                                                 </div>
-                                            </div>
-                                        </a>
-                                        <a class="dropdown-item" href="{{ route('notifications') }}">
-                                            <div class="card border-0">
-                                                <div class="d-flex justify-content-between  align-items-center">
-                                                    <div class="d-flex  align-items-center">
-                                                        <i style="font-size: 1.6em;"
-                                                            class="fas fa-times-circle mr-2 text-danger"></i>
-                                                        <small>Your booking has been cancelled.</small>
-                                                    </div>
-                                                    <small class="text-info">◉</small>
-                                                </div>
-                                            </div>
-                                        </a>
+                                            </a>
+                                        </div>
                                         <div class="dropdown-divider"></div>
                                         <a class="dropdown-item" href="{{ route('notifications') }}">View All</a>
                                     </div>
@@ -315,6 +294,73 @@
             document.querySelector("#spinner").remove();
         })
     </script>
+
+    @auth
+        <script>
+            // Unread Notif Count
+            const countUnreadNotif = async() => {
+                const counter = document.querySelector("#unread-count-notif");
+
+                const res = await fetch("{{ route('notifications.unreadCount') }}");
+                const data = await res.json();
+
+                counter.innerText = data?.count ?? '!';
+            }
+            countUnreadNotif();
+
+            // Latest Notif
+            const loadUnreadSummary = async () => {
+                const container = document.querySelector("#notif-dropdown-container");
+                const res = await fetch("{{ route('notifications.unread') }}");
+                const data = await res.json();
+
+                if(data.notifications.length != 0) {
+                    container.innerHTML = "";
+                    data.notifications.forEach((notif) => {
+                        container.innerHTML += `
+                        <a class="dropdown-item" href="{{ route('notifications') }}">
+                            <div class="card border-0">
+                                <div class="d-flex justify-content-between  align-items-center">
+                                    <div class="d-flex  align-items-center">
+                                        <i style="font-size: 1.6em;"
+                                            class="fas fa-check-circle mr-2 text-primary"></i>
+                                        <small>${notif.message}.</small>
+                                    </div>
+                                    <small class="text-info">◉</small>
+                                </div>
+                            </div>
+                        </a>
+                        `;
+                    });
+                }
+            }
+            loadUnreadSummary();
+
+            // Packages Dropdown
+            const loadPackageDropdown = async () => {
+                const container = document.querySelector("#package-dropdown-public");
+                const res = await fetch("{{ route('public.packages') }}");
+                const data = await res.json();
+
+                container.innerHTML = "";
+                if(data.packages.length != 0) {
+                    data.packages.forEach((package) => {
+                        container.innerHTML += `
+                            <a
+                                href="{{ route('customer_booking_packages') }}"
+                                class="nav-item nav-link">
+                                ${package.package_name}
+                            </a>
+                        `;
+                    });
+                }
+                container.innerHTML += `
+                    <a href="{{ route('customer_booking_packages') }}" class="nav-item nav-link btn btn-primary">View More</a>
+                `;
+            }
+            loadPackageDropdown();
+        </script>
+    @endauth
     @yield('custom_scripts')
 </body>
 

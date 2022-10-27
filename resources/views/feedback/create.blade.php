@@ -1,5 +1,6 @@
 @extends("layout.layout")
 
+
 @section("content")
         <!-- Breadcrumb Start -->
         <div class="container-fluid">
@@ -22,21 +23,56 @@
                 <div class="col-lg-7 mb-5">
                     <div class="contact-form bg-light p-30">
                         <div id="success"></div>
-                        <form name="sentMessage" id="contactForm" novalidate="novalidate">
-                            <div class="control-group">
-                                <input type="text" class="form-control" id="subject" placeholder="Subject"
-                                    required="required" data-validation-required-message="Please enter a subject" />
+                        <form
+                            method="POST"
+                            action="{{ route('feedback.store') }}"
+                            id="feedback-form"
+                            novalidate="novalidate">
+                            @csrf
+                            <input type="hidden" name="booking_id" value="{{ $booking->id }}">
+                            <div class="control-group mb-4">
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    name="package"
+                                    placeholder="package"
+                                    disabled
+                                    value="{{ $booking->package->package_name }} - {{ date('M d, Y', strtotime($booking->booking_date)) }}"
+                                    />
+                            </div>
+                            <div class="control-group mb-4">
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    name="subject"
+                                    placeholder="Subject"
+                                    required="required"
+                                    />
                                 <p class="help-block text-danger"></p>
                             </div>
-                            <div class="control-group">
-                                <textarea class="form-control" rows="8" id="message" placeholder="Your experience"
+                            <div class="control-group mb-2">
+                                <textarea
+                                    class="form-control"
+                                    rows="8"
+                                    name="message"
+                                    placeholder="Please tell us about your experience"
                                     required="required"
-                                    data-validation-required-message="Please tell us about your experience"></textarea>
+                                    ></textarea>
                                 <p class="help-block text-danger"></p>
                             </div>
                             <div>
-                                <button class="btn btn-primary py-2 px-4" type="submit" id="sendMessageButton">Send
-                                    Message</button>
+                                <button
+                                    onclick="history.go(-1)"
+                                    class="btn btn-danger py-2 px-4"
+                                    type="button">
+                                    Back
+                                </button>
+                                <button
+                                    class="btn btn-primary py-2 px-4"
+                                    type="submit"
+                                    id="sendMessageButton">
+                                    Send Message
+                                </button>
                             </div>
                         </form>
                     </div>

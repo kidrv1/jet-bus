@@ -164,14 +164,34 @@
                                                     <span
                                                         class="text-secondary text-xs font-weight-bold">{{ $package->status_name }}</span>
                                                 </td>
-                                                <td class="align-middle text-center">
-                                                    @if ($package->status_id == 1)
-                                                        <a href="{{ route('admin_booking_cancel', $package->booking_id) }}"
-                                                            class="btn btn-danger btn-xs">CANCEL</a>
-                                                        <button class="btn btn-primary btn-xs payment"
-                                                            data-bs-toggle="modal" data-bs-target="#paymentModal"
-                                                            value="{{ $package->booking_id }}">Payment</button>
+                                                <td class="text-center">
+                                                    @if ($package->status_id < 3)
+                                                        @if ($package->hasCancelRequest)
+                                                            <button
+                                                                class="btn btn-danger btn-xs">CANCEL REQUESTED
+                                                            </button>
+                                                        @else
+                                                            <a
+                                                                href="{{ route('admin_booking_cancel_request', $package->booking_id) }}"
+                                                                class="btn btn-danger btn-xs">CANCEL
+                                                            </a>
+                                                        @endif
                                                     @endif
+                                                    @if ($package->status_id == 1)
+                                                        <button
+                                                            class="btn btn-primary btn-xs payment"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#paymentModal"
+                                                            value="{{ $package->booking_id }}">
+                                                            Payment
+                                                        </button>
+                                                    @endif
+                                                    @if ($package->status_id == 4)
+                                                    <a
+                                                        href="{{ route('feedback.create') }}{{ '?q=' . $package->booking_id }}"
+                                                        class="btn btn-success btn-xs">Feedback
+                                                    </a>
+                                                @endif
                                                 </td>
 
                                             </tr>

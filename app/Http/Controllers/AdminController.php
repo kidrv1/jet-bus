@@ -156,17 +156,21 @@ class AdminController extends Controller
         $validatedData = $request->validate([
             'payment_receipt'        =>  'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             'book_id'               => 'required'
-
         ]);
 
         $check_book = Booking::find($request->book_id);
 
         if ($check_book) {
-            $cover = $request->file('payment_receipt')->getClientOriginalName();
+            // $cover = $request->file('payment_receipt')->getClientOriginalName();
 
-            $url = Storage::putFileAs('public', $request->file('payment_receipt'), $cover);
+            // $url = Storage::putFileAs('public', $request->file('payment_receipt'), $cover);
+            $destinationPath = 'public';
+            $file = $request->file('payment_receipt');
+            $extension = $file->getClientOriginalExtension();
+            $fileName = rand(111111111, 999999999) . '.' . $extension;
+            $file->move($destinationPath, $fileName);
 
-            Payment::create(['payment_receipt' => $url, 'book_id' => $validatedData['book_id']]);
+            Payment::create(['payment_receipt' => $fileName, 'book_id' => $validatedData['book_id']]);
 
             return back()->with('success', 'Payment Sent Successfully');
         }
@@ -176,8 +180,8 @@ class AdminController extends Controller
     {
         $booked = Payment::where('book_id', $request->book_id)->first();
         if ($booked) {
-            $file_name = explode("/", $booked->payment_receipt);
-            return response()->json($file_name[1]);
+            $file_name = $booked->payment_receipt;
+            return response()->json($file_name);
         } else {
             return response()->json("null");
         }
@@ -209,7 +213,7 @@ class AdminController extends Controller
             ->join('statuses', 'statuses.id', '=', 'bookings.status_id')
             ->join('users', 'users.id', '=', 'bookings.user_id')
 
-            ->select('buses.plate', 'packages.package_name', 'packages.inclusion', 'packages.package_rate', 'bookings.status_id', 'bookings.created_at', 'statuses.name as status_name', 'bookings.id as booking_id', 'bookings.booking_date as booking_date', 'bookings.created_at', 'users.first_name as first_name', 'users.last_name as last_name')
+            ->select('buses.plate', 'packages.package_name', 'packages.inclusion', 'packages.package_rate', 'bookings.status_id', 'bookings.created_at', 'statuses.name as status_name', 'bookings.id as booking_id', 'bookings.booking_date as booking_date', 'bookings.created_at', 'bookings.hasCancelRequest', 'users.first_name as first_name', 'users.last_name as last_name')
             ->orderBy('bookings.id', 'DESC')
             ->get();
         return view('admin.booking', compact('packages'));
@@ -307,7 +311,7 @@ class AdminController extends Controller
             ->join('buses', 'buses.id', '=', 'packages.bus_id')
             ->join('statuses', 'statuses.id', '=', 'bookings.status_id')
             ->where('bookings.user_id', Auth::id())
-            ->select('buses.plate', 'packages.package_name', 'packages.inclusion', 'packages.package_rate', 'bookings.status_id', 'bookings.created_at', 'statuses.name as status_name', 'bookings.id as booking_id', 'bookings.booking_date as booking_date', 'bookings.created_at')
+            ->select('buses.plate', 'packages.package_name', 'packages.inclusion', 'packages.package_rate', 'bookings.status_id', 'bookings.created_at', 'bookings.hasCancelRequest', 'statuses.name as status_name', 'bookings.id as booking_id', 'bookings.booking_date as booking_date', 'bookings.created_at')
             ->orderBy('bookings.id', 'desc')
             ->get();
         return view('admin.customer_booking_list', compact('packages'));
@@ -354,6 +358,23 @@ class AdminController extends Controller
         return back()->with('success', 'Booked Canceled Successfully');
     }
 
+    public function bookingCancelRequest($id)
+    {
+        $check = Booking::with(['package'])
+            ->where('id', $id)
+            ->where('user_id', auth()->id())
+            ->first();
+
+        if (!$check) {
+            abort(404);
+        }
+
+        $check->update(['hasCancelRequest' => true]);
+
+
+        return back()->with('success', 'Booking Cancel Requested');
+    }
+
     public function bookingApprove($id)
     {
         $check = Booking::with(['package'])->where('id', $id)->first();
@@ -368,6 +389,25 @@ class AdminController extends Controller
             $check->user_id,
             "Booking Approved",
             "Your " . $check->package->package_name . " booking for " . date("M d, Y", strtotime($check->booking_date))  . " has been approved."
+        );
+
+        return back()->with('success', 'Booked Approved Successfully');
+    }
+
+    public function bookingComplete($id)
+    {
+        $check = Booking::with(['package'])->where('id', $id)->first();
+
+        if (!$check) {
+            abort(404);
+        }
+
+        $check->update(['status_id' => 4]);
+
+        (new NotifService())->sendNotification(
+            $check->user_id,
+            "Booking Completed",
+            "Your " . $check->package->package_name . " booking for " . date("M d, Y", strtotime($check->booking_date))  . " has been completed."
         );
 
         return back()->with('success', 'Booked Approved Successfully');

@@ -23,42 +23,53 @@
                     <div class="contact-form bg-light p-30">
                         <div id="success"></div>
                         <form name="sentMessage" id="feedback-form" novalidate="novalidate">
-                            <div class="control-group">
+                            <div class="control-group mb-2">
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="package"
+                                    placeholder="package"
+                                    disabled
+                                    value="{{ $booking->package->package_name }} - {{ date('M d, Y', strtotime($booking->booking_date)) }}"
+                                    />
+                            </div>
+                            @hasanyrole('admin|staff')
+                            <div class="control-group mb-4">
                                 <input
                                     id="customer"
                                     type="text"
                                     class="form-control"
-                                    value="{{ $feedback->user->id ?? '' }}"
+                                    value="{{ $booking->feedback->user->first_name ?? '' }} {{ $booking->feedback->user->last_name ?? '' }}"
                                     disabled
                                 />
                             </div>
-                            <div class="control-group">
+                            @endhasanyrole
+                            <div class="control-group mb-4">
                                 <input
                                     id="subject"
                                     type="text"
                                     class="form-control"
-                                    value="{{ $feedback->subject }}"
+                                    value="{{ $booking->feedback->subject }}"
                                     disabled
                                 />
                             </div>
-                            <div class="control-group">
+                            <div class="control-group mb-2">
                                 <textarea
                                     class="form-control"
                                     rows="8"
                                     id="message"
-                                >
-                                    {{ $feedback->message }}
-                                </textarea>
+                                    disabled
+                                >{{ $booking->feedback->message }}</textarea>
                                 <p class="help-block text-danger"></p>
                             </div>
-                            {{-- <div>
+                            <div>
                                 <button
+                                    onclick="history.go(-1)"
                                     class="btn btn-primary py-2 px-4"
-                                    type="submit"
-                                    id="sendMessageButton">
-                                    Send Message
+                                    type="button">
+                                    Back
                                 </button>
-                            </div> --}}
+                            </div>
                         </form>
                     </div>
                 </div>

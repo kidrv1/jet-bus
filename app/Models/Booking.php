@@ -9,7 +9,12 @@ class Booking extends Model
 {
     use HasFactory;
 
-    protected $guarded = [];
+    protected $fillable = [
+        "user_id",
+        "package_id",
+        "booking_date",
+        "status_id",
+    ];
 
     public function status()
     {
@@ -24,5 +29,10 @@ class Booking extends Model
     public function package()
     {
         return $this->belongsTo(Package::class);
+    }
+
+    public function feedback()
+    {
+        return $this->hasOne(Feedback::class);
     }
 }

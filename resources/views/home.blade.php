@@ -46,21 +46,25 @@
                 </div>
             </div>
             <div class="col-lg-4">
-                <div class="product-offer mb-30" style="height: 200px;">
-                    <img class="img-fluid" src="public/baguio-bus.jpg" alt="">
-                    <div class="offer-text">
-                        {{-- <h6 class="text-white text-uppercase">Save 20%</h6> --}}
-                        <h3 class="text-white mb-3">Baguio Package</h3>
-                        <a href="" class="btn btn-primary">Book Now</a>
+                @if ($randomPackages[0] != null)
+                    <div class="product-offer mb-30" style="height: 200px;">
+                        <img class="img-fluid" src="/public/{{ $randomPackages[1]['bus']->image}}" alt="package image">
+                        <div class="offer-text">
+                            {{-- <h6 class="text-white text-uppercase">Save 20%</h6> --}}
+                            <h3 class="text-white mb-3">{{ $randomPackages[0]->package_name }}</h3>
+                            <a href="{{ route("customer_booking_packages") }}" class="btn btn-primary">Book Now</a>
+                        </div>
                     </div>
-                </div>
-                <div class="product-offer mb-30" style="height: 200px;">
-                    <img class="img-fluid" src="public/iloilo-bus.webp" alt="">
-                    <div class="offer-text">
-                        <h3 class="text-white mb-3">Iloilo Package</h3>
-                        <a href="" class="btn btn-primary">Book Now</a>
+                @endif
+                @if ($randomPackages[1] != null)
+                    <div class="product-offer mb-30" style="height: 200px;">
+                        <img class="img-fluid" src="/public/{{ $randomPackages[1]['bus']->image}}" alt="package image">
+                        <div class="offer-text">
+                            <h3 class="text-white mb-3">{{ $randomPackages[1]->package_name }}</h3>
+                            <a href="{{ route("customer_booking_packages") }}" class="btn btn-primary">Book Now</a>
+                        </div>
                     </div>
-                </div>
+                @endif
             </div>
         </div>
     </div>
@@ -97,43 +101,51 @@
         </div>
     </div>
     <!-- Brag End -->
-
+    {{-- <div class="container">
+        {{ dd($prevPackages[0]->package->bus->image) }}
+    </div> --}}
     <!-- Products Start -->
     <div class="container-fluid pt-5 pb-3">
         <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4"><span class="bg-secondary pr-3">Featured Packages</span></h2>
         <div class="row px-xl-5">
             {{-- Packages Here --}}
-            <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
-                <div class="product-item bg-light mb-4">
-                    <div class="product-img position-relative overflow-hidden">
-                        <img class="img-fluid w-100" src="public/baguio-bus.jpg" alt="package picture">
-                        <div class="product-action">
-                            <a class="btn btn-outline-dark" href="">
-                                <i class="fa fa-shopping-cart mr-1"></i>
-                                Book
+            @forelse ($featuredPackages as $package)
+                <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
+                    <div class="product-item bg-light mb-4">
+                        <div class="product-img position-relative overflow-hidden">
+                            <img class="img-fluid w-100" src="public/{{ $package->bus->image }}" alt="package picture">
+                            <div class="product-action">
+                                <a class="btn btn-outline-dark" href="">
+                                    <i class="fa fa-shopping-cart mr-1"></i>
+                                    Book
+                                </a>
+                            </div>
+                        </div>
+                        <div class="text-center py-4">
+                            <a
+                                class="h6 text-decoration-none text-truncate"
+                                href="{{ route("customer_booking_packages") }}">
+                                {{ $package->package_name }}
                             </a>
-                        </div>
-                    </div>
-                    <div class="text-center py-4">
-                        <a
-                            class="h6 text-decoration-none text-truncate"
-                            href="{{ route("customer_booking_packages") }}">
-                            Baguio
-                        </a>
-                        <div class="d-flex align-items-center justify-content-center mt-2">
-                            <h5>&#8369; 10,000</h5>
-                            {{-- <h6 class="text-muted ml-2">
-                                <del>$123.00</del>
-                            </h6> --}}
-                        </div>
-                        <div class="d-flex align-items-center justify-content-center mb-1">
-                            <small class="text-primary mr-1">06:00 AM</small>
-                            <small class="text-primary mr-1">-</small>
-                            <small class="text-primary mr-1">06:00 PM</small>
+                            <div class="d-flex align-items-center justify-content-center mt-2">
+                                <h5>&#8369; {{ number_format($package->package_rate, 2) }}</h5>
+                                {{-- <h6 class="text-muted ml-2">
+                                    <del>&#8368; 12,300.00</del>
+                                </h6> --}}
+                            </div>
+                            <div class="d-flex align-items-center justify-content-center mb-1">
+                                <small class="text-primary mr-1">{{ date('h:i A', strtotime($package->start_time)) }}</small>
+                                <small class="text-primary mr-1">-</small>
+                                <small class="text-primary mr-1">{{ date('h:i A', strtotime($package->end_time)) }}</small>
+                            </div>
                         </div>
                     </div>
                 </div>
+            @empty
+            <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
+                <h3>No Packages To Show</h3>
             </div>
+            @endforelse
 
         </div>
     </div>
@@ -143,26 +155,30 @@
     <!-- Random Start -->
     <div class="container-fluid pt-5 pb-3">
         <div class="row px-xl-5">
-            <div class="col-md-6">
-                <div class="product-offer mb-30" style="height: 300px;">
-                    <img class="img-fluid" src="img/offer-1.jpg" alt="">
-                    <div class="offer-text">
-                        <h6 class="text-white text-uppercase">You might like</h6>
-                        <h3 class="text-white mb-3">Random Package</h3>
-                        <a href="" class="btn btn-primary">Book Now</a>
+            @if ($randomPackages[2] ?? null != null)
+                <div class="col-md-6">
+                    <div class="product-offer mb-30" style="height: 300px;">
+                        <img class="img-fluid" src="/public/{{ $randomPackages[2]['bus']->image}}" alt="package image">
+                        <div class="offer-text">
+                            <h6 class="text-white text-uppercase">You might like</h6>
+                            <h3 class="text-white mb-3">{{ $randomPackages[2]->package_name }}</h3>
+                            <a href="{{ route("customer_booking_packages") }}" class="btn btn-primary">Book Now</a>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-6">
-                <div class="product-offer mb-30" style="height: 300px;">
-                    <img class="img-fluid" src="img/offer-2.jpg" alt="">
-                    <div class="offer-text">
-                        <h6 class="text-white text-uppercase">You might like</h6>
-                        <h3 class="text-white mb-3">Random Package</h3>
-                        <a href="" class="btn btn-primary">Book Now</a>
+            @endif
+            @if ($randomPackages[3] ?? null != null)
+                <div class="col-md-6">
+                    <div class="product-offer mb-30" style="height: 300px;">
+                        <img class="img-fluid" src="/public/{{ $randomPackages[3]['bus']->image}}" alt="package image">
+                        <div class="offer-text">
+                            <h6 class="text-white text-uppercase">You might like</h6>
+                            <h3 class="text-white mb-3">{{ $randomPackages[3]->package_name }}</h3>
+                            <a href="{{ route("customer_booking_packages") }}" class="btn btn-primary">Book Now</a>
+                        </div>
                     </div>
                 </div>
-            </div>
+            @endif
         </div>
     </div>
     <!-- Random End -->
@@ -170,39 +186,50 @@
 
     @auth
     <!-- Recent Packages Booked Start -->
-    <div class="container-fluid pt-5 pb-3">
-        <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4"><span class="bg-secondary pr-3">Recently Booked</span></h2>
-        <div class="row px-xl-5">
+    @isset($prevPackages)
+        <div class="container-fluid pt-5 pb-3">
+            <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4"><span class="bg-secondary pr-3">Recently Booked</span></h2>
+            <div class="row px-xl-5">
+        @forelse ($prevPackages as $package)
             <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
                 <div class="product-item bg-light mb-4">
                     <div class="product-img position-relative overflow-hidden">
-                        <img class="img-fluid w-100" src="img/product-1.jpg" alt="">
+                        <img class="img-fluid w-100" src="/public/{{ $package->package->bus->image }}" alt="package picture">
                         <div class="product-action">
-                            <a class="btn btn-outline-dark btn-square" href=""><i class="fa fa-shopping-cart"></i></a>
-                            <a class="btn btn-outline-dark btn-square" href=""><i class="far fa-heart"></i></a>
-                            <a class="btn btn-outline-dark btn-square" href=""><i class="fa fa-sync-alt"></i></a>
-                            <a class="btn btn-outline-dark btn-square" href=""><i class="fa fa-search"></i></a>
+                            <a class="btn btn-outline-dark" href="{{ route("customer_booking_list") }}">
+                                <i class="fa fa-shopping-cart mr-1"></i>
+                                View
+                            </a>
                         </div>
                     </div>
                     <div class="text-center py-4">
-                        <a class="h6 text-decoration-none text-truncate" href="">Product Name Goes Here</a>
+                        <a
+                            class="h6 text-decoration-none text-truncate"
+                            href="{{ route("customer_booking_packages") }}">
+                            {{ $package->package->package_name }}
+                        </a>
                         <div class="d-flex align-items-center justify-content-center mt-2">
-                            <h5>$123.00</h5><h6 class="text-muted ml-2"><del>$123.00</del></h6>
+                            <h5>&#8369; {{ number_format($package->package->package_rate, 2) }}</h5>
+                            {{-- <h6 class="text-muted ml-2">
+                                <del>&#8369; 12,000.00</del>
+                            </h6> --}}
                         </div>
                         <div class="d-flex align-items-center justify-content-center mb-1">
-                            <small class="fa fa-star text-primary mr-1"></small>
-                            <small class="fa fa-star text-primary mr-1"></small>
-                            <small class="fa fa-star text-primary mr-1"></small>
-                            <small class="fa fa-star text-primary mr-1"></small>
-                            <small class="fa fa-star text-primary mr-1"></small>
-                            <small>(99)</small>
+                            <small class="text-primary mr-1">{{ date('h:i A', strtotime($package->package->start_time)) }}</small>
+                            <small class="text-primary mr-1">-</small>
+                            <small class="text-primary mr-1">{{ date('h:i A', strtotime($package->package->end_time)) }}</small>
                         </div>
                     </div>
                 </div>
             </div>
-
+        @empty
+            <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
+                No History To Show
+            </div>
+        @endforelse
+            </div>
         </div>
-    </div>
+    @endisset
     <!-- Recent Packages Booked End-->
     @endauth
 

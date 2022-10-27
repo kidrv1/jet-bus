@@ -2,30 +2,37 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Booking;
 use App\Models\Feedback;
 use Illuminate\Http\Request;
 
 class FeedbackController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        // TODO: Get id of the booking to feedback to
-        return view("feedback");
-    }
 
     /**
      * Show the form for creating a new resource.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+        // Check if booking exists
+        // $booking_id = $request->query("q", null);
+        // $booking = Booking::find($booking_id);
+
+        // if ($booking == null) {
+        //     return redirect()->route("home");
+        // }
+
+        // // Check if booking already has feedback
+        // $feedback = $booking->feedback()->get();
+        // if ($feedback != null) {
+        //     return redirect()->route("home");
+        // }
+
+        return view("feedback.create");
+        // ->with(["booking_id" => $booking_id]);
     }
 
     /**
@@ -36,17 +43,45 @@ class FeedbackController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            "booking_id" => ["required"],
+            "subject" => ["required"],
+            "message" => ["required"],
+        ]);
+
+        $booking = Booking::find($request->booking_id);
+        if ($booking == null) {
+            return redirect()->route("home");
+        }
+
+        Feedback::create([
+            "booking_id" => $request->booking_id,
+            "user_id" => auth()->id,
+            "subject" => $request->subject,
+            "message" => $request->message,
+        ]);
+
+        return redirect()->route("home")->with([
+            "success" => "Thank you for your feedback."
+        ]);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Feedback  $feedback
+     * @param  \App\Models\Booking  $booking
      * @return \Illuminate\Http\Response
      */
-    public function show(Feedback $feedback)
+    public function show(Booking $booking)
     {
-        //
+        $feedback = $booking->feedback()->get();
+
+        if ($feedback == null) {
+            return redirect()->route("home");
+        }
+
+        return view("feedback.show")->with([
+            "feedback" => $feedback
+        ]);
     }
 }

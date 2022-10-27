@@ -28,8 +28,6 @@ Route::get("/testexcel", function () {
 });
 
 Route::get('/', [HomeController::class, "index"])->name("home");
-Route::get('/feedback', [FeedbackController::class, "index"])->name("feedback");
-Route::get('/notifications', [NotificationController::class, "index"])->name("notifications");
 
 Route::get('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/login', [AuthController::class, 'loginCheck'])->name('login_check');
@@ -76,4 +74,9 @@ Route::group(['prefix' => 'dashboard', 'middleware' => ['auth']], function () {
     //Customer
     Route::get('/booking', [AdminController::class, 'customer_booking_packages'])->name('customer_booking_packages');
     Route::get('/booking-list', [AdminController::class, 'customer_booking_list'])->name('customer_booking_list');
+    Route::get('/feedback', [FeedbackController::class, "create"])->name("feedback.create");
+    Route::post('/feedback', [FeedbackController::class, "store"])->name("feedback.store");
+    Route::get('/feedback/{booking}', [FeedbackController::class, "show"])->name("feedback.show");
+
+    Route::get('/notifications', [NotificationController::class, "index"])->name("notifications");
 });

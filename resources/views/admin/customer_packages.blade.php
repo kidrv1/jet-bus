@@ -94,10 +94,10 @@
                                     <div class="col-sm-3">
                                         <div class="card">
                                             <?php
-                                                $file_name = explode('/', $package->image);
+                                                $file_name = $package->image;
 
                                                 ?>
-                                            <img class="card-img-top" src="{{ URL::to('storage') }}/{{ $file_name[1] }}"
+                                            <img class="card-img-top" src="{{ URL::to('storage') }}/{{ $file_name}}"
                                                 alt="Card image" width="80px" height="200px">
                                             <div class="card-body">
                                                 <h4 class="card-title">{{ $package->package_name }}</h4>

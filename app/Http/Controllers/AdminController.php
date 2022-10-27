@@ -27,22 +27,20 @@ class AdminController extends Controller
     public function home()
     {
         $users = User::whereHas('roles', function ($query) {
-            $query->where('name','!=', 'admin');
+            $query->where('name', '!=', 'admin');
         })->get();
-        return view('admin.home',compact('users'));
+        return view('admin.home', compact('users'));
     }
 
     public function findUser(Request $request)
     {
         $user = User::find($request->user_id);
-        if( $user->getRoleNames()[0] == 'staff' )
-        {
+        if ($user->getRoleNames()[0] == 'staff') {
             $user->position = 1;
-        }else if( $user->getRoleNames()[0] == 'customer' )
-        {
+        } else if ($user->getRoleNames()[0] == 'customer') {
             $user->position = 2;
         }
-        
+
         return response()->json($user);
     }
 
@@ -51,8 +49,7 @@ class AdminController extends Controller
         $user = User::find($id);
         $user->status_id = 2;
         $user->save();
-        return back()->with('success','User Approved Successfully');
-
+        return back()->with('success', 'User Approved Successfully');
     }
 
     public function findBus(Request $request)
@@ -69,62 +66,56 @@ class AdminController extends Controller
             'position' => ['required'],
             'gender' => ['required'],
             'mobile' => ['required']
-            
+
         ]);
 
         $user = User::find($request->user_id);
         $user->roles()->detach();
 
 
-        if($validatedData['position'] == 1)
-        {
-            
+        if ($validatedData['position'] == 1) {
+
             $user->first_name       = strtolower($validatedData['first_name']);
             $user->last_name        = strtolower($validatedData['last_name']);
             $user->gender           = strtolower($validatedData['gender']);
             $user->mobile           = strtolower($validatedData['mobile']);
             $user->email            = $validatedData['email'];
-            
+
             $user->save();
 
             $user->assignRole('staff');
-            
-        }else if($validatedData['position'] == 2)
-        {
+        } else if ($validatedData['position'] == 2) {
             $user->first_name       = strtolower($validatedData['first_name']);
             $user->last_name        = strtolower($validatedData['last_name']);
             $user->gender           = strtolower($validatedData['gender']);
             $user->mobile           = strtolower($validatedData['mobile']);
             $user->email            = $validatedData['email'];
-            
+
             $user->save();
 
             $user->assignRole('customer');
-
-        }else {
+        } else {
             return 'Invalid User Type';
         }
 
-        
-        return back()->with('success','Updated Successfully');
-            
+
+        return back()->with('success', 'Updated Successfully');
     }
 
     public function deleteUser(Request $request)
     {
         $find_user = User::find($request->user_id);
-        if($find_user)
-        {
+        if ($find_user) {
             $find_user->delete();
         }
 
-        return back()->with('success','Deleted Successfully');
+        return back()->with('success', 'Deleted Successfully');
     }
 
     public function bus()
     {
         $buses = Bus::all();
-        return view('admin.bus',compact('buses'));
+        return view('admin.bus', compact('buses'));
     }
 
     public function bus_check(Request $request)
@@ -137,21 +128,26 @@ class AdminController extends Controller
             'model'            => ['required'],
             'plate'            => ['required'],
             'seaters'            => ['required'],
-            
+
         ]);
 
         unset($validatedData['image']);
 
-        $cover = $request->file('image')->getClientOriginalName();
-       
-        $url = Storage::putFileAs('public', $request->file('image'),$cover);
+        // $cover = $request->file('image')->getClientOriginalName();
+        // $url = Storage::putFileAs('public', $request->file('image'), $cover);
 
-        $validatedData['image'] = $url;
+        $destinationPath = 'public';
+        $file = $request->file('image');
+        $extension = $file->getClientOriginalExtension();
+        $fileName = rand(111111111, 999999999) . '.' . $extension;
+        $file->move($destinationPath, $fileName);
+
+        $validatedData['image'] = $fileName;
         $validatedData['user_id'] = Auth::id();
 
         Bus::create($validatedData);
 
-        return back()->with('success','Bus Created Successfully');
+        return back()->with('success', 'Bus Created Successfully');
     }
 
     public function bookingPayment(Request $request)
@@ -159,42 +155,31 @@ class AdminController extends Controller
         $validatedData = $request->validate([
             'payment_receipt'        =>  'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             'book_id'               => 'required'
-                
+
         ]);
 
         $check_book = Booking::find($request->book_id);
 
-        if($check_book)
-        {
+        if ($check_book) {
             $cover = $request->file('payment_receipt')->getClientOriginalName();
-       
-            $url = Storage::putFileAs('public', $request->file('payment_receipt'),$cover);
 
-            Payment::create(['payment_receipt'=> $url, 'book_id'=> $validatedData['book_id']]);
+            $url = Storage::putFileAs('public', $request->file('payment_receipt'), $cover);
 
-            return back()->with('success','Payment Sent Successfully');
+            Payment::create(['payment_receipt' => $url, 'book_id' => $validatedData['book_id']]);
 
+            return back()->with('success', 'Payment Sent Successfully');
         }
-
-        
-
-        
-
     }
 
     public function findBooking(Request $request)
     {
-        $booked = Payment::where('book_id',$request->book_id)->first();
-        if($booked)
-        {
-            $file_name = explode("/",$booked->payment_receipt);
+        $booked = Payment::where('book_id', $request->book_id)->first();
+        if ($booked) {
+            $file_name = explode("/", $booked->payment_receipt);
             return response()->json($file_name[1]);
-        }else 
-        {
+        } else {
             return response()->json("null");
         }
-
-        
     }
 
     public function updateBus(Request $request)
@@ -205,91 +190,84 @@ class AdminController extends Controller
             'model'            => ['required'],
             'plate'            => ['required'],
             'seaters'            => ['required'],
-            
+
         ]);
 
         $bus = Bus::find($request->bus_id);
 
         $bus->update($validatedData);
 
-        return back()->with('success','Bus Updated Successfully');
-
+        return back()->with('success', 'Bus Updated Successfully');
     }
 
     public function bookingList()
     {
         $packages = DB::table('bookings')
-                   ->join('packages','packages.id','=','bookings.package_id')
-                   ->join('buses','buses.id','=','packages.bus_id')
-                   ->join('statuses','statuses.id','=','bookings.status_id')
-                   ->join('users','users.id','=','bookings.user_id')
-                   
-                   ->select('buses.plate','packages.package_name','packages.inclusion','packages.package_rate','bookings.status_id','bookings.created_at','statuses.name as status_name','bookings.id as booking_id','bookings.booking_date as booking_date','bookings.created_at','users.first_name as first_name','users.last_name as last_name')
-                   ->orderBy('bookings.id','DESC')
-                   ->get();
-        return view('admin.booking',compact('packages'));
+            ->join('packages', 'packages.id', '=', 'bookings.package_id')
+            ->join('buses', 'buses.id', '=', 'packages.bus_id')
+            ->join('statuses', 'statuses.id', '=', 'bookings.status_id')
+            ->join('users', 'users.id', '=', 'bookings.user_id')
+
+            ->select('buses.plate', 'packages.package_name', 'packages.inclusion', 'packages.package_rate', 'bookings.status_id', 'bookings.created_at', 'statuses.name as status_name', 'bookings.id as booking_id', 'bookings.booking_date as booking_date', 'bookings.created_at', 'users.first_name as first_name', 'users.last_name as last_name')
+            ->orderBy('bookings.id', 'DESC')
+            ->get();
+        return view('admin.booking', compact('packages'));
     }
 
     public function sales()
     {
-        if(isset($_GET['from_date']) && isset($_GET['to_date']))
-        {
+        if (isset($_GET['from_date']) && isset($_GET['to_date'])) {
             $from = Carbon::parse($_GET['from_date']);
             $to = Carbon::parse($_GET['to_date']);
 
-             $packages = DB::table('bookings')
-               ->join('packages','packages.id','=','bookings.package_id')
-               ->join('buses','buses.id','=','packages.bus_id')
-               ->join('statuses','statuses.id','=','bookings.status_id')
-               ->where('bookings.status_id', 2)
-               ->whereBetween('bookings.created_at', [$from, $to])
-               ->select('buses.plate','packages.package_name','packages.inclusion','packages.package_rate','bookings.status_id','bookings.created_at','statuses.name as status_name','bookings.id as booking_id','bookings.booking_date as booking_date','bookings.created_at')
-               ->get();
-
-        }else 
-        {
             $packages = DB::table('bookings')
-               ->join('packages','packages.id','=','bookings.package_id')
-               ->join('buses','buses.id','=','packages.bus_id')
-               ->join('statuses','statuses.id','=','bookings.status_id')
-               ->where('bookings.status_id', 2)
-               ->select('buses.plate','packages.package_name','packages.inclusion','packages.package_rate','bookings.status_id','bookings.created_at','statuses.name as status_name','bookings.id as booking_id','bookings.booking_date as booking_date','bookings.created_at')
-               ->get(); 
+                ->join('packages', 'packages.id', '=', 'bookings.package_id')
+                ->join('buses', 'buses.id', '=', 'packages.bus_id')
+                ->join('statuses', 'statuses.id', '=', 'bookings.status_id')
+                ->where('bookings.status_id', 2)
+                ->whereBetween('bookings.created_at', [$from, $to])
+                ->select('buses.plate', 'packages.package_name', 'packages.inclusion', 'packages.package_rate', 'bookings.status_id', 'bookings.created_at', 'statuses.name as status_name', 'bookings.id as booking_id', 'bookings.booking_date as booking_date', 'bookings.created_at')
+                ->get();
+        } else {
+            $packages = DB::table('bookings')
+                ->join('packages', 'packages.id', '=', 'bookings.package_id')
+                ->join('buses', 'buses.id', '=', 'packages.bus_id')
+                ->join('statuses', 'statuses.id', '=', 'bookings.status_id')
+                ->where('bookings.status_id', 2)
+                ->select('buses.plate', 'packages.package_name', 'packages.inclusion', 'packages.package_rate', 'bookings.status_id', 'bookings.created_at', 'statuses.name as status_name', 'bookings.id as booking_id', 'bookings.booking_date as booking_date', 'bookings.created_at')
+                ->get();
         }
 
-        
-       
 
-        return view('admin.sales',compact('packages'));
+
+
+        return view('admin.sales', compact('packages'));
     }
 
     public function report()
     {
         $graph = DB::table('bookings')
-          ->select(DB::raw('DATE_FORMAT(created_at, "%m") as date'), DB::raw('count(*) as views'))
-          ->groupBy('date')
+            ->select(DB::raw('DATE_FORMAT(created_at, "%m") as date'), DB::raw('count(*) as views'))
+            ->groupBy('date')
 
-          ->get();
+            ->get();
 
-          $labels = [];
-          $data = [];
+        $labels = [];
+        $data = [];
 
-          foreach($graph as $g)
-          {
+        foreach ($graph as $g) {
             array_push($labels, $g->date);
             array_push($data, $g->views);
-          }
+        }
 
-          return view('admin.report',compact('labels','data'));
-
-
+        return view('admin.report', compact('labels', 'data'));
     }
 
     public function busPackage($id)
     {
         $bus = Bus::find($id);
-        $packages = Package::where('bus_id',$id)->get();
-        return view('admin.package',compact('packages','bus'));
+        $packages = Package::where('bus_id', $id)->get();
+        return view('admin.package', compact('packages', 'bus'));
     }
 
     public function busPackageCheck(Request $request)
@@ -301,7 +279,7 @@ class AdminController extends Controller
             'package_name'      => ['required'],
             'package_rate'     => ['required'],
             'inclusion'        => ['required']
-            
+
         ]);
 
         $validatedData['user_id'] = Auth::id();
@@ -309,29 +287,29 @@ class AdminController extends Controller
 
         Package::create($validatedData);
 
-        return back()->with('success','Bus Package Created Successfully');
+        return back()->with('success', 'Bus Package Created Successfully');
     }
 
     public function customer_booking_packages()
     {
-         $packages = DB::table('packages')
-                   ->join('buses','buses.id','=','packages.bus_id')
-                   ->select('packages.id','packages.package_name','packages.package_rate','packages.inclusion','buses.image','packages.start_time','packages.end_time')
-                   ->get();
-        return view('admin.customer_packages',compact('packages'));
+        $packages = DB::table('packages')
+            ->join('buses', 'buses.id', '=', 'packages.bus_id')
+            ->select('packages.id', 'packages.package_name', 'packages.package_rate', 'packages.inclusion', 'buses.image', 'packages.start_time', 'packages.end_time')
+            ->get();
+        return view('admin.customer_packages', compact('packages'));
     }
 
     public function customer_booking_list()
     {
         $packages = DB::table('bookings')
-                   ->join('packages','packages.id','=','bookings.package_id')
-                   ->join('buses','buses.id','=','packages.bus_id')
-                   ->join('statuses','statuses.id','=','bookings.status_id')
-                   ->where('bookings.user_id', Auth::id())
-                   ->select('buses.plate','packages.package_name','packages.inclusion','packages.package_rate','bookings.status_id','bookings.created_at','statuses.name as status_name','bookings.id as booking_id','bookings.booking_date as booking_date','bookings.created_at')
-                   ->orderBy('bookings.id','desc')
-                   ->get();
-        return view('admin.customer_booking_list',compact('packages'));
+            ->join('packages', 'packages.id', '=', 'bookings.package_id')
+            ->join('buses', 'buses.id', '=', 'packages.bus_id')
+            ->join('statuses', 'statuses.id', '=', 'bookings.status_id')
+            ->where('bookings.user_id', Auth::id())
+            ->select('buses.plate', 'packages.package_name', 'packages.inclusion', 'packages.package_rate', 'bookings.status_id', 'bookings.created_at', 'statuses.name as status_name', 'bookings.id as booking_id', 'bookings.booking_date as booking_date', 'bookings.created_at')
+            ->orderBy('bookings.id', 'desc')
+            ->get();
+        return view('admin.customer_booking_list', compact('packages'));
     }
 
     public function bookingSetDate(Request $request)
@@ -339,7 +317,7 @@ class AdminController extends Controller
         $validatedData = $request->validate([
             'booking_date'      => ['required'],
             'package_id'      => ['required']
-            
+
         ]);
 
         $validatedData['user_id'] = Auth::id();
@@ -347,35 +325,32 @@ class AdminController extends Controller
 
         Booking::create($validatedData);
 
-        return back()->with('success','You have Booked Successfully');
-
+        return back()->with('success', 'You have Booked Successfully');
     }
 
     public function bookingCancel($id)
     {
-        $check = Booking::where('id',$id)->first();
+        $check = Booking::where('id', $id)->first();
 
-        if(!$check)
-        {
-           abort(404);
+        if (!$check) {
+            abort(404);
         }
 
-        $check->update(['status_id'=> 3]);
+        $check->update(['status_id' => 3]);
 
-        return back()->with('success','Booked Canceled Successfully');
+        return back()->with('success', 'Booked Canceled Successfully');
     }
 
     public function bookingApprove($id)
     {
-         $check = Booking::where('id',$id)->first();
+        $check = Booking::where('id', $id)->first();
 
-        if(!$check)
-        {
-           abort(404);
+        if (!$check) {
+            abort(404);
         }
 
-        $check->update(['status_id'=> 2]);
+        $check->update(['status_id' => 2]);
 
-        return back()->with('success','Booked Approved Successfully');
+        return back()->with('success', 'Booked Approved Successfully');
     }
 }

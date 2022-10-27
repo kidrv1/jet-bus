@@ -6,26 +6,10 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NotificationController;
+use App\Service\NotifService;
+use Illuminate\Support\Facades\Log;
 use Rap2hpoutre\FastExcel\FastExcel;
 
-Route::get("/testexcel", function () {
-    $arrayVal = [
-        0 => [
-            "id" => 1,
-            "name" => "popo"
-        ],
-        1 => [
-            "id" => 2,
-            "name" => "pepa"
-        ],
-        2 => [
-            "id" => 3,
-            "name" => "peems"
-        ]
-    ];
-
-    return (new FastExcel($arrayVal))->download('file.xlsx');
-});
 
 Route::get('/', [HomeController::class, "index"])->name("home");
 
@@ -33,6 +17,7 @@ Route::get('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/login', [AuthController::class, 'loginCheck'])->name('login_check');
 Route::get('/register', [AuthController::class, 'register']);
 Route::post('/register', [AuthController::class, 'registerCheck'])->name('register');
+Route::get("/packages_list", [AdminController::class, "public_packages"])->name("public.packages");
 
 Route::group(['prefix' => 'dashboard', 'middleware' => ['auth']], function () {
 
@@ -79,4 +64,44 @@ Route::group(['prefix' => 'dashboard', 'middleware' => ['auth']], function () {
     Route::get('/feedback/{booking}', [FeedbackController::class, "show"])->name("feedback.show");
 
     Route::get('/notifications', [NotificationController::class, "index"])->name("notifications");
+    Route::put("/notifications", [NotificationController::class, "update"])->name("notifications.update");
+    Route::get("/notifications_count", [NotificationController::class, "unreadCount"])->name("notifications.unreadCount");
+    Route::get("/notifications_unread", [NotificationController::class, "unread"])->name("notifications.unread");
+});
+
+
+// Test Routes
+
+Route::get("/testexcel", function () {
+    $arrayVal = [
+        0 => [
+            "id" => 1,
+            "name" => "popo"
+        ],
+        1 => [
+            "id" => 2,
+            "name" => "pepa"
+        ],
+        2 => [
+            "id" => 3,
+            "name" => "peems"
+        ]
+    ];
+
+    return (new FastExcel($arrayVal))->download('file.xlsx');
+});
+
+Route::get("/notif-me", function () {
+
+    Log::debug("Accessed Notif Route");
+    if (auth()->check()) {
+        Log::debug("Created Notif");
+        (new NotifService())->sendNotification(
+            auth()->id(),
+            "Test Notif",
+            "This is a test notification"
+        );
+    }
+
+    return redirect()->home();
 });

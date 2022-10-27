@@ -136,20 +136,17 @@ class AdminController extends Controller
         // $cover = $request->file('image')->getClientOriginalName();
         // $url = Storage::putFileAs('public', $request->file('image'), $cover);
 
-        try {
-            $destinationPath = 'public';
-            $file = $request->file('image');
-            $extension = $file->getClientOriginalExtension();
-            $fileName = rand(111111111, 999999999) . '.' . $extension;
-            $file->move($destinationPath, $fileName);
+        $destinationPath = 'public';
+        $file = $request->file('image');
+        $extension = $file->getClientOriginalExtension();
+        $fileName = rand(111111111, 999999999) . '.' . $extension;
+        $file->move($destinationPath, $fileName);
 
-            $validatedData['image'] = $fileName;
-            $validatedData['user_id'] = Auth::id();
+        $validatedData['image'] = $fileName;
+        $validatedData['user_id'] = Auth::id();
 
-            Bus::create($validatedData);
-        } catch (\Throwable $th) {
-            dd($th);
-        }
+        Bus::create($validatedData);
+
         return back()->with('success', 'Bus Created Successfully');
     }
 

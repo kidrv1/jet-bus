@@ -173,15 +173,40 @@
                                                     <span
                                                         class="text-secondary text-xs font-weight-bold">{{ $package->status_name }}</span>
                                                 </td>
-                                                <td class="align-middle text-center">
+                                                <td class="text-center">
+                                                    <button
+                                                        class="btn btn-warning btn-xs receipt"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#viewReceipt"
+                                                        value="{{ $package->booking_id }}">
+                                                        View Receipt
+                                                    </button>
+                                                    @if(!in_array($package->status_id, [3, 4]))
+                                                    <a
+                                                        href="{{ route('admin_booking_cancel', $package->booking_id) }}"
+                                                        class="btn btn-danger btn-xs">
+                                                        CANCEL{{ $package->hasCancelRequest ? '(Requested)' : '' }}
+                                                    </a>
+                                                    @endif
                                                     @if ($package->status_id == 1)
-                                                        <a href="{{ route('admin_booking_cancel', $package->booking_id) }}"
-                                                            class="btn btn-danger btn-xs">CANCEL</a>
-                                                        <a href="{{ route('admin_booking_approve', $package->booking_id) }}"
-                                                            class="btn btn-primary btn-xs">APPROVE</a>
-                                                        <button class="btn btn-warning btn-xs receipt"
-                                                            data-bs-toggle="modal" data-bs-target="#viewReceipt"
-                                                            value="{{ $package->booking_id }}">View Receipt</button>
+                                                        <a
+                                                            href="{{ route('admin_booking_approve', $package->booking_id) }}"
+                                                            class="btn btn-primary btn-xs">
+                                                            APPROVE
+                                                        </a>
+                                                    @endif
+                                                    @if($package->status_id == 2)
+                                                        <a
+                                                            href="{{ route('admin_booking_complete', $package->booking_id) }}"
+                                                            class="btn btn-success btn-xs">
+                                                            COMPLETE
+                                                        </a>
+                                                    @endif
+                                                    @if($package->status_id == 4)
+                                                        <a
+                                                            href="{{ route('feedback.create') }}{{ '?q=' . $package->booking_id }}"
+                                                            class="btn btn-success btn-xs">View Feedback
+                                                        </a>
                                                     @endif
                                                 </td>
 
@@ -281,7 +306,7 @@
                                 "<h3 class='receiptclass'>NO RECEIPT</h2>");
                         } else {
                             $("#displayImage").append(
-                                "<img class='receiptclass' src='{{ URL::to('storage') }}/" +
+                                "<img class='receiptclass' src='/public/" +
                                 data + "' width='450px' height='400px'>");
                         }
 

@@ -18,21 +18,24 @@ class FeedbackController extends Controller
     public function create(Request $request)
     {
         // Check if booking exists
-        // $booking_id = $request->query("q", null);
-        // $booking = Booking::find($booking_id);
+        $booking_id = $request->query("q", null);
+        $booking = Booking::with(['package', 'feedback'])->find($booking_id);
 
-        // if ($booking == null) {
-        //     return redirect()->route("home");
-        // }
+        if ($booking == null) {
+            return redirect()->route("home");
+        }
 
-        // // Check if booking already has feedback
-        // $feedback = $booking->feedback()->get();
-        // if ($feedback != null) {
-        //     return redirect()->route("home");
-        // }
+        // Check if booking already has feedback
+        $feedback = $booking->feedback()->get();
+        if (count($feedback) != 0) {
+            return view("feedback.show")->with(["booking" => $booking]);
+        }
 
-        return view("feedback.create");
-        // ->with(["booking_id" => $booking_id]);
+        if (auth()->user()->hasAnyRole(['admin', 'staff'])) {
+            return back()->with('success', 'Booking has no feedback yet');
+        }
+
+        return view("feedback.create")->with(["booking" => $booking]);
     }
 
     /**
@@ -56,7 +59,7 @@ class FeedbackController extends Controller
 
         Feedback::create([
             "booking_id" => $request->booking_id,
-            "user_id" => auth()->id,
+            "user_id" => auth()->id(),
             "subject" => $request->subject,
             "message" => $request->message,
         ]);

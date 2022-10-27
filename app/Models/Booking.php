@@ -13,6 +13,7 @@ class Booking extends Model
         "user_id",
         "package_id",
         "booking_date",
+        "hasCancelRequest",
         "status_id",
     ];
 

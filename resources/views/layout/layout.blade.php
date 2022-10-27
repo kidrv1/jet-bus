@@ -100,32 +100,58 @@
                     <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                         <div class="navbar-nav mr-auto py-0">
                             <a href="{{ route('home') }}" class="nav-item nav-link active">Home</a>
-                            <a href="{{ route('customer_booking_packages') }}" class="nav-item nav-link">Book</a>
-                            <a href="{{ route('feedback.create') }}" class="nav-item nav-link">Feedback(Temp Route)</a>
+                            @hasanyrole('admin|staff')
+                                <a href="{{ route('admin_home') }}" class="nav-item nav-link">Dashboard</a>
+                            @else
+                                <a href="{{ route('customer_booking_packages') }}" class="nav-item nav-link">Book</a>
+                            @endhasanyrole
                             <div class="dropdown-divider"></div>
                             @guest
                                 <a href="{{ route('login') }}" class="nav-item nav-link d-block d-lg-none">Login</a>
                             @endguest
                             @auth
-                                <a href="{{ route('home') }}" class="nav-item nav-link d-block d-lg-none">Notifications</a>
-                                <a href="{{ route('customer_booking_list') }}"
-                                    class="nav-item nav-link d-block d-lg-none">My Bookings</a>
+                                <a
+                                    href="{{ route('home') }}"
+                                    class="nav-item nav-link d-block d-lg-none">
+                                    Notifications
+                                </a>
+                                <a
+                                    href="{{ route('customer_booking_list') }}"
+                                    class="nav-item nav-link d-block d-lg-none">
+                                    My Bookings
+                                </a>
                                 <div class="dropdown-divider"></div>
-                                <a href="{{ route('admin_logout') }}"
-                                    class="nav-item nav-link d-block d-lg-none">Logout</a>
+                                <a
+                                    href="{{ route('admin_logout') }}"
+                                    class="nav-item nav-link d-block d-lg-none">
+                                    Logout
+                                </a>
                             @endauth
 
                         </div>
                         <div class="navbar-nav ml-auto py-0 d-none d-lg-block">
                             @auth
                                 <div class="btn-group">
-                                    <button type="button" class="btn btn-sm btn-primary dropdown-toggle"
-                                        data-toggle="dropdown">My Account</button>
-                                    <div class="dropdown-menu dropdown-menu-right">
-                                        <a href="{{ route('customer_booking_list') }}" class="dropdown-item"
-                                            type="button">My Bookings</a>
-                                        <a href="{{ route('admin_logout') }}" class="dropdown-item"
-                                            type="button">Logout</a>
+                                    <button
+                                        type="button"
+                                        class="btn btn-sm btn-primary dropdown-toggle"
+                                        data-toggle="dropdown">
+                                        My Account
+                                    </button>
+                                    <div
+                                        class="dropdown-menu dropdown-menu-right">
+                                        <a
+                                            href="{{ route('customer_booking_list') }}"
+                                            class="dropdown-item"
+                                            type="button">
+                                            My Bookings
+                                        </a>
+                                        <a
+                                            href="{{ route('admin_logout') }}"
+                                            class="dropdown-item"
+                                            type="button">
+                                            Logout
+                                        </a>
                                     </div>
                                 </div>
                                 <div class="btn px-0 ml-3 dropleft">
@@ -324,7 +350,7 @@
                                     <div class="d-flex  align-items-center">
                                         <i style="font-size: 1.6em;"
                                             class="fas fa-check-circle mr-2 text-primary"></i>
-                                        <small>${notif.message}.</small>
+                                        <small>${notif.subject}</small>
                                     </div>
                                     <small class="text-info">◉</small>
                                 </div>

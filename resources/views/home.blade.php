@@ -48,7 +48,7 @@
             <div class="col-lg-4">
                 @if ($randomPackages[0] != null)
                     <div class="product-offer mb-30" style="height: 200px;">
-                        <img class="img-fluid" src="/public/{{ $randomPackages[1]['bus']->image}}" alt="package image">
+                        <img class="img-fluid" src="/{{ $randomPackages[1]['bus']->image}}" alt="package image">
                         <div class="offer-text">
                             {{-- <h6 class="text-white text-uppercase">Save 20%</h6> --}}
                             <h3 class="text-white mb-3">{{ $randomPackages[0]->package_name }}</h3>
@@ -58,7 +58,7 @@
                 @endif
                 @if ($randomPackages[1] != null)
                     <div class="product-offer mb-30" style="height: 200px;">
-                        <img class="img-fluid" src="/public/{{ $randomPackages[1]['bus']->image}}" alt="package image">
+                        <img class="img-fluid" src="/{{ $randomPackages[1]['bus']->image}}" alt="package image">
                         <div class="offer-text">
                             <h3 class="text-white mb-3">{{ $randomPackages[1]->package_name }}</h3>
                             <a href="{{ route("customer_booking_packages") }}" class="btn btn-primary">Book Now</a>
@@ -113,7 +113,7 @@
                 <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
                     <div class="product-item bg-light mb-4">
                         <div class="product-img position-relative overflow-hidden">
-                            <img class="img-fluid w-100" src="public/{{ $package->bus->image }}" alt="package picture">
+                            <img class="img-fluid w-100" src="/{{ $package->bus->image }}" alt="package picture">
                             <div class="product-action">
                                 <a class="btn btn-outline-dark" href="">
                                     <i class="fa fa-shopping-cart mr-1"></i>
@@ -158,7 +158,7 @@
             @if ($randomPackages[2] ?? null != null)
                 <div class="col-md-6">
                     <div class="product-offer mb-30" style="height: 300px;">
-                        <img class="img-fluid" src="/public/{{ $randomPackages[2]['bus']->image}}" alt="package image">
+                        <img class="img-fluid" src="/{{ $randomPackages[2]['bus']->image}}" alt="package image">
                         <div class="offer-text">
                             <h6 class="text-white text-uppercase">You might like</h6>
                             <h3 class="text-white mb-3">{{ $randomPackages[2]->package_name }}</h3>
@@ -170,7 +170,7 @@
             @if ($randomPackages[3] ?? null != null)
                 <div class="col-md-6">
                     <div class="product-offer mb-30" style="height: 300px;">
-                        <img class="img-fluid" src="/public/{{ $randomPackages[3]['bus']->image}}" alt="package image">
+                        <img class="img-fluid" src="/{{ $randomPackages[3]['bus']->image}}" alt="package image">
                         <div class="offer-text">
                             <h6 class="text-white text-uppercase">You might like</h6>
                             <h3 class="text-white mb-3">{{ $randomPackages[3]->package_name }}</h3>
@@ -194,7 +194,7 @@
             <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
                 <div class="product-item bg-light mb-4">
                     <div class="product-img position-relative overflow-hidden">
-                        <img class="img-fluid w-100" src="/public/{{ $package->package->bus->image }}" alt="package picture">
+                        <img class="img-fluid w-100" src="/{{ $package->package->bus->image }}" alt="package picture">
                         <div class="product-action">
                             <a class="btn btn-outline-dark" href="{{ route("customer_booking_list") }}">
                                 <i class="fa fa-shopping-cart mr-1"></i>

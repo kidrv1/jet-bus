@@ -162,7 +162,7 @@
                                         <span id="unread-count-notif" class="badge text-secondary border border-secondary rounded-circle"
                                             style="padding-bottom: 2px;">0</span>
                                     </button>
-                                    <div style="width: 400px;" class="dropdown-menu"
+                                    <div style="width: 300px;" class="dropdown-menu"
                                         aria-labelledby="notificationDropDown">
                                         <h5 class="dropdown-header">Notifications</h5>
                                         <div id="notif-dropdown-container">
@@ -347,9 +347,8 @@
                         <a class="dropdown-item" href="{{ route('notifications') }}">
                             <div class="card border-0">
                                 <div class="d-flex justify-content-between  align-items-center">
-                                    <div class="d-flex  align-items-center">
-                                        <i style="font-size: 1.6em;"
-                                            class="fas fa-check-circle mr-2 text-primary"></i>
+                                    <div class="d-flex align-items-center">
+                                        <i style="font-size: 1.6em;" class="fas fa-check-circle mr-2 text-primary"></i>
                                         <small>${notif.subject}</small>
                                     </div>
                                     <small class="text-info">◉</small>

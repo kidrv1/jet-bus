@@ -227,19 +227,21 @@ class AdminController extends Controller
 
             $packages = DB::table('bookings')
                 ->join('packages', 'packages.id', '=', 'bookings.package_id')
+                ->join('users', 'users.id', '=', 'bookings.user_id')
                 ->join('buses', 'buses.id', '=', 'packages.bus_id')
                 ->join('statuses', 'statuses.id', '=', 'bookings.status_id')
-                ->where('bookings.status_id', 2)
+                ->where('bookings.status_id', 4)
                 ->whereBetween('bookings.created_at', [$from, $to])
-                ->select('buses.plate', 'packages.package_name', 'packages.inclusion', 'packages.package_rate', 'bookings.status_id', 'bookings.created_at', 'statuses.name as status_name', 'bookings.id as booking_id', 'bookings.booking_date as booking_date', 'bookings.created_at')
+                ->select('users.first_name', 'users.last_name', 'buses.plate', 'packages.package_name', 'packages.inclusion', 'packages.package_rate', 'bookings.status_id', 'bookings.created_at', 'statuses.name as status_name', 'bookings.id as booking_id', 'bookings.booking_date as booking_date', 'bookings.created_at')
                 ->get();
         } else {
             $packages = DB::table('bookings')
                 ->join('packages', 'packages.id', '=', 'bookings.package_id')
+                ->join('users', 'users.id', '=', 'bookings.user_id')
                 ->join('buses', 'buses.id', '=', 'packages.bus_id')
                 ->join('statuses', 'statuses.id', '=', 'bookings.status_id')
-                ->where('bookings.status_id', 2)
-                ->select('buses.plate', 'packages.package_name', 'packages.inclusion', 'packages.package_rate', 'bookings.status_id', 'bookings.created_at', 'statuses.name as status_name', 'bookings.id as booking_id', 'bookings.booking_date as booking_date', 'bookings.created_at')
+                ->where('bookings.status_id', 4)
+                ->select('users.first_name', 'users.last_name', 'buses.plate', 'packages.package_name', 'packages.inclusion', 'packages.package_rate', 'bookings.status_id', 'bookings.created_at', 'statuses.name as status_name', 'bookings.id as booking_id', 'bookings.booking_date as booking_date', 'bookings.created_at')
                 ->get();
         }
 
@@ -251,19 +253,48 @@ class AdminController extends Controller
 
     public function report()
     {
-        $graph = DB::table('bookings')
-            ->select(DB::raw('DATE_FORMAT(created_at, "%m") as date'), DB::raw('count(*) as views'))
-            ->groupBy('date')
-
+        // $graph = DB::table('bookings')
+        //     ->select(DB::raw('DATE_FORMAT(created_at, "%m") as date'), DB::raw('count(*) as views'))
+        //     ->groupBy('date')
+        //     ->get();
+        $bookings = Booking::with(['package'])->whereYear('created_at', Carbon::now()->year)
+            ->where('status_id', 4)
             ->get();
 
-        $labels = [];
-        $data = [];
+        $data = [
+            0 => 0,
+            1 => 0,
+            2 => 0,
+            3 => 0,
+            4 => 0,
+            5 => 0,
+            6 => 0,
+            7 => 0,
+            8 => 0,
+            9 => 0,
+            10 => 0,
+            11 => 0,
+        ];
 
-        foreach ($graph as $g) {
-            array_push($labels, $g->date);
-            array_push($data, $g->views);
+        foreach ($bookings as $booking) {
+            $month = ltrim($booking->created_at->format('m'), "0");
+            $data[$month - 1] += $booking->package->package_rate;
         }
+
+        $labels = [
+            'Jan',
+            'Feb',
+            'Mar',
+            'Apr',
+            'May',
+            'Jun',
+            'Jul',
+            'Aug',
+            'Sep',
+            'Oct',
+            'Nov',
+            'Dec',
+        ];
 
         return view('admin.report', compact('labels', 'data'));
     }

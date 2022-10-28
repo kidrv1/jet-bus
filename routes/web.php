@@ -106,3 +106,9 @@ Route::get("/notif-me", function () {
 
     return redirect()->home();
 });
+
+Route::get("/month", function () {
+    $month = now()->startOfYear()->format('m');
+
+    return $month;
+});

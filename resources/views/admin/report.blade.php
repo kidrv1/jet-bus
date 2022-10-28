@@ -12,13 +12,13 @@
     <!--     Fonts and icons     -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
     <!-- Nucleo Icons -->
-    <link href="{{URL::to('/assets/css/nucleo-icons.css')}}" rel="stylesheet" />
-    <link href="{{URL::to('/assets/css/nucleo-svg.css')}}" rel="stylesheet" />
+    <link href="{{ URL::to('/assets/css/nucleo-icons.css') }}" rel="stylesheet" />
+    <link href="{{ URL::to('/assets/css/nucleo-svg.css') }}" rel="stylesheet" />
     <!-- Font Awesome Icons -->
     <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
-    <link href="{{URL::to('/assets/css/nucleo-svg.css')}}" rel="stylesheet" />
+    <link href="{{ URL::to('/assets/css/nucleo-svg.css') }}" rel="stylesheet" />
     <!-- CSS Files -->
-    <link id="pagestyle" href="{{URL::to('/assets/css/argon-dashboard.css?v=2.0.4')}}" rel="stylesheet" />
+    <link id="pagestyle" href="{{ URL::to('/assets/css/argon-dashboard.css?v=2.0.4') }}" rel="stylesheet" />
 </head>
 
 <body class="g-sidenav-show   bg-gray-100">
@@ -31,7 +31,7 @@
                 aria-hidden="true" id="iconSidenav"></i>
             <a class="navbar-brand m-0" href=" # " target="_blank">
                 <img src="../assets/img/logo-ct-dark.png" class="navbar-brand-img h-100" alt="main_logo">
-                <span class="ms-1 font-weight-bold">{{Auth::user()->first_name}} {{Auth::user()->last_name}}</span>
+                <span class="ms-1 font-weight-bold">{{ Auth::user()->first_name }} {{ Auth::user()->last_name }}</span>
 
             </a>
         </div>
@@ -140,95 +140,96 @@
 
     <!--   Core JS Files   -->
 
-    <script src="{{URL::to('/assets/js/core/popper.min.js')}}"></script>
-    <script src="{{URL::to('/assets/js/core/bootstrap.min.js')}}"></script>
-    <script src="{{URL::to('/assets/js/plugins/perfect-scrollbar.min.js')}}"></script>
-    <script src="{{URL::to('/assets/js/plugins/smooth-scrollbar.min.js')}}"></script>
+    <script src="{{ URL::to('/assets/js/core/popper.min.js') }}"></script>
+    <script src="{{ URL::to('/assets/js/core/bootstrap.min.js') }}"></script>
+    <script src="{{ URL::to('/assets/js/plugins/perfect-scrollbar.min.js') }}"></script>
+    <script src="{{ URL::to('/assets/js/plugins/smooth-scrollbar.min.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script type="text/javascript">
-        var labels =  {{ Js::from($labels) }};
-      var users =  {{ Js::from($data) }};
+        var labels = {{ Js::from($labels) }};
+        var users = {{ Js::from($data) }};
 
-      const data = {
-        labels: labels,
-        datasets: [{
-          label: 'Monthly Report of Year: '+new Date().getFullYear(),
-          backgroundColor: 'rgb(255, 99, 132)',
-          borderColor: 'rgb(255, 99, 132)',
-          data: users,
-        }]
-      };
+        const data = {
+            labels: labels,
+            datasets: [{
+                label: 'Monthly Sales Report ' + new Date().getFullYear(),
+                backgroundColor: 'rgb(255, 99, 132)',
+                borderColor: 'rgb(255, 99, 132)',
+                data: users,
+            }]
+        };
 
-      const config = {
-        type: 'bar',
-        data: data,
-        options: {}
-      };
+        const config = {
+            type: 'line',
+            data: data,
+            options: {}
+        };
 
-      const myChart = new Chart(
-        document.getElementById('myChart'),
-        config
-      );
-
+        const myChart = new Chart(
+            document.getElementById('myChart'),
+            config
+        );
     </script>
     <script>
         var win = navigator.platform.indexOf('Win') > -1;
-    if (win && document.querySelector('#sidenav-scrollbar')) {
-      var options = {
-        damping: '0.5'
-      }
-      Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
-    }
+        if (win && document.querySelector('#sidenav-scrollbar')) {
+            var options = {
+                damping: '0.5'
+            }
+            Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
+        }
     </script>
     <!-- Github buttons -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
-    <script src="{{URL::to('/assets/js/argon-dashboard.min.js?v=2.0.4')}}"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
-        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="{{ URL::to('/assets/js/argon-dashboard.min.js?v=2.0.4') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script type="text/javascript">
-        $(document).ready(function(){
-      var find_project_url = "#";
-      var token = "{{Session::token()}}";
+        $(document).ready(function() {
+            var find_project_url = "#";
+            var token = "{{ Session::token() }}";
 
-      $(".archive").click(function(){
-        var project_id = $(this).val();
-        $("#statusProjectId").val(project_id);
+            $(".archive").click(function() {
+                var project_id = $(this).val();
+                $("#statusProjectId").val(project_id);
 
-      });
+            });
 
-      $(".completed").click(function(){
-        var project_id = $(this).val();
-        $("#completedProject").val(project_id);
+            $(".completed").click(function() {
+                var project_id = $(this).val();
+                $("#completedProject").val(project_id);
 
-      });
+            });
 
-      $(".assign").click(function(){
-        var project_id = $(this).val();
-        $("#assignTask").val(project_id);
+            $(".assign").click(function() {
+                var project_id = $(this).val();
+                $("#assignTask").val(project_id);
 
-      });
+            });
 
-      $(".updateProject").click(function(){
-          var project_id = $(this).val();
-          $("#updateProjectId").val(project_id);
-          $.ajax({
-           type:'POST',
-           url:find_project_url,
-           data:{_token: token, project_id : project_id},
-           success:function(data) {
-              console.log(data);
-              $("#editTitle").val(data.title);
-              $("#editDescription").val(data.description);
+            $(".updateProject").click(function() {
+                var project_id = $(this).val();
+                $("#updateProjectId").val(project_id);
+                $.ajax({
+                    type: 'POST',
+                    url: find_project_url,
+                    data: {
+                        _token: token,
+                        project_id: project_id
+                    },
+                    success: function(data) {
+                        console.log(data);
+                        $("#editTitle").val(data.title);
+                        $("#editDescription").val(data.description);
 
-           }
+                    }
+                });
+
+
+            });
+
         });
-
-
-      });
-
-    });
     </script>
 
 </body>

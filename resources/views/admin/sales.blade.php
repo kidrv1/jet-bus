@@ -12,11 +12,11 @@
     <!--     Fonts and icons     -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
     <!-- Nucleo Icons -->
-    <link href="{{URL::to('/assets/css/nucleo-icons.css')}}" rel="stylesheet" />
-    <link href="{{URL::to('/assets/css/nucleo-svg.css')}}" rel="stylesheet" />
+    <link href="{{ URL::to('/assets/css/nucleo-icons.css') }}" rel="stylesheet" />
+    <link href="{{ URL::to('/assets/css/nucleo-svg.css') }}" rel="stylesheet" />
     <!-- Font Awesome Icons -->
     <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
-    <link href="{{URL::to('/assets/css/nucleo-svg.css')}}" rel="stylesheet" />
+    <link href="{{ URL::to('/assets/css/nucleo-svg.css') }}" rel="stylesheet" />
     <!-- CSS Files -->
 
     <style>
@@ -55,7 +55,7 @@
         }
     </style>
 
-    <link id="pagestyle" href="{{URL::to('/assets/css/argon-dashboard.css?v=2.0.4')}}" rel="stylesheet" />
+    <link id="pagestyle" href="{{ URL::to('/assets/css/argon-dashboard.css?v=2.0.4') }}" rel="stylesheet" />
 </head>
 
 <body class="g-sidenav-show   bg-gray-100">
@@ -68,7 +68,7 @@
                 aria-hidden="true" id="iconSidenav"></i>
             <a class="navbar-brand m-0" href=" # " target="_blank">
                 <img src="../assets/img/logo-ct-dark.png" class="navbar-brand-img h-100" alt="main_logo">
-                <span class="ms-1 font-weight-bold">{{Auth::user()->first_name}} {{Auth::user()->last_name}}</span>
+                <span class="ms-1 font-weight-bold">{{ Auth::user()->first_name }} {{ Auth::user()->last_name }}</span>
 
             </a>
         </div>
@@ -174,46 +174,45 @@
                                     </thead>
                                     <tbody>
                                         <?php $total = 0; ?>
-                                        @foreach($packages as $package)
-                                        <tr>
+                                        @foreach ($packages as $package)
+                                            <tr>
 
-                                            <td>
-                                                <div class="d-flex px-2 py-1">
+                                                <td>
+                                                    <div class="d-flex px-2 py-1">
 
-                                                    <div class="d-flex flex-column justify-content-center">
-                                                        <span
-                                                            class="text-secondary text-xs font-weight-bold">{{$package->plate}}</span>
+                                                        <div class="d-flex flex-column justify-content-center">
+                                                            <span
+                                                                class="text-secondary text-xs font-weight-bold">{{ $package->plate }}</span>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </td>
+                                                </td>
 
-                                            <td class="align-middle text-center">
-                                                <span
-                                                    class="text-secondary text-xs font-weight-bold">{{$package->package_name}}</span>
-                                            </td>
+                                                <td class="align-middle text-center">
+                                                    <span
+                                                        class="text-secondary text-xs font-weight-bold">{{ $package->package_name }}</span>
+                                                </td>
 
-                                            <td class="align-middle text-center">
-                                                <span
-                                                    class="text-secondary text-xs font-weight-bold">{{$package->customer_name
-                                                    ?? "WIP"}}</span>
-                                            </td>
+                                                <td class="align-middle text-center">
+                                                    <span
+                                                        class="text-secondary text-xs font-weight-bold">{{ $package->first_name ?? '' }} {{ $package->last_name ?? '' }}</span>
+                                                </td>
 
-                                            <td class="align-middle text-center">
-                                                <span
-                                                    class="text-secondary text-xs font-weight-bold">{{$package->booking_date}}</span>
-                                            </td>
-                                            <td class="align-middle text-center">
-                                                <span
-                                                    class="text-secondary text-xs font-weight-bold">{{$package->created_at}}</span>
-                                            </td>
-                                            <td class="align-middle text-center">
-                                                <span
-                                                    class="text-secondary text-xs font-weight-bold">P{{number_format($package->package_rate)}}</span>
-                                            </td>
-                                            <?php $total += $package->package_rate; ?>
+                                                <td class="align-middle text-center">
+                                                    <span
+                                                        class="text-secondary text-xs font-weight-bold">{{ $package->booking_date }}</span>
+                                                </td>
+                                                <td class="align-middle text-center">
+                                                    <span
+                                                        class="text-secondary text-xs font-weight-bold">{{ $package->created_at }}</span>
+                                                </td>
+                                                <td class="align-middle text-center">
+                                                    <span
+                                                        class="text-secondary text-xs font-weight-bold">P{{ number_format($package->package_rate) }}</span>
+                                                </td>
+                                                <?php $total += $package->package_rate; ?>
 
 
-                                        </tr>
+                                            </tr>
                                         @endforeach
 
                                     </tbody>
@@ -222,7 +221,7 @@
                             </div>
                         </div>
                         <div class="container-fluid">
-                            <h5>Total Sales: P{{number_format($total)}}</h5>
+                            <h5>Total Sales: &#8369;{{ number_format($total) }}</h5>
                             <button onclick="window.print()" class="btn btn-primary btn-xxs">Print</button>
                             <button onclick="exportTable()" class="btn btn-success btn-xxs">Export To Excel</button>
                         </div>
@@ -273,71 +272,74 @@
 
     <!--   Core JS Files   -->
 
-    <script src="{{URL::to('/assets/js/core/popper.min.js')}}"></script>
-    <script src="{{URL::to('/assets/js/core/bootstrap.min.js')}}"></script>
-    <script src="{{URL::to('/assets/js/plugins/perfect-scrollbar.min.js')}}"></script>
-    <script src="{{URL::to('/assets/js/plugins/smooth-scrollbar.min.js')}}"></script>
+    <script src="{{ URL::to('/assets/js/core/popper.min.js') }}"></script>
+    <script src="{{ URL::to('/assets/js/core/bootstrap.min.js') }}"></script>
+    <script src="{{ URL::to('/assets/js/plugins/perfect-scrollbar.min.js') }}"></script>
+    <script src="{{ URL::to('/assets/js/plugins/smooth-scrollbar.min.js') }}"></script>
 
     </script>
     <!-- Github buttons -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
-    <script src="{{URL::to('/assets/js/argon-dashboard.min.js?v=2.0.4')}}"></script>
+    <script src="{{ URL::to('/assets/js/argon-dashboard.min.js?v=2.0.4') }}"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
         integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="//cdn.rawgit.com/rainabba/jquery-table2excel/1.1.0/dist/jquery.table2excel.min.js"></script>
 
     <script type="text/javascript">
-    const exportTable = () => {
-        $("#sales-table").table2excel({
-            // exclude: ".excludeThisClass",
-            name: "Sales",
-            filename: "sales_export.xls", // do include extension
-            preserveColors: false // set to true if you want background colors and font colors preserved
+        const exportTable = () => {
+            $("#sales-table").table2excel({
+                // exclude: ".excludeThisClass",
+                name: "Sales",
+                filename: "sales_export.xls", // do include extension
+                preserveColors: false // set to true if you want background colors and font colors preserved
+            });
+        }
+
+        $(document).ready(function() {
+            var find_project_url = "#";
+            var token = "{{ Session::token() }}";
+
+            $(".archive").click(function() {
+                var project_id = $(this).val();
+                $("#statusProjectId").val(project_id);
+
+            });
+
+            $(".completed").click(function() {
+                var project_id = $(this).val();
+                $("#completedProject").val(project_id);
+
+            });
+
+            $(".assign").click(function() {
+                var project_id = $(this).val();
+                $("#assignTask").val(project_id);
+
+            });
+
+            $(".updateProject").click(function() {
+                var project_id = $(this).val();
+                $("#updateProjectId").val(project_id);
+                $.ajax({
+                    type: 'POST',
+                    url: find_project_url,
+                    data: {
+                        _token: token,
+                        project_id: project_id
+                    },
+                    success: function(data) {
+                        console.log(data);
+                        $("#editTitle").val(data.title);
+                        $("#editDescription").val(data.description);
+
+                    }
+                });
+
+
+            });
+
         });
-    }
-
-        $(document).ready(function(){
-      var find_project_url = "#";
-      var token = "{{Session::token()}}";
-
-      $(".archive").click(function(){
-        var project_id = $(this).val();
-        $("#statusProjectId").val(project_id);
-
-      });
-
-      $(".completed").click(function(){
-        var project_id = $(this).val();
-        $("#completedProject").val(project_id);
-
-      });
-
-      $(".assign").click(function(){
-        var project_id = $(this).val();
-        $("#assignTask").val(project_id);
-
-      });
-
-      $(".updateProject").click(function(){
-          var project_id = $(this).val();
-          $("#updateProjectId").val(project_id);
-          $.ajax({
-           type:'POST',
-           url:find_project_url,
-           data:{_token: token, project_id : project_id},
-           success:function(data) {
-              console.log(data);
-              $("#editTitle").val(data.title);
-              $("#editDescription").val(data.description);
-
-           }
-        });
-
-
-      });
-
-    });
     </script>
 
 </body>

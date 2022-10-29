@@ -132,7 +132,7 @@
                                                         #{{ $package->booking_id }}
                                                     </summary>
                                                     @isset($package->parent_id)
-                                                        <sub>Addon For #({{ $package->parent_id }})</sub>
+                                                        <sub>Addon For #{{ $package->parent_id }}</sub>
                                                     @endisset
 
                                                     </details>

@@ -20,7 +20,7 @@ class Booking extends Model
 
     public function parent()
     {
-        return $this->belongsTo(Booking::class);
+        return $this->belongsTo(Booking::class, 'parent_id');
     }
 
     public function status()

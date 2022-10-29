@@ -70,7 +70,8 @@
                 </div>
             </div>
             <div class="col-lg-4">
-                @if ($randomPackages[0] != null)
+                @if(count($randomPackages) != 0)
+                    @if ($randomPackages[0] != null)
                     <div class="product-offer mb-30" style="height: 200px;">
                         <img class="img-fluid" src="/public/{{ $randomPackages[0]['bus']->image}}" alt="package image">
                         <div class="offer-text">
@@ -79,15 +80,16 @@
                             <a href="{{ route("packages.show", ['id' => $randomPackages[0]->id]) }}" class="btn btn-primary">Book Now</a>
                         </div>
                     </div>
-                @endif
-                @if ($randomPackages[1] != null)
-                    <div class="product-offer mb-30" style="height: 200px;">
-                        <img class="img-fluid" src="/public/{{ $randomPackages[1]['bus']->image}}" alt="package image">
-                        <div class="offer-text">
-                            <h3 class="text-white mb-3">{{ $randomPackages[1]->package_name }}</h3>
-                            <a href="{{ route("packages.show", ['id' => $randomPackages[1]->id]) }}" class="btn btn-primary">Book Now</a>
+                    @endif
+                    @if ($randomPackages[1] != null)
+                        <div class="product-offer mb-30" style="height: 200px;">
+                            <img class="img-fluid" src="/public/{{ $randomPackages[1]['bus']->image}}" alt="package image">
+                            <div class="offer-text">
+                                <h3 class="text-white mb-3">{{ $randomPackages[1]->package_name }}</h3>
+                                <a href="{{ route("packages.show", ['id' => $randomPackages[1]->id]) }}" class="btn btn-primary">Book Now</a>
+                            </div>
                         </div>
-                    </div>
+                    @endif
                 @endif
             </div>
         </div>

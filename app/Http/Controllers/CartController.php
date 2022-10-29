@@ -129,13 +129,13 @@ class CartController extends Controller
             (new NotifService())->sendNotification(
                 $user_id,
                 "Booking Created",
-                "Your " . $cartItems[0]->package->package_name . " booking for " . date("M d, Y", strtotime($cartItems[0]->booking_date)) . " has been created."
+                "Your " . "#$baseBooking->id " . $cartItems[0]->package->package_name . " booking for " . date("M d, Y", strtotime($cartItems[0]->booking_date)) . " has been created."
             );
 
             // Book Addons
             foreach ($cartItems as $index => $item) {
                 if ($index != 0) {
-                    Booking::create([
+                    $booking = Booking::create([
                         "user_id" => $user_id,
                         "package_id" => $item->package->id,
                         "booking_date" => $item->booking_date,
@@ -146,7 +146,7 @@ class CartController extends Controller
                     (new NotifService())->sendNotification(
                         $user_id,
                         "Booking Created",
-                        "Your addon " . $item->package->package_name . " booking for " . date("M d, Y", strtotime($item->booking_date)) . " has been created."
+                        "Your addon for " . "#$baseBooking->id - #$booking->id"  . $item->package->package_name . " booking for " . date("M d, Y", strtotime($item->booking_date)) . " has been created."
 
                     );
                 }

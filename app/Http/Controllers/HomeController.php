@@ -11,7 +11,7 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $featuredPackages = Package::with(['bus'])->limit(20)->get();
+        $featuredPackages = Package::with(['bus'])->get();
         $randomPackages = Package::inRandomOrder()->limit(4)->get();
         $prevPackages = null;
 

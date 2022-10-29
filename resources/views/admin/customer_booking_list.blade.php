@@ -92,6 +92,9 @@
                                         <tr>
                                             <th
                                                 class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                                Booking ID</th>
+                                            <th
+                                                class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                                 Bus Plate</th>
 
                                             <th
@@ -122,7 +125,18 @@
                                     <tbody>
                                         @foreach ($packages as $package)
                                             <tr>
+                                                <td class="align-middle text-center">
+                                                    <details open>
+                                                        <summary
+                                                        class="text-secondary text-xs font-weight-bold">
+                                                        #{{ $package->booking_id }}
+                                                    </summary>
+                                                    @isset($package->parent_id)
+                                                        <sub>Addon For #({{ $package->parent_id }})</sub>
+                                                    @endisset
 
+                                                    </details>
+                                                </td>
                                                 <td>
                                                     <div class="d-flex px-2 py-1">
 
@@ -167,31 +181,26 @@
                                                 <td class="text-center">
                                                     @if ($package->status_id < 3)
                                                         @if ($package->hasCancelRequest)
-                                                            <button
-                                                                class="btn btn-danger btn-xs">CANCEL REQUESTED
+                                                            <button class="btn btn-danger btn-xs">CANCEL REQUESTED
                                                             </button>
                                                         @else
-                                                            <a
-                                                                href="{{ route('admin_booking_cancel_request', $package->booking_id) }}"
+                                                            <a href="{{ route('admin_booking_cancel_request', $package->booking_id) }}"
                                                                 class="btn btn-danger btn-xs">CANCEL
                                                             </a>
                                                         @endif
                                                     @endif
                                                     @if ($package->status_id == 1)
-                                                        <button
-                                                            class="btn btn-primary btn-xs payment"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#paymentModal"
+                                                        <button class="btn btn-primary btn-xs payment"
+                                                            data-bs-toggle="modal" data-bs-target="#paymentModal"
                                                             value="{{ $package->booking_id }}">
                                                             Payment
                                                         </button>
                                                     @endif
                                                     @if ($package->status_id == 4)
-                                                    <a
-                                                        href="{{ route('feedback.create') }}{{ '?q=' . $package->booking_id }}"
-                                                        class="btn btn-success btn-xs">Feedback
-                                                    </a>
-                                                @endif
+                                                        <a href="{{ route('feedback.create') }}{{ '?q=' . $package->booking_id }}"
+                                                            class="btn btn-success btn-xs">Feedback
+                                                        </a>
+                                                    @endif
                                                 </td>
 
                                             </tr>

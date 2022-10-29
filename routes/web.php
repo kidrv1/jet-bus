@@ -3,9 +3,11 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\PackageController;
 use App\Service\NotifService;
 use Illuminate\Support\Facades\Log;
 use Rap2hpoutre\FastExcel\FastExcel;
@@ -17,10 +19,17 @@ Route::get('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/login', [AuthController::class, 'loginCheck'])->name('login_check');
 Route::get('/register', [AuthController::class, 'register']);
 Route::post('/register', [AuthController::class, 'registerCheck'])->name('register');
+
+Route::get("/packages/{id?}", [PackageController::class, "show"])->name("packages.show");
 Route::get("/packages_list", [AdminController::class, "public_packages"])->name("public.packages");
 
 Route::group(['prefix' => 'dashboard', 'middleware' => ['auth']], function () {
 
+    Route::get("cart-count", [CartController::class, 'count'])->name("cart.count");
+    Route::get("my-cart", [CartController::class, 'index'])->name("my_cart");
+    Route::post("my-cart", [CartController::class, 'add'])->name("cart.add");
+    Route::get("my-cart/delete/{id?}", [CartController::class, 'remove'])->name("cart.remove");
+    Route::get("checkout", [CartController::class, 'checkout'])->name("cart.checkout");
 
     Route::get('/home', [AdminController::class, 'home'])->name('admin_home')->middleware(['role:admin']);
     Route::get('/logout', [AdminController::class, 'logout'])->name('admin_logout');
@@ -59,7 +68,9 @@ Route::group(['prefix' => 'dashboard', 'middleware' => ['auth']], function () {
 
 
     //Customer
-    Route::get('/booking', [AdminController::class, 'customer_booking_packages'])->name('customer_booking_packages');
+    // Route::get('/booking', [AdminController::class, 'customer_booking_packages'])->name('customer_booking_packages');
+    Route::redirect('/booking', '/#featured-section', 301)->name('customer_booking_packages');
+
     Route::get('/booking-list', [AdminController::class, 'customer_booking_list'])->name('customer_booking_list');
     Route::get('/feedback', [FeedbackController::class, "create"])->name("feedback.create");
     Route::post('/feedback', [FeedbackController::class, "store"])->name("feedback.store");

@@ -16,9 +16,17 @@
                             <img class="position-absolute w-100 h-100" src="img/carousel-1.jpg" style="object-fit: cover;">
                             <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
                                 <div class="p-3" style="max-width: 700px;">
-                                    <h1 class="display-4 text-white mb-3 animate__animated animate__fadeInDown">Tour Packages</h1>
-                                    <p class="mx-md-5 px-5 animate__animated animate__bounceIn">Experience the best local tours in town. Explore the region for an affordable price.</p>
-                                    <a class="btn btn-outline-light py-2 px-4 mt-3 animate__animated animate__fadeInUp" href="#">Book Now</a>
+                                    <h1 class="display-4 text-white mb-3 animate__animated animate__fadeInDown">
+                                        Tour Packages
+                                    </h1>
+                                    <p class="mx-md-5 px-5 animate__animated animate__bounceIn">
+                                        Experience the best local tours in town. Explore the region for an affordable price.
+                                    </p>
+                                    <a
+                                        class="btn btn-outline-light py-2 px-4 mt-3 animate__animated animate__fadeInUp"
+                                        href="#featured-section">
+                                        Book Now
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -26,9 +34,17 @@
                             <img class="position-absolute w-100 h-100" src="img/carousel-2.jpg" style="object-fit: cover;">
                             <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
                                 <div class="p-3" style="max-width: 700px;">
-                                    <h1 class="display-4 text-white mb-3 animate__animated animate__fadeInDown">Convenient</h1>
-                                    <p class="mx-md-5 px-5 animate__animated animate__bounceIn">We found and combined the best tours in a single package. Just book and you're ready to go in a week</p>
-                                    <a class="btn btn-outline-light py-2 px-4 mt-3 animate__animated animate__fadeInUp" href="#">Shop Now</a>
+                                    <h1 class="display-4 text-white mb-3 animate__animated animate__fadeInDown">
+                                        Convenient
+                                    </h1>
+                                    <p class="mx-md-5 px-5 animate__animated animate__bounceIn">
+                                        We found and combined the best tours in a single package. Just book and you're ready to go in a week
+                                    </p>
+                                    <a
+                                        class="btn btn-outline-light py-2 px-4 mt-3 animate__animated animate__fadeInUp"
+                                        href="#featured-section">
+                                        Book Now
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -36,9 +52,17 @@
                             <img class="position-absolute w-100 h-100" src="img/carousel-3.jpg" style="object-fit: cover;">
                             <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
                                 <div class="p-3" style="max-width: 700px;">
-                                    <h1 class="display-4 text-white mb-3 animate__animated animate__fadeInDown">For Everyone</h1>
-                                    <p class="mx-md-5 px-5 animate__animated animate__bounceIn">Fit for all your needs. From small gatherings to big events</p>
-                                    <a class="btn btn-outline-light py-2 px-4 mt-3 animate__animated animate__fadeInUp" href="#">Shop Now</a>
+                                    <h1 class="display-4 text-white mb-3 animate__animated animate__fadeInDown">
+                                        For Everyone
+                                    </h1>
+                                    <p class="mx-md-5 px-5 animate__animated animate__bounceIn">
+                                        Fit for all your needs. From small gatherings to big events
+                                    </p>
+                                    <a
+                                        class="btn btn-outline-light py-2 px-4 mt-3 animate__animated animate__fadeInUp"
+                                        href="#featured-section">
+                                        Shop Now
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -52,7 +76,7 @@
                         <div class="offer-text">
                             {{-- <h6 class="text-white text-uppercase">Save 20%</h6> --}}
                             <h3 class="text-white mb-3">{{ $randomPackages[0]->package_name }}</h3>
-                            <a href="{{ route("customer_booking_packages") }}" class="btn btn-primary">Book Now</a>
+                            <a href="{{ route("packages.show", ['id' => $randomPackages[0]->id]) }}" class="btn btn-primary">Book Now</a>
                         </div>
                     </div>
                 @endif
@@ -61,7 +85,7 @@
                         <img class="img-fluid" src="/public/{{ $randomPackages[1]['bus']->image}}" alt="package image">
                         <div class="offer-text">
                             <h3 class="text-white mb-3">{{ $randomPackages[1]->package_name }}</h3>
-                            <a href="{{ route("customer_booking_packages") }}" class="btn btn-primary">Book Now</a>
+                            <a href="{{ route("packages.show", ['id' => $randomPackages[1]->id]) }}" class="btn btn-primary">Book Now</a>
                         </div>
                     </div>
                 @endif
@@ -105,7 +129,7 @@
         {{ dd($prevPackages[0]->package->bus->image) }}
     </div> --}}
     <!-- Products Start -->
-    <div class="container-fluid pt-5 pb-3">
+    <div id="featured-section" class="container-fluid pt-5 pb-3">
         <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4"><span class="bg-secondary pr-3">Featured Packages</span></h2>
         <div class="row px-xl-5">
             {{-- Packages Here --}}
@@ -115,7 +139,7 @@
                         <div class="product-img position-relative overflow-hidden">
                             <img class="img-fluid w-100" src="public/{{ $package->bus->image }}" alt="package picture">
                             <div class="product-action">
-                                <a class="btn btn-outline-dark" href="">
+                                <a class="btn btn-outline-dark" href="{{ route("packages.show", ['id' => $package->id]) }}">
                                     <i class="fa fa-shopping-cart mr-1"></i>
                                     Book
                                 </a>
@@ -124,7 +148,7 @@
                         <div class="text-center py-4">
                             <a
                                 class="h6 text-decoration-none text-truncate"
-                                href="{{ route("customer_booking_packages") }}">
+                                href="{{ route("packages.show", ['id' => $package->id]) }}">
                                 {{ $package->package_name }}
                             </a>
                             <div class="d-flex align-items-center justify-content-center mt-2">
@@ -162,7 +186,7 @@
                         <div class="offer-text">
                             <h6 class="text-white text-uppercase">You might like</h6>
                             <h3 class="text-white mb-3">{{ $randomPackages[2]->package_name }}</h3>
-                            <a href="{{ route("customer_booking_packages") }}" class="btn btn-primary">Book Now</a>
+                            <a href="{{ route("packages.show", ['id' => $randomPackages[2]->id]) }}" class="btn btn-primary">Book Now</a>
                         </div>
                     </div>
                 </div>
@@ -174,7 +198,7 @@
                         <div class="offer-text">
                             <h6 class="text-white text-uppercase">You might like</h6>
                             <h3 class="text-white mb-3">{{ $randomPackages[3]->package_name }}</h3>
-                            <a href="{{ route("customer_booking_packages") }}" class="btn btn-primary">Book Now</a>
+                            <a href="{{ route("packages.show", ['id' => $randomPackages[3]->id]) }}" class="btn btn-primary">Book Now</a>
                         </div>
                     </div>
                 </div>
@@ -210,9 +234,6 @@
                         </a>
                         <div class="d-flex align-items-center justify-content-center mt-2">
                             <h5>&#8369; {{ number_format($package->package->package_rate, 2) }}</h5>
-                            {{-- <h6 class="text-muted ml-2">
-                                <del>&#8369; 12,000.00</del>
-                            </h6> --}}
                         </div>
                         <div class="d-flex align-items-center justify-content-center mb-1">
                             <small class="text-primary mr-1">{{ date('h:i A', strtotime($package->package->start_time)) }}</small>

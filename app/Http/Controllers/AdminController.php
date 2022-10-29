@@ -213,7 +213,7 @@ class AdminController extends Controller
             ->join('statuses', 'statuses.id', '=', 'bookings.status_id')
             ->join('users', 'users.id', '=', 'bookings.user_id')
 
-            ->select('buses.plate', 'packages.package_name', 'packages.inclusion', 'packages.package_rate', 'bookings.status_id', 'bookings.created_at', 'statuses.name as status_name', 'bookings.id as booking_id', 'bookings.booking_date as booking_date', 'bookings.created_at', 'bookings.hasCancelRequest', 'users.first_name as first_name', 'users.last_name as last_name')
+            ->select('bookings.parent_id', 'buses.plate', 'packages.package_name', 'packages.inclusion', 'packages.package_rate', 'bookings.status_id', 'bookings.created_at', 'statuses.name as status_name', 'bookings.id as booking_id', 'bookings.booking_date as booking_date', 'bookings.created_at', 'bookings.hasCancelRequest', 'users.first_name as first_name', 'users.last_name as last_name')
             ->orderBy('bookings.id', 'DESC')
             ->get();
         return view('admin.booking', compact('packages'));
@@ -257,8 +257,14 @@ class AdminController extends Controller
         //     ->select(DB::raw('DATE_FORMAT(created_at, "%m") as date'), DB::raw('count(*) as views'))
         //     ->groupBy('date')
         //     ->get();
-        $bookings = Booking::with(['package'])->whereYear('created_at', Carbon::now()->year)
+        $baseBookings = Booking::with(['package'])->whereYear('created_at', Carbon::now()->year)
             ->where('status_id', 4)
+            ->whereNull('parent_id')
+            ->get();
+
+        $addonBookings = Booking::with(['package'])->whereYear('created_at', Carbon::now()->year)
+            ->where('status_id', 4)
+            ->whereNotNull('parent_id')
             ->get();
 
         $data = [
@@ -276,9 +282,29 @@ class AdminController extends Controller
             11 => 0,
         ];
 
-        foreach ($bookings as $booking) {
+        $addonData = [
+            0 => 0,
+            1 => 0,
+            2 => 0,
+            3 => 0,
+            4 => 0,
+            5 => 0,
+            6 => 0,
+            7 => 0,
+            8 => 0,
+            9 => 0,
+            10 => 0,
+            11 => 0,
+        ];
+
+        foreach ($baseBookings as $booking) {
             $month = ltrim($booking->created_at->format('m'), "0");
             $data[$month - 1] += $booking->package->package_rate;
+        }
+
+        foreach ($addonBookings as $booking) {
+            $month = ltrim($booking->created_at->format('m'), "0");
+            $addonData[$month - 1] += $booking->package->package_rate;
         }
 
         $labels = [
@@ -296,7 +322,7 @@ class AdminController extends Controller
             'Dec',
         ];
 
-        return view('admin.report', compact('labels', 'data'));
+        return view('admin.report', compact('labels', 'data', 'addonData'));
     }
 
     public function busPackage($id)
@@ -342,7 +368,7 @@ class AdminController extends Controller
             ->join('buses', 'buses.id', '=', 'packages.bus_id')
             ->join('statuses', 'statuses.id', '=', 'bookings.status_id')
             ->where('bookings.user_id', Auth::id())
-            ->select('buses.plate', 'packages.package_name', 'packages.inclusion', 'packages.package_rate', 'bookings.status_id', 'bookings.created_at', 'bookings.hasCancelRequest', 'statuses.name as status_name', 'bookings.id as booking_id', 'bookings.booking_date as booking_date', 'bookings.created_at')
+            ->select('bookings.parent_id', 'buses.plate', 'packages.package_name', 'packages.inclusion', 'packages.package_rate', 'bookings.status_id', 'bookings.created_at', 'bookings.hasCancelRequest', 'statuses.name as status_name', 'bookings.id as booking_id', 'bookings.booking_date as booking_date', 'bookings.created_at')
             ->orderBy('bookings.id', 'desc')
             ->get();
         return view('admin.customer_booking_list', compact('packages'));

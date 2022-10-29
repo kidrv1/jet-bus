@@ -85,14 +85,21 @@
 
                             @include('shared.notification')
                         </div>
-                        <div class="card-body px-0 pt-0 pb-2">
+                        <div class="card-body">
                             <div class="table-responsive p-0">
                                 <div>
                                     <canvas id="myChart"></canvas>
                                 </div>
                             </div>
                         </div>
-
+                        <hr>
+                        <div class="card-body">
+                            <div class="table-responsive p-0">
+                                <div>
+                                    <canvas id="addonChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
 
                     </div>
                 </div>
@@ -149,6 +156,7 @@
     <script type="text/javascript">
         var labels = {{ Js::from($labels) }};
         var users = {{ Js::from($data) }};
+        const addonUsers = {{ Js::from($addonData) }};
 
         const data = {
             labels: labels,
@@ -170,6 +178,29 @@
             document.getElementById('myChart'),
             config
         );
+
+
+        const addonData = {
+            labels: labels,
+            datasets: [{
+                label: 'Monthly Addon Report ' + new Date().getFullYear(),
+                backgroundColor: 'rgb(255, 99, 132)',
+                borderColor: 'rgb(255, 99, 132)',
+                data: addonUsers,
+            }]
+        };
+
+        const addonConfig = {
+            type: 'line',
+            data: addonData,
+            options: {}
+        };
+
+        const addonChart = new Chart(
+            document.getElementById('addonChart'),
+            addonConfig
+        );
+
     </script>
     <script>
         var win = navigator.platform.indexOf('Win') > -1;

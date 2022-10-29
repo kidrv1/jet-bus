@@ -15,7 +15,13 @@ class Booking extends Model
         "booking_date",
         "hasCancelRequest",
         "status_id",
+        "parent_id",
     ];
+
+    public function parent()
+    {
+        return $this->belongsTo(Booking::class);
+    }
 
     public function status()
     {

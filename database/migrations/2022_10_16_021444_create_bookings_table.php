@@ -20,6 +20,7 @@ class CreateBookingsTable extends Migration
             $table->date('booking_date');
             $table->boolean('hasCancelRequest')->default(false);
             $table->unsignedBigInteger('status_id');
+            $table->foreignIdFor(Booking::class, 'parent_id')->nullable();
             $table->timestamps();
         });
     }

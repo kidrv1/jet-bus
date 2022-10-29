@@ -92,6 +92,9 @@
                                         <tr>
                                             <th
                                                 class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                                Booking ID</th>
+                                            <th
+                                                class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                                 Customer</th>
                                             <th
                                                 class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
@@ -126,16 +129,25 @@
 
                                         @foreach ($packages as $package)
                                             <tr>
+                                                <td class="align-middle text-center">
+                                                    <details open>
+                                                        <summary
+                                                        class="text-secondary text-xs font-weight-bold">
+                                                        #{{ $package->booking_id }}
+                                                    </summary>
+                                                    @isset($package->parent_id)
+                                                        <sub>Addon For #({{ $package->parent_id }})</sub>
+                                                    @endisset
 
-                                                <td>
-                                                    <div class="d-flex px-2 py-1">
+                                                    </details>
+                                                </td>
+                                                <td class="align-middle text-center">
 
-                                                        <div class="d-flex flex-column justify-content-center">
-                                                            <span
-                                                                class="text-secondary text-xs font-weight-bold">{{ $package->first_name }}
-                                                                {{ $package->last_name }}</span>
-                                                        </div>
-                                                    </div>
+                                                    <span class="text-secondary text-xs font-weight-bold">
+                                                        {{ $package->first_name }}
+                                                        {{ $package->last_name }}
+                                                    </span>
+
                                                 </td>
                                                 <td class="align-middle text-center">
                                                     <span
@@ -174,37 +186,31 @@
                                                         class="text-secondary text-xs font-weight-bold">{{ $package->status_name }}</span>
                                                 </td>
                                                 <td class="text-center">
-                                                    <button
-                                                        class="btn btn-warning btn-xs receipt"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="#viewReceipt"
+                                                    <button class="btn btn-warning btn-xs receipt"
+                                                        data-bs-toggle="modal" data-bs-target="#viewReceipt"
                                                         value="{{ $package->booking_id }}">
                                                         View Receipt
                                                     </button>
-                                                    @if(!in_array($package->status_id, [3, 4]))
-                                                    <a
-                                                        href="{{ route('admin_booking_cancel', $package->booking_id) }}"
-                                                        class="btn btn-danger btn-xs">
-                                                        CANCEL{{ $package->hasCancelRequest ? '(Requested)' : '' }}
-                                                    </a>
+                                                    @if (!in_array($package->status_id, [3, 4]))
+                                                        <a href="{{ route('admin_booking_cancel', $package->booking_id) }}"
+                                                            class="btn btn-danger btn-xs">
+                                                            CANCEL{{ $package->hasCancelRequest ? '(Requested)' : '' }}
+                                                        </a>
                                                     @endif
                                                     @if ($package->status_id == 1)
-                                                        <a
-                                                            href="{{ route('admin_booking_approve', $package->booking_id) }}"
+                                                        <a href="{{ route('admin_booking_approve', $package->booking_id) }}"
                                                             class="btn btn-primary btn-xs">
                                                             APPROVE
                                                         </a>
                                                     @endif
-                                                    @if($package->status_id == 2)
-                                                        <a
-                                                            href="{{ route('admin_booking_complete', $package->booking_id) }}"
+                                                    @if ($package->status_id == 2)
+                                                        <a href="{{ route('admin_booking_complete', $package->booking_id) }}"
                                                             class="btn btn-success btn-xs">
                                                             COMPLETE
                                                         </a>
                                                     @endif
-                                                    @if($package->status_id == 4)
-                                                        <a
-                                                            href="{{ route('feedback.create') }}{{ '?q=' . $package->booking_id }}"
+                                                    @if ($package->status_id == 4)
+                                                        <a href="{{ route('feedback.create') }}{{ '?q=' . $package->booking_id }}"
                                                             class="btn btn-success btn-xs">View Feedback
                                                         </a>
                                                     @endif

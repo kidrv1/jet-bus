@@ -100,11 +100,15 @@
                     <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                         <div class="navbar-nav mr-auto py-0">
                             <a href="{{ route('home') }}" class="nav-item nav-link active">Home</a>
-                            @hasanyrole('admin|staff')
+                            @role('admin')
                                 <a href="{{ route('admin_home') }}" class="nav-item nav-link">Dashboard</a>
-                            @else
+                            @endrole
+                            @role('staff')
+                                <a href="{{ route('admin_bus') }}" class="nav-item nav-link">Dashboard</a>
+                            @endrole
+                            @role('customer')
                                 <a href="{{ route('customer_booking_packages') }}" class="nav-item nav-link">Book</a>
-                            @endhasanyrole
+                            @endrole
                             <div class="dropdown-divider"></div>
                             @guest
                                 <a href="{{ route('login') }}" class="nav-item nav-link d-block d-lg-none">Login</a>
@@ -177,6 +181,15 @@
                                         <div class="dropdown-divider"></div>
                                         <a class="dropdown-item" href="{{ route('notifications') }}">View All</a>
                                     </div>
+                                    <a href="{{ route("my_cart") }}" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-shopping-cart text-white"></i>
+                                        <span
+                                            id="cart-counter"
+                                            class="badge text-secondary border border-secondary rounded-circle"
+                                            style="padding-bottom: 2px;">
+                                            0
+                                        </span>
+                                    </a>
                                 </div>
                             @endauth
                             @guest
@@ -372,7 +385,7 @@
                     data.packages.forEach((package) => {
                         container.innerHTML += `
                             <a
-                                href="{{ route('customer_booking_packages') }}"
+                                href="{{ route('packages.show') }}/${package.id}"
                                 class="nav-item nav-link">
                                 ${package.package_name}
                             </a>
@@ -380,10 +393,21 @@
                     });
                 }
                 container.innerHTML += `
-                    <a href="{{ route('customer_booking_packages') }}" class="nav-item nav-link btn btn-primary">View More</a>
+                    <a href="{{ route("home") }}#featured-section" class="nav-item nav-link btn btn-primary">View More</a>
                 `;
             }
             loadPackageDropdown();
+
+            // load cart count
+            const loadCartCount = async () => {
+                const counter = document.querySelector("#cart-counter");
+
+                const res = await fetch("{{ route('cart.count') }}");
+                const data = await res.json();
+
+                counter.innerText = data?.count ?? '0';
+            }
+            loadCartCount();
         </script>
     @endauth
     @yield('custom_scripts')

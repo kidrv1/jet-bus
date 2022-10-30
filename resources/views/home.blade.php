@@ -254,7 +254,7 @@
         @endforelse
             </div>
         </div>
-    @if
+    @endif
     <!-- Recent Packages Booked End-->
     @endauth
 

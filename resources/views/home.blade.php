@@ -70,7 +70,7 @@
                 </div>
             </div>
             <div class="col-lg-4">
-                @if(count($randomPackages) != 0)
+                @if(count($randomPackages) >= 2)
                     @if ($randomPackages[0] != null)
                     <div class="product-offer mb-30" style="height: 200px;">
                         <img class="img-fluid" src="/public/{{ $randomPackages[0]['bus']->image}}" alt="package image">
@@ -181,29 +181,31 @@
     <!-- Random Start -->
     <div class="container-fluid pt-5 pb-3">
         <div class="row px-xl-5">
-            @if ($randomPackages[2] ?? null != null)
-                <div class="col-md-6">
-                    <div class="product-offer mb-30" style="height: 300px;">
-                        <img class="img-fluid" src="/public/{{ $randomPackages[2]['bus']->image}}" alt="package image">
-                        <div class="offer-text">
-                            <h6 class="text-white text-uppercase">You might like</h6>
-                            <h3 class="text-white mb-3">{{ $randomPackages[2]->package_name }}</h3>
-                            <a href="{{ route("packages.show", ['id' => $randomPackages[2]->id]) }}" class="btn btn-primary">Book Now</a>
+            @if (count($randomPackages) >= 4)
+                @if ($randomPackages[2] ?? null != null)
+                    <div class="col-md-6">
+                        <div class="product-offer mb-30" style="height: 300px;">
+                            <img class="img-fluid" src="/public/{{ $randomPackages[2]['bus']->image}}" alt="package image">
+                            <div class="offer-text">
+                                <h6 class="text-white text-uppercase">You might like</h6>
+                                <h3 class="text-white mb-3">{{ $randomPackages[2]->package_name }}</h3>
+                                <a href="{{ route("packages.show", ['id' => $randomPackages[2]->id]) }}" class="btn btn-primary">Book Now</a>
+                            </div>
                         </div>
                     </div>
-                </div>
-            @endif
-            @if ($randomPackages[3] ?? null != null)
-                <div class="col-md-6">
-                    <div class="product-offer mb-30" style="height: 300px;">
-                        <img class="img-fluid" src="/public/{{ $randomPackages[3]['bus']->image}}" alt="package image">
-                        <div class="offer-text">
-                            <h6 class="text-white text-uppercase">You might like</h6>
-                            <h3 class="text-white mb-3">{{ $randomPackages[3]->package_name }}</h3>
-                            <a href="{{ route("packages.show", ['id' => $randomPackages[3]->id]) }}" class="btn btn-primary">Book Now</a>
+                @endif
+                @if ($randomPackages[3] ?? null != null)
+                    <div class="col-md-6">
+                        <div class="product-offer mb-30" style="height: 300px;">
+                            <img class="img-fluid" src="/public/{{ $randomPackages[3]['bus']->image}}" alt="package image">
+                            <div class="offer-text">
+                                <h6 class="text-white text-uppercase">You might like</h6>
+                                <h3 class="text-white mb-3">{{ $randomPackages[3]->package_name }}</h3>
+                                <a href="{{ route("packages.show", ['id' => $randomPackages[3]->id]) }}" class="btn btn-primary">Book Now</a>
+                            </div>
                         </div>
                     </div>
-                </div>
+                @endif
             @endif
         </div>
     </div>
@@ -212,7 +214,7 @@
 
     @auth
     <!-- Recent Packages Booked Start -->
-    @isset($prevPackages)
+    @if(count($prevPackages) > 0)
         <div class="container-fluid pt-5 pb-3">
             <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4"><span class="bg-secondary pr-3">Recently Booked</span></h2>
             <div class="row px-xl-5">
@@ -252,7 +254,7 @@
         @endforelse
             </div>
         </div>
-    @endisset
+    @if
     <!-- Recent Packages Booked End-->
     @endauth
 

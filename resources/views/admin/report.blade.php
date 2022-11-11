@@ -160,12 +160,20 @@
 
         const data = {
             labels: labels,
-            datasets: [{
-                label: 'Monthly Sales Report ' + new Date().getFullYear(),
+            datasets: [
+            {
+                label: 'Monthly Sales ' + new Date().getFullYear(),
                 backgroundColor: 'rgb(255, 99, 132)',
                 borderColor: 'rgb(255, 99, 132)',
                 data: users,
-            }]
+            },
+            {
+                label: 'Monthly Addons ' + new Date().getFullYear(),
+                backgroundColor: 'rgb(132, 99, 255)',
+                borderColor: 'rgb(132, 99, 255)',
+                data: addonUsers,
+            }
+        ]
         };
 
         const config = {
@@ -179,27 +187,6 @@
             config
         );
 
-
-        const addonData = {
-            labels: labels,
-            datasets: [{
-                label: 'Monthly Addon Report ' + new Date().getFullYear(),
-                backgroundColor: 'rgb(255, 99, 132)',
-                borderColor: 'rgb(255, 99, 132)',
-                data: addonUsers,
-            }]
-        };
-
-        const addonConfig = {
-            type: 'line',
-            data: addonData,
-            options: {}
-        };
-
-        const addonChart = new Chart(
-            document.getElementById('addonChart'),
-            addonConfig
-        );
 
     </script>
     <script>

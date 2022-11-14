@@ -49,9 +49,13 @@
     <div class="container-fluid">
         <div class="row align-items-center bg-light py-3 px-xl-5 d-none d-lg-flex">
             <div class="col-lg-8">
-                <a href="" class="text-decoration-none">
-                    <span class="h1 text-uppercase text-primary bg-dark px-2">Jet Bus</span>
-                    <span class="h1 text-uppercase text-light bg-primary px-2 ml-n1">Travel and Tours</span>
+
+                <a href="" class="text-decoration-none d-flex align-items-center">
+                    <div class="h2 mr-2 bg-none d-flex justify-content-center align-items-center p-1" style="border-radius: 50%">
+                        <img class="bg-dark m-1" src="{{ URL::to("logo.png") }}" width="50" height="50" alt="logo">
+                    </div>
+                    <span class="h2 text-uppercase text-primary bg-dark px-2">Jet Bus</span>
+                    <span class="h2 text-uppercase text-light bg-primary px-2 ml-n1">Travel and Tours</span>
                 </a>
             </div>
 
@@ -100,6 +104,8 @@
                     <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                         <div class="navbar-nav mr-auto py-0">
                             <a href="{{ route('home') }}" class="nav-item nav-link active">Home</a>
+                            <a href="{{ route('services') }}" class="nav-item nav-link">Our Services</a>
+                            <a href="{{ route('contact') }}" class="nav-item nav-link">Contact Us</a>
                             @role('admin')
                                 <a href="{{ route('admin_home') }}" class="nav-item nav-link">Dashboard</a>
                             @endrole
@@ -261,7 +267,7 @@
                                     class="fa fa-angle-right mr-2"></i>Home</a>
                             <a class="text-secondary mb-2" href="{{ route('customer_booking_packages') }}"><i
                                     class="fa fa-angle-right mr-2"></i>Booking</a>
-                            <a class="text-secondary" href="#"><i class="fa fa-angle-right mr-2"></i>Contact
+                            <a class="text-secondary" href="{{ route("contact") }}"><i class="fa fa-angle-right mr-2"></i>Contact
                                 Us</a>
                         </div>
                     </div>

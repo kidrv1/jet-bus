@@ -192,10 +192,19 @@
                                                         View Receipt
                                                     </button>
                                                     @if (!in_array($package->status_id, [3, 4]))
-                                                        <a href="{{ route('admin_booking_cancel', $package->booking_id) }}"
+                                                        @if(!$package->hasCancelRequest)
+                                                        <a
+                                                            href="{{ route('admin_booking_cancel', $package->booking_id) }}"
                                                             class="btn btn-danger btn-xs">
-                                                            CANCEL{{ $package->hasCancelRequest ? '(Requested)' : '' }}
+                                                            CANCEL
                                                         </a>
+                                                        @else
+                                                        <button
+                                                            onclick="loadCancellationRequest('{{ $package->booking_id }}')"
+                                                            type="button"
+                                                            class="btn btn-danger btn-xs">CANCEL REQUEST
+                                                        </button>
+                                                        @endif
                                                     @endif
                                                     @if ($package->status_id == 1)
                                                         <a href="{{ route('admin_booking_approve', $package->booking_id) }}"
@@ -264,7 +273,39 @@
     </div>
 
 
+    {{-- Cancel Request Modal --}}
+    <div class="modal" id="cancelModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
 
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Cancellation Request</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <form role="form" action="{{ route('admin_booking_cancel_approve') }}" method="POST">
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        @csrf
+                        @method("PUT")
+                        <input type="hidden" name="booking_id" id="cancel_booking_id">
+                        <div class="form-group">
+                            <label class="h4" for="cancel-reason">Reason <sup class="text-danger">*</sup></label>
+                            <textarea readonly class="form-control" name="reason" id="cancel-reason" rows="3"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                        <button type="submit" class="btn bg-gradient-primary">Approve Cancellation</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
 
 
     <!--   Core JS Files   -->
@@ -288,11 +329,27 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
         integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script type="text/javascript">
+        const loadCancellationRequest = async (id) => {
+            const reasonField = document.querySelector("#cancel-reason");
+            const bookingIdField = document.querySelector("#cancel_booking_id");
+
+            const res = await fetch(`{{ route("customer_booking_cancel_show") }}/${id}`);
+
+            if(!res.ok) {
+                alert("Error loading cancel request");
+                return;
+            }
+
+            const data = await res.json();
+            const req = data.data;
+            bookingIdField.value = id;
+            reasonField.value = req.reason;
+
+            $('#cancelModal').modal('show');
+        }
         $(document).ready(function() {
             var find_project_url = "{{ route('admin_find_booking') }}";
             var token = "{{ Session::token() }}";
-
-
 
             $(".receipt").click(function() {
                 var book_id = $(this).val();

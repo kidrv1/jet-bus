@@ -157,7 +157,11 @@
                                                     <button class="btn btn-info btn-xs updateBus"
                                                         data-bs-toggle="modal" data-bs-target="#editModal"
                                                         value="{{ $bus->id }}">EDIT</button>
-                                                    <button class="btn btn-danger btn-xs">DELETE</button>
+                                                    @if($bus->isActive)
+                                                    <button onclick="toggleStatus('{{ $bus->id }}', false)" class="btn btn-danger btn-xs">ARCHIVE</button>
+                                                    @else
+                                                    <button onclick="toggleStatus('{{ $bus->id }}', true)" class="btn btn-success btn-xs">RESTORE</button>
+                                                    @endif
                                                     <a href="{{ route('admin_bus_package', $bus->id) }}"
                                                         class="btn btn-primary btn-xs">PACKAGE</a>
                                                 </td>
@@ -320,22 +324,23 @@
         </div>
     </div>
 
-    <div class="modal" id="statusModal">
+    <div class="modal" id="status-modal">
         <div class="modal-dialog">
             <div class="modal-content">
 
                 <!-- Modal Header -->
                 <div class="modal-header">
-                    <h4 class="modal-title">Change Status?</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <h4 class="modal-title" id="status-modal-title">Loading...</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal">&times;</button>
                 </div>
 
-                <form role="form" action="#" method="POST">
+                <form role="form" action="{{ route("admin_bus_status") }}" method="POST">
                     <!-- Modal body -->
                     <div class="modal-body">
-
                         @csrf
-                        <input type="hidden" name="project_id" id="statusProjectId">
+                        <input type="hidden" name="bus_id" id="status-modal-id">
+                        <input type="hidden" name="status" id="status-modal-status">
+                        Are you sure?
                     </div>
 
                     <!-- Modal footer -->
@@ -348,8 +353,6 @@
             </div>
         </div>
     </div>
-
-
 
 
 
@@ -374,6 +377,25 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
         integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script type="text/javascript">
+        const toggleStatus = async (busId, status) => {
+            const titleField = document.querySelector("#status-modal-title");
+            const idField = document.querySelector("#status-modal-id");
+            const statusField = document.querySelector("#status-modal-status");
+
+            idField.value = busId;
+
+            if(status) {
+                titleField.innerText = "Restore Bus"
+                statusField.value = 1;
+
+            } else {
+                titleField.innerText = "Archive Bus"
+                statusField.value = 0;
+            }
+
+            $('#status-modal').modal('show');
+        }
+
         $(document).ready(function() {
             var find_project_url = "{{ route('admin_find_bus') }}";
             var token = "{{ Session::token() }}";
@@ -409,7 +431,6 @@
                     success: function(data) {
                         console.log(data);
                         $("#bus_id").val(data.id);
-
                         $("#ac").val(data.ac);
                         $("#fuel").val(data.fuel);
                         $("#model").val(data.model);

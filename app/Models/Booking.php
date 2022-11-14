@@ -13,9 +13,15 @@ class Booking extends Model
         "user_id",
         "package_id",
         "booking_date",
+        "booking_date_end",
         "hasCancelRequest",
         "status_id",
         "parent_id",
+    ];
+
+    protected $casts = [
+        'booking_date' => 'datetime',
+        'booking_date_end' => 'datetime',
     ];
 
     public function parent()
@@ -41,5 +47,10 @@ class Booking extends Model
     public function feedback()
     {
         return $this->hasOne(Feedback::class);
+    }
+
+    public function cancelRequest()
+    {
+        return $this->hasOne(CancelRequest::class);
     }
 }

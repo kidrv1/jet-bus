@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Validator;
 use Carbon\Carbon;
 use App\Models\Bus;
 use App\Models\User;
@@ -14,7 +13,6 @@ use Illuminate\Http\Request;
 use App\Service\NotifService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
 {
@@ -119,6 +117,26 @@ class AdminController extends Controller
         return view('admin.bus', compact('buses'));
     }
 
+    public function busUpdateStatus(Request $request)
+    {
+        $request->validate([
+            "bus_id" => ["required"],
+            "status" => ["required", "boolean"]
+        ]);
+
+        $bus = Bus::findOrFail($request->bus_id);
+        $bus->isActive = $request->status;
+        $bus->save();
+
+        if ($request->status == false) {
+            Package::where("bus_id", $bus->id)->update([
+                "isActive" => false
+            ]);
+        }
+
+        return back()->with("success", "Bus status updated");
+    }
+
     public function bus_check(Request $request)
     {
 
@@ -213,7 +231,7 @@ class AdminController extends Controller
             ->join('statuses', 'statuses.id', '=', 'bookings.status_id')
             ->join('users', 'users.id', '=', 'bookings.user_id')
 
-            ->select('bookings.parent_id', 'buses.plate', 'packages.package_name', 'packages.inclusion', 'packages.package_rate', 'bookings.status_id', 'bookings.created_at', 'statuses.name as status_name', 'bookings.id as booking_id', 'bookings.booking_date as booking_date', 'bookings.created_at', 'bookings.hasCancelRequest', 'users.first_name as first_name', 'users.last_name as last_name')
+            ->select('bookings.parent_id', 'buses.plate', 'packages.package_name', 'packages.inclusion', 'packages.package_rate', 'bookings.status_id', 'bookings.created_at', 'statuses.name as status_name', 'bookings.id as booking_id', 'bookings.booking_date as booking_date', 'bookings.booking_date_end as booking_date_end', 'bookings.created_at', 'bookings.hasCancelRequest', 'users.first_name as first_name', 'users.last_name as last_name')
             ->orderBy('bookings.id', 'DESC')
             ->get();
         return view('admin.booking', compact('packages'));
@@ -253,10 +271,6 @@ class AdminController extends Controller
 
     public function report()
     {
-        // $graph = DB::table('bookings')
-        //     ->select(DB::raw('DATE_FORMAT(created_at, "%m") as date'), DB::raw('count(*) as views'))
-        //     ->groupBy('date')
-        //     ->get();
         $baseBookings = Booking::with(['package'])->whereYear('created_at', Carbon::now()->year)
             ->where('status_id', 4)
             ->whereNull('parent_id')
@@ -368,7 +382,7 @@ class AdminController extends Controller
             ->join('buses', 'buses.id', '=', 'packages.bus_id')
             ->join('statuses', 'statuses.id', '=', 'bookings.status_id')
             ->where('bookings.user_id', Auth::id())
-            ->select('bookings.parent_id', 'buses.plate', 'packages.package_name', 'packages.inclusion', 'packages.package_rate', 'bookings.status_id', 'bookings.created_at', 'bookings.hasCancelRequest', 'statuses.name as status_name', 'bookings.id as booking_id', 'bookings.booking_date as booking_date', 'bookings.created_at')
+            ->select('bookings.parent_id', 'bookings.booking_date_end as booking_date_end', 'buses.plate', 'packages.package_name', 'packages.inclusion', 'packages.package_rate', 'bookings.status_id', 'bookings.created_at', 'bookings.hasCancelRequest', 'statuses.name as status_name', 'bookings.id as booking_id', 'bookings.booking_date as booking_date', 'bookings.created_at')
             ->orderBy('bookings.id', 'desc')
             ->get();
         return view('admin.customer_booking_list', compact('packages'));
@@ -390,12 +404,13 @@ class AdminController extends Controller
         (new NotifService())->sendNotification(
             $validatedData['user_id'],
             "Booking Created",
-            "Your " . $booking->package()->first()->package_name . " booking for " . date("M d, Y", strtotime($validatedData['booking_date'])) . " has been created."
+            "Your " . $booking->package()->first()->package_name . " booking for " . date("M d, Y", strtotime($validatedData['booking_date'])) . " to " . " has been created."
         );
 
         return back()->with('success', 'You have Booked Successfully');
     }
 
+    // Depreciated
     public function bookingCancel($id)
     {
         $check = Booking::with(['package'])->where('id', $id)->first();
@@ -414,7 +429,7 @@ class AdminController extends Controller
 
         return back()->with('success', 'Booked Canceled Successfully');
     }
-
+    // Depreciated
     public function bookingCancelRequest($id)
     {
         $check = Booking::with(['package'])

@@ -181,24 +181,26 @@
                                                 <td class="text-center">
                                                     @if ($package->status_id < 3)
                                                         @if ($package->hasCancelRequest)
-                                                            <button class="btn btn-danger btn-xs">CANCEL REQUESTED
+                                                            <button onclick="loadCancellationRequest('{{ $package->booking_id }}')" type="button" class="btn btn-danger btn-xs">CANCEL REQUESTED
                                                             </button>
                                                         @else
-                                                            <a href="{{ route('admin_booking_cancel_request', $package->booking_id) }}"
-                                                                class="btn btn-danger btn-xs">CANCEL
-                                                            </a>
+                                                            <button class="btn btn-danger btn-xs cancel-btn-data"
+                                                                data-bs-toggle="modal" data-bs-target="#cancelModal"
+                                                                value="{{ $package->booking_id }}">
+                                                                CANCEL
+                                                            </button>
                                                         @endif
                                                     @endif
                                                     @if ($package->status_id == 1)
                                                         <button class="btn btn-primary btn-xs payment"
                                                             data-bs-toggle="modal" data-bs-target="#paymentModal"
                                                             value="{{ $package->booking_id }}">
-                                                            Payment
+                                                            PAYMENT
                                                         </button>
                                                     @endif
                                                     @if ($package->status_id == 4)
                                                         <a href="{{ route('feedback.create') }}{{ '?q=' . $package->booking_id }}"
-                                                            class="btn btn-success btn-xs">Feedback
+                                                            class="btn btn-success btn-xs">FEEDBACK
                                                         </a>
                                                     @endif
                                                 </td>
@@ -219,6 +221,7 @@
     </main>
 
 
+    {{-- Payment Modal --}}
     <div class="modal" id="paymentModal">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -261,6 +264,76 @@
         </div>
     </div>
 
+    {{-- Cancel Request Modal --}}
+    <div class="modal" id="cancelModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Cancellation Request Form</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <form role="form" action="{{ route('customer_booking_cancel_request') }}" method="POST">
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <div class="alert alert-warning mt-1" role="alert">
+                            <i class="fas fa-exclamation text-white"></i>
+                            <small class="text-white">Once your cancellation is approved, a 20% cancellation fee will
+                                be deducted from your payment.</small>
+                        </div>
+                        @csrf
+                        <input type="hidden" name="booking_id" id="cancel_booking_id">
+                        <div class="form-group">
+                            <label class="h4" for="cancel-reason">Reason <sup class="text-danger">*</sup></label>
+                            {{-- <input type="text" class="form-control" name="reason" id="cancel-reason" placeholder="reason for cancellation"> --}}
+                            <textarea class="form-control" name="reason" id="cancel-reason" rows="3" placeholder="Please provide reasons for cancellation"></textarea>
+                        </div>
+
+                    </div>
+
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                        <button type="submit" class="btn bg-gradient-primary">Submit</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    {{-- Cancel Request View Modal --}}
+    <div class="modal" id="cancelViewModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">View Cancellation Request</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <form role="form" >
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <input type="hidden" name="book_id" id="cancel_booking_id">
+                        <div class="form-group">
+                            <label class="h4" for="cancel-reason">Reason <sup class="text-danger">*</sup></label>
+                            <textarea readonly class="form-control" id="cancel-reason-view" rows="3"></textarea>
+                        </div>
+                    </div>
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
 
 
 
@@ -286,6 +359,23 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
         integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script type="text/javascript">
+        const loadCancellationRequest = async (id) => {
+            const reasonField = document.querySelector("#cancel-reason-view");
+
+            const res = await fetch(`{{ route("customer_booking_cancel_show") }}/${id}`);
+
+            if(!res.ok) {
+                alert("Error loading cancel request");
+                return;
+            }
+
+            const data = await res.json();
+            const req = data.data;
+            reasonField.value = req.reason;
+
+            $('#cancelViewModal').modal('show');
+        }
+
         $(document).ready(function() {
             var find_project_url = "#";
             var token = "{{ Session::token() }}";
@@ -294,7 +384,12 @@
                 var book_id = $(this).val();
                 console.log(book_id);
                 $("#bookId").val(book_id);
+            });
 
+            $(".cancel-btn-data").click(function() {
+                const book_id = $(this).val();
+                console.log(book_id);
+                $("#cancel_booking_id").val(book_id);
             });
 
             $(".completed").click(function() {

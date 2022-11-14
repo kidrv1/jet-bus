@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Exception;
 use App\Models\Cart;
+use App\Models\Status;
 use App\Models\Booking;
 use App\Models\Package;
 use Illuminate\Http\Request;
@@ -53,7 +54,8 @@ class CartController extends Controller
         try {
             $request->validate([
                 'package_id' => ['required', 'integer'],
-                'booking_date' => ['required', 'date']
+                'booking_date' => ['required', 'date'],
+                'booking_date_end' => ['required', 'date'],
             ]);
 
             $cartItem = Cart::where('user_id', auth()->id())
@@ -121,7 +123,8 @@ class CartController extends Controller
                 "user_id" => $user_id,
                 "package_id" => $cartItems[0]->package->id,
                 "booking_date" => $cartItems[0]->booking_date,
-                "status_id" => 1,
+                "booking_date_end" => $cartItems[0]->booking_date_end,
+                "status_id" => Status::PENDING,
                 "parent_id" => null
             ]);
 
@@ -139,7 +142,8 @@ class CartController extends Controller
                         "user_id" => $user_id,
                         "package_id" => $item->package->id,
                         "booking_date" => $item->booking_date,
-                        "status_id" => 1,
+                        "booking_date_end" => $cartItems->booking_date_end,
+                        "status_id" => Status::PENDING,
                         "parent_id" => $baseBooking->id
                     ]);
 

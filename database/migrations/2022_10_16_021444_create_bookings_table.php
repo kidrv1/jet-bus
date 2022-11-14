@@ -18,6 +18,7 @@ class CreateBookingsTable extends Migration
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('package_id');
             $table->date('booking_date');
+            $table->date('booking_date_end');
             $table->boolean('hasCancelRequest')->default(false);
             $table->unsignedBigInteger('status_id');
             $table->foreignId('parent_id')->nullable();

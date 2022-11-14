@@ -5,10 +5,26 @@ namespace App\Http\Controllers;
 use App\Models\Booking;
 use App\Models\Feedback;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class FeedbackController extends Controller
 {
+    public function index(Request $request)
+    {
+        if (!auth()->user()->hasAnyRole(['admin', 'staff'])) {
+            return redirect()->route("home");
+        }
 
+        $startDate = $request->from_date ? Carbon::parse($request->from_date)->startOfDay() : now()->startOfMonth();
+        $endDate = $request->to_date ? Carbon::parse($request->to_date)->endOfDay() : now()->endOfMonth();
+
+        $feedbacks = Feedback::with(["user", "booking.package"])
+            ->whereBetween("created_at", [$startDate->toDateTimeString(), $endDate->toDateTimeString()])
+            ->latest()
+            ->get();
+
+        return view("feedback.index")->with(["feedbacks" => $feedbacks]);
+    }
     /**
      * Show the form for creating a new resource.
      *

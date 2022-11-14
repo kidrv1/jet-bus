@@ -44,7 +44,8 @@
                         <tr>
                             <th>Package</th>
                             <th>Price</th>
-                            <th>Booking Date</th>
+                            <th>Booking Start</th>
+                            <th>Booking End</th>
                             <th>Remove</th>
                         </tr>
                     </thead>
@@ -61,6 +62,9 @@
                                 </td>
                                 <td class="align-middle">
                                     {{ $item->booking_date->format('M d, Y') }}
+                                </td>
+                                <td class="align-middle">
+                                    {{ $item->booking_date_end->format('M d, Y') }}
                                 </td>
                                 <td class="align-middle">
                                     <a href="{{ route('cart.remove', ['id' => $item->id]) }}" class="btn btn-sm btn-danger">

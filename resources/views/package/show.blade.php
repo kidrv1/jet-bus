@@ -98,8 +98,11 @@
                             @endforelse
                         </ul>
                     </div>
+
+                    {{-- Buttons --}}
+                    @if ($package->isActive == true)
                     <label>
-                        <strong>Booking Date:</strong>
+                        <strong>Booking Start:</strong>
                         <input
                             id="booking-date-input"
                             type="date"
@@ -107,6 +110,20 @@
                             @if ($inCart != null)
                                 readonly
                                 value="{{ $inCart->booking_date->isoFormat('YYYY-MM-DD') }}"
+                            @else
+                                min="{{ now()->addDays(7)->isoFormat('YYYY-MM-DD') }}"
+                            @endif
+                        >
+                    </label>
+                    <label>
+                        <strong>Booking End:</strong>
+                        <input
+                            id="booking-date-end-input"
+                            type="date"
+                            class="form-control form-control-sm bg-secondary border-0 text-center"
+                            @if ($inCart != null)
+                                readonly
+                                value="{{ $inCart->booking_date_end->isoFormat('YYYY-MM-DD') }}"
                             @else
                                 min="{{ now()->addDays(7)->isoFormat('YYYY-MM-DD') }}"
                             @endif
@@ -153,6 +170,15 @@
                         <i class="fas fa-info-circle"></i>
                         <small>{{ $inCart != null ? 'Already in cart' : '' }}</small>
                     </p>
+                    @else
+                    <p
+                        id="cart-message"
+                        class="mt-3 bg-light text-danger p-2 border border-bottom">
+                        <i class="fas fa-info-circle"></i>
+                        <span >Not Available</span>
+                    </p>
+                    @endif
+                    {{-- Buttons End --}}
                 </div>
             </div>
         </div>

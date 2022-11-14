@@ -23,6 +23,26 @@
 
     @if(Auth::user()->getRoleNames()[0] == 'admin' || Auth::user()->getRoleNames()[0] == 'staff')
     <li class="nav-item">
+        <a class="nav-link active" href="{{ route("admin_inbox") }}">
+            <div
+                class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                <i class="far fa-envelope text-warning text-sm opacity-10"></i>
+            </div>
+            <span class="nav-link-text ms-1">INBOX</span>
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link active" href="{{ route("admin_calendar_index") }}">
+            <div
+                class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                <i class="fas fa-calendar text-warning text-sm opacity-10"></i>
+            </div>
+            <span class="nav-link-text ms-1">CALENDAR</span>
+        </a>
+    </li>
+
+    <li class="nav-item">
         <a class="nav-link active" href="{{route('admin_bus')}}">
             <div
                 class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
@@ -56,9 +76,30 @@
         <a class="nav-link active" href="{{route('admin_report')}}">
             <div
                 class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-                <i class="ni ni-chart-bar-32 text-warning text-sm opacity-10"></i>
+                <i class="fas fa-chart-line text-warning text-sm opacity-10"></i>
             </div>
             <span class="nav-link-text ms-1">REPORT</span>
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link active" href="{{route('admin_feedback')}}">
+            <div
+                class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                {{-- <i class="ni ni-chart-bar-32 text-warning text-sm opacity-10"></i> --}}
+                <i class="fas fa-comments text-warning text-sm opacity-10"></i>
+            </div>
+            <span class="nav-link-text ms-1">FEEDBACK</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active" href="{{route('admin_testimonials_index')}}">
+            <div
+                class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                {{-- <i class="ni ni-chart-bar-32 text-warning text-sm opacity-10"></i> --}}
+                <i class="fas fa-chalkboard-teacher text-warning text-sm opacity-10"></i>
+            </div>
+            <span class="nav-link-text ms-1">TESTIMONIALS</span>
         </a>
     </li>
     @endif

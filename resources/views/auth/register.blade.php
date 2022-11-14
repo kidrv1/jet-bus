@@ -32,7 +32,7 @@
                 <div class="card-body">
                     <a href="{{ route("home") }}">
                         <center>
-                            <img src="{{URL::to('logo.jpg')}}" class="img-thumbnail" height="200px" width="200px">
+                            <img src="{{URL::to('logo.png')}}" class="img-thumbnail" height="200px" width="200px">
                         </center>
                     </a>
                     <h4 class="font-weight-bolder text-center">Sign Up</h4>

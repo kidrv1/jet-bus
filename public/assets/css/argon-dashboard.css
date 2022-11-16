@@ -10580,7 +10580,8 @@ fieldset:disabled .btn {
 }
 
 .bg-primary {
-  background-color: #5e72e4 !important;
+  /* background-color: #5e72e4 !important; */
+  background-color: #b6977d !important;
 }
 
 .bg-secondary {

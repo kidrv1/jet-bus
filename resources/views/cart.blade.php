@@ -17,6 +17,13 @@
                 submitBtn.disabled = true;
             }
         });
+
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+        // $(function () {
+        //     $('[data-toggle="popover"]').popover()
+        // })
     </script>
 @endsection
 
@@ -43,8 +50,10 @@
                     <thead class="thead-dark">
                         <tr>
                             <th>Package</th>
-                            <th>Price</th>
-                            <th>Booking Date</th>
+                            <th>Base Price</th>
+                            <th>Addons</th>
+                            <th>Booking Start</th>
+                            <th>Booking End</th>
                             <th>Remove</th>
                         </tr>
                     </thead>
@@ -60,7 +69,31 @@
                                     &#8369;{{ number_format($item->package->package_rate, 2) }}
                                 </td>
                                 <td class="align-middle">
+                                    <?php $totalAddons = 0; ?>
+                                    @if(!empty($item->addons))
+                                        <?php $displayText = "" ?>
+
+                                        @foreach ($item->addons as $addon)
+                                            <?php $totalAddons += (float) $addon->addonRef->price; ?>
+                                            <?php
+                                                $displayText .= $addon->addonRef->price . " - " . $addon->addonRef->name . "<br>";
+                                            ?>
+                                        @endforeach
+                                        <i
+                                            data-toggle="tooltip"
+                                            data-placement="bottom"
+                                            data-html="true"
+                                            title="{{ $displayText }}"
+                                            class="fas fa-question-circle">
+                                        </i>
+                                    @endif
+                                    &#8369;{{ number_format($totalAddons, 2) }}
+                                </td>
+                                <td class="align-middle">
                                     {{ $item->booking_date->format('M d, Y') }}
+                                </td>
+                                <td class="align-middle">
+                                    {{ $item->booking_date_end->format('M d, Y') }}
                                 </td>
                                 <td class="align-middle">
                                     <a href="{{ route('cart.remove', ['id' => $item->id]) }}" class="btn btn-sm btn-danger">

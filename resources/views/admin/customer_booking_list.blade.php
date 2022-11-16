@@ -105,13 +105,22 @@
                                                 Inclusions</th>
                                             <th
                                                 class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                                Tour Date</th>
+                                                Addons</th>
+                                            <th
+                                                class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                                Base Price</th>
+                                            <th
+                                                class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                                Total Price</th>
+                                            <th
+                                                class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                                Start Date</th>
+                                            <th
+                                                class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                                End Date</th>
                                             <th
                                                 class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                                 Created</th>
-                                            <th
-                                                class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                                Price</th>
                                             <th
                                                 class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                                 Status</th>
@@ -123,7 +132,113 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($packages as $package)
+                                        @foreach ($bookings as $booking)
+                                        <tr>
+                                            <td class="align-middle text-center">
+                                                <details open>
+                                                    <summary
+                                                    class="text-secondary text-xs font-weight-bold">
+                                                    #{{ $booking->id }}
+                                                </summary>
+                                                @isset($booking->parent)
+                                                    <sub>Addon For #{{ $booking->parent->id }}</sub>
+                                                @endisset
+
+                                                </details>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex px-2 py-1">
+
+                                                    <div class="d-flex flex-column justify-content-center">
+                                                        <span
+                                                            class="text-secondary text-xs font-weight-bold">{{ $booking->package->bus->plate }}</span>
+                                                    </div>
+                                                </div>
+                                            </td>
+
+                                            <td class="align-middle text-center">
+                                                <span
+                                                    class="text-secondary text-xs font-weight-bold">{{ $booking->package->package_name }}</span>
+                                            </td>
+
+                                            <td class="align-middle text-center">
+                                                <span class="text-secondary text-xs font-weight-bold">
+                                                    <?php
+                                                    $inclusions = json_decode($booking->package->inclusion);
+                                                    ?>
+                                                    @foreach ($inclusions as $inc)
+                                                        {{ $inc }}<br>
+                                                    @endforeach
+                                                </span>
+                                            </td>
+                                            <td class="align-middle text-center">
+                                                <span
+                                                    class="text-secondary text-xs font-weight-bold">
+                                                    <?php $addonPrice = 0; ?>
+                                                    @if(!empty($booking->addons))
+                                                        @foreach ($booking->addons as $addons)
+                                                            <?php $addonPrice += (float) $addons->price ?>
+                                                            {{ $addons->price }} - {{ $addons->name }}<br>
+                                                        @endforeach
+                                                    @endif
+                                                </span>
+                                            </td>
+                                            <td class="align-middle text-center">
+                                                <span
+                                                    class="text-secondary text-xs font-weight-bold">{{ number_format($booking->package->package_rate) }}</span>
+                                            </td>
+                                            <td class="align-middle text-center">
+                                                <span
+                                                    class="text-secondary text-xs font-weight-bold">{{ number_format($booking->package->package_rate + $addonPrice) }}</span>
+                                            </td>
+                                            <td class="align-middle text-center">
+                                                <span
+                                                    class="text-secondary text-xs font-weight-bold">{{ $booking->booking_date->format("M d, Y") }}</span>
+                                            </td>
+                                            <td class="align-middle text-center">
+                                                <span
+                                                    class="text-secondary text-xs font-weight-bold">{{ $booking->booking_date_end->format("M d, Y") }}</span>
+                                            </td>
+                                            <td class="align-middle text-center">
+                                                <span
+                                                    class="text-secondary text-xs font-weight-bold">{{ $booking->created_at }}</span>
+                                            </td>
+                                            <td class="align-middle text-center">
+                                                <span
+                                                    class="text-secondary text-xs font-weight-bold">{{ $booking->status->name }}</span>
+                                            </td>
+                                            <td class="text-center">
+                                                @if ($booking->status->id < 3)
+                                                    @if ($booking->cancelRequest != null)
+                                                        <button onclick="loadCancellationRequest('{{ $booking->id }}')" type="button" class="btn btn-danger btn-xs">CANCEL REQUESTED
+                                                        </button>
+                                                    @else
+                                                        <button class="btn btn-danger btn-xs cancel-btn-data"
+                                                            data-bs-toggle="modal" data-bs-target="#cancelModal"
+                                                            value="{{ $booking->id }}">
+                                                            CANCEL
+                                                        </button>
+                                                    @endif
+                                                @endif
+                                                @if ($booking->status->id == 1)
+                                                    @if($booking->payment == null)
+                                                    <button class="btn btn-primary btn-xs payment"
+                                                        data-bs-toggle="modal" data-bs-target="#paymentModal"
+                                                        value="{{ $booking->id }}">
+                                                        PAYMENT
+                                                    </button>
+                                                    @endif
+                                                @endif
+                                                @if ($booking->status->id == 4)
+                                                    <a href="{{ route('feedback.create') }}{{ '?q=' . $booking->id }}"
+                                                        class="btn btn-success btn-xs">FEEDBACK
+                                                    </a>
+                                                @endif
+                                            </td>
+
+                                        </tr>
+                                    @endforeach
+                                        {{-- @foreach ($packages as $package)
                                             <tr>
                                                 <td class="align-middle text-center">
                                                     <details open>
@@ -164,6 +279,14 @@
                                                 </td>
                                                 <td class="align-middle text-center">
                                                     <span
+                                                        class="text-secondary text-xs font-weight-bold">
+                                                        @if(!empty(BookingAddon::where('booking_id', $package->id)->get()))
+                                                            Has Packages
+                                                        @endif
+                                                    </span>
+                                                </td>
+                                                <td class="align-middle text-center">
+                                                    <span
                                                         class="text-secondary text-xs font-weight-bold">{{ $package->booking_date }}</span>
                                                 </td>
                                                 <td class="align-middle text-center">
@@ -181,30 +304,32 @@
                                                 <td class="text-center">
                                                     @if ($package->status_id < 3)
                                                         @if ($package->hasCancelRequest)
-                                                            <button class="btn btn-danger btn-xs">CANCEL REQUESTED
+                                                            <button onclick="loadCancellationRequest('{{ $package->booking_id }}')" type="button" class="btn btn-danger btn-xs">CANCEL REQUESTED
                                                             </button>
                                                         @else
-                                                            <a href="{{ route('admin_booking_cancel_request', $package->booking_id) }}"
-                                                                class="btn btn-danger btn-xs">CANCEL
-                                                            </a>
+                                                            <button class="btn btn-danger btn-xs cancel-btn-data"
+                                                                data-bs-toggle="modal" data-bs-target="#cancelModal"
+                                                                value="{{ $package->booking_id }}">
+                                                                CANCEL
+                                                            </button>
                                                         @endif
                                                     @endif
                                                     @if ($package->status_id == 1)
                                                         <button class="btn btn-primary btn-xs payment"
                                                             data-bs-toggle="modal" data-bs-target="#paymentModal"
                                                             value="{{ $package->booking_id }}">
-                                                            Payment
+                                                            PAYMENT
                                                         </button>
                                                     @endif
                                                     @if ($package->status_id == 4)
                                                         <a href="{{ route('feedback.create') }}{{ '?q=' . $package->booking_id }}"
-                                                            class="btn btn-success btn-xs">Feedback
+                                                            class="btn btn-success btn-xs">FEEDBACK
                                                         </a>
                                                     @endif
                                                 </td>
 
                                             </tr>
-                                        @endforeach
+                                        @endforeach --}}
 
                                     </tbody>
                                 </table>
@@ -219,6 +344,7 @@
     </main>
 
 
+    {{-- Payment Modal --}}
     <div class="modal" id="paymentModal">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -261,6 +387,76 @@
         </div>
     </div>
 
+    {{-- Cancel Request Modal --}}
+    <div class="modal" id="cancelModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Cancellation Request Form</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <form role="form" action="{{ route('customer_booking_cancel_request') }}" method="POST">
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <div class="alert alert-warning mt-1" role="alert">
+                            <i class="fas fa-exclamation text-white"></i>
+                            <small class="text-white">Once your cancellation is approved, a 20% cancellation fee will
+                                be deducted from your payment.</small>
+                        </div>
+                        @csrf
+                        <input type="hidden" name="booking_id" id="cancel_booking_id">
+                        <div class="form-group">
+                            <label class="h4" for="cancel-reason">Reason <sup class="text-danger">*</sup></label>
+                            {{-- <input type="text" class="form-control" name="reason" id="cancel-reason" placeholder="reason for cancellation"> --}}
+                            <textarea class="form-control" name="reason" id="cancel-reason" rows="3" placeholder="Please provide reasons for cancellation"></textarea>
+                        </div>
+
+                    </div>
+
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                        <button type="submit" class="btn bg-gradient-primary">Submit</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    {{-- Cancel Request View Modal --}}
+    <div class="modal" id="cancelViewModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">View Cancellation Request</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <form role="form" >
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <input type="hidden" name="book_id" id="cancel_booking_id">
+                        <div class="form-group">
+                            <label class="h4" for="cancel-reason">Reason <sup class="text-danger">*</sup></label>
+                            <textarea readonly class="form-control" id="cancel-reason-view" rows="3"></textarea>
+                        </div>
+                    </div>
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
 
 
 
@@ -286,6 +482,23 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
         integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script type="text/javascript">
+        const loadCancellationRequest = async (id) => {
+            const reasonField = document.querySelector("#cancel-reason-view");
+
+            const res = await fetch(`{{ route("customer_booking_cancel_show") }}/${id}`);
+
+            if(!res.ok) {
+                alert("Error loading cancel request");
+                return;
+            }
+
+            const data = await res.json();
+            const req = data.data;
+            reasonField.value = req.reason;
+
+            $('#cancelViewModal').modal('show');
+        }
+
         $(document).ready(function() {
             var find_project_url = "#";
             var token = "{{ Session::token() }}";
@@ -294,7 +507,12 @@
                 var book_id = $(this).val();
                 console.log(book_id);
                 $("#bookId").val(book_id);
+            });
 
+            $(".cancel-btn-data").click(function() {
+                const book_id = $(this).val();
+                console.log(book_id);
+                $("#cancel_booking_id").val(book_id);
             });
 
             $(".completed").click(function() {

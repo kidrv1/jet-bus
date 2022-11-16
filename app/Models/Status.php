@@ -9,5 +9,10 @@ class Status extends Model
 {
     use HasFactory;
 
-     protected $guarded = [];
+    public const PENDING = 1;
+    public const APPROVED = 2;
+    public const CANCELED = 3;
+    public const COMPLETED = 4;
+
+    protected $guarded = [];
 }

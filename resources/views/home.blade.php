@@ -154,7 +154,7 @@
                                 {{ $package->package_name }}
                             </a>
                             <div class="d-flex align-items-center justify-content-center mt-2">
-                                <h5>&#8369; {{ number_format($package->package_rate, 2) }}</h5>
+                                {{-- <h5>&#8369; {{ number_format($package->package_rate, 2) }}</h5> --}}
                                 {{-- <h6 class="text-muted ml-2">
                                     <del>&#8368; 12,300.00</del>
                                 </h6> --}}
@@ -176,6 +176,24 @@
         </div>
     </div>
     <!-- Products End -->
+
+    <!-- Satisfied Start -->
+    @if(!empty($testimonials))
+    <div class="container-fluid py-5">
+        <div class="row px-xl-5">
+            <div class="col">
+                <div class="owl-carousel vendor-carousel">
+                    @foreach ($testimonials as $item)
+                        <div class="bg-light p-4">
+                            <img class="img-fluid" src="{{ URL::to('/') }}/testimonials/{{ $item->image }}" style="max-width: 1024;" alt="Image of Satisfied Customer">
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+    <!-- Satisfied End -->
 
 
     <!-- Random Start -->
@@ -237,7 +255,7 @@
                             {{ $package->package->package_name }}
                         </a>
                         <div class="d-flex align-items-center justify-content-center mt-2">
-                            <h5>&#8369; {{ number_format($package->package->package_rate, 2) }}</h5>
+                            {{-- <h5>&#8369; {{ number_format($package->package->package_rate, 2) }}</h5> --}}
                         </div>
                         <div class="d-flex align-items-center justify-content-center mb-1">
                             <small class="text-primary mr-1">{{ date('h:i A', strtotime($package->package->start_time)) }}</small>

@@ -13,11 +13,13 @@ class Cart extends Model
     protected $fillable = [
         'user_id',
         'package_id',
-        'booking_date'
+        'booking_date',
+        'booking_date_end',
     ];
 
     protected $casts = [
-        'booking_date' => 'datetime'
+        'booking_date' => 'datetime',
+        'booking_date_end' => 'datetime'
     ];
 
     public function package()
@@ -28,5 +30,10 @@ class Cart extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function addons()
+    {
+        return $this->hasMany(CartAddon::class, "cart_id");
     }
 }

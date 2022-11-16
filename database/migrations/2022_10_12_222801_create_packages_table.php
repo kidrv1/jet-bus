@@ -23,6 +23,7 @@ class CreatePackagesTable extends Migration
             $table->string('start_time');
             $table->string('end_time');
             $table->integer('max_booking')->nullable();
+            $table->boolean("isActive")->default(true);
             $table->timestamps();
         });
     }

@@ -20,4 +20,9 @@ class Package extends Model
     {
         return $this->belongsTo(Bus::class);
     }
+
+    public function addons()
+    {
+        return $this->hasMany(PackageAddon::class);
+    }
 }

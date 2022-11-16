@@ -1,16 +1,21 @@
 @extends('layout.layout')
 
 @section('custom_styles')
-    <style>
-
-    </style>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 @endsection
 
 @section('custom_scripts')
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
     <script>
+        $(document).ready(function() {
+            $('#addons-dropdown').select2();
+        });
         const addToCart = async () => {
             const btn = document.querySelector("#add-to-cart-btn");
             const dateInput = document.querySelector("#booking-date-input");
+            const dateInputEnd = document.querySelector("#booking-date-end-input");
+            const addonsValues = $('#addons-dropdown').val()
             const viewCart = document.querySelector("#view-cart-btn");
             const flashMessage = document.querySelector("#cart-message");
 
@@ -33,7 +38,9 @@
                 },
                 body: JSON.stringify({
                     package_id: {{ $package->id }},
-                    booking_date: dateInput.value
+                    booking_date: dateInput.value,
+                    booking_date_end: dateInputEnd.value,
+                    addons: addonsValues
                 })
             })
             const data = await res.json();
@@ -45,10 +52,6 @@
                 btn.remove();
                 flashMessage.querySelector('small').innerText = 'Added to cart!';
             }
-
-            //display results
-
-            //enable button
         }
     </script>
 @endsection
@@ -98,8 +101,11 @@
                             @endforelse
                         </ul>
                     </div>
+
+                    {{-- Buttons --}}
+                    @if ($package->isActive == true)
                     <label>
-                        <strong>Booking Date:</strong>
+                        <strong>Booking Start:</strong>
                         <input
                             id="booking-date-input"
                             type="date"
@@ -112,6 +118,30 @@
                             @endif
                         >
                     </label>
+                    <label>
+                        <strong>Booking End:</strong>
+                        <input
+                            id="booking-date-end-input"
+                            type="date"
+                            class="form-control form-control-sm bg-secondary border-0 text-center"
+                            @if ($inCart != null)
+                                readonly
+                                value="{{ $inCart->booking_date_end->isoFormat('YYYY-MM-DD') }}"
+                            @else
+                                min="{{ now()->addDays(7)->isoFormat('YYYY-MM-DD') }}"
+                            @endif
+                        >
+                    </label>
+                    <div class="form-group">
+                        <label for="addons-dropdown">
+                            <strong>Addons</strong>
+                        </label>
+                        <select class="form-control" id="addons-dropdown" name="addons[]" multiple="multiple">
+                            @foreach ($package->addons as $addon)
+                                <option value="{{ $addon->id }}">&#8369;{{ $addon->price }} - {{ $addon->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                     <div class="d-flex align-items-center pt-2">
                         <button
                             type="button"
@@ -153,6 +183,15 @@
                         <i class="fas fa-info-circle"></i>
                         <small>{{ $inCart != null ? 'Already in cart' : '' }}</small>
                     </p>
+                    @else
+                    <p
+                        id="cart-message"
+                        class="mt-3 bg-light text-danger p-2 border border-bottom">
+                        <i class="fas fa-info-circle"></i>
+                        <span >Not Available</span>
+                    </p>
+                    @endif
+                    {{-- Buttons End --}}
                 </div>
             </div>
         </div>

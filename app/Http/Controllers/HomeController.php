@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Booking;
 use App\Models\Package;
+use App\Models\SatisfiedCustomer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -11,8 +12,9 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $featuredPackages = Package::with(['bus'])->get();
-        $randomPackages = Package::inRandomOrder()->limit(4)->get();
+        $featuredPackages = Package::with(['bus'])->where("isActive", true)->get();
+        $randomPackages = Package::inRandomOrder()->where("isActive", true)->limit(4)->get();
+        $testimonials = SatisfiedCustomer::all();
         $prevPackages = null;
 
         if (Auth::check()) {
@@ -23,6 +25,12 @@ class HomeController extends Controller
             "featuredPackages" => $featuredPackages ?? [],
             "randomPackages" => $randomPackages ?? [],
             "prevPackages" => $prevPackages ?? [],
+            "testimonials" => $testimonials ?? [],
         ]);
+    }
+
+    public function services()
+    {
+        return view("services");
     }
 }

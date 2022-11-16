@@ -10,7 +10,7 @@ class PackageController extends Controller
 {
     public function show(Request $request, $id)
     {
-        $package = Package::with(['bus'])->find($id);
+        $package = Package::with(['bus', 'addons'])->find($id);
         $randomPackages = Package::with(['bus'])
             ->where("isActive", true)
             ->inRandomOrder()

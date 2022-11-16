@@ -22,6 +22,7 @@ class CreateBusesTable extends Migration
             $table->string('ac');
             $table->string('seaters');
             $table->string('fuel');
+            $table->boolean("isActive")->default(true);
             $table->timestamps();
         });
     }

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateBookingAddonsTable extends Migration
+class CreateCartAddonsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,10 @@ class CreateBookingAddonsTable extends Migration
      */
     public function up()
     {
-        Schema::create('booking_addons', function (Blueprint $table) {
+        Schema::create('cart_addons', function (Blueprint $table) {
             $table->id();
-            $table->foreignId("booking_id");
-            $table->string("name");
-            $table->string("price");
+            $table->foreignId("cart_id");
+            $table->foreignId("package_addon_id");
             $table->timestamps();
         });
     }
@@ -29,6 +28,6 @@ class CreateBookingAddonsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('booking_addons');
+        Schema::dropIfExists('cart_addons');
     }
 }

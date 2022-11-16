@@ -15,6 +15,9 @@ class CreatePackageAddonsTable extends Migration
     {
         Schema::create('package_addons', function (Blueprint $table) {
             $table->id();
+            $table->foreignId("package_id");
+            $table->string("name");
+            $table->string("price");
             $table->timestamps();
         });
     }

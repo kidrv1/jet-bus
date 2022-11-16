@@ -46,7 +46,7 @@ class SatisfiedCustomerController extends Controller
             return back()->with('error', 'Forbbiden');
         }
 
-        $image = SatisfiedCustomer::findOrFail($request->image_id);
+        $image = SatisfiedCustomer::find($request->image_id);
         if ($image == null) {
             return back()->with('error', 'Image Not Found');
         }

@@ -31,4 +31,9 @@ class Cart extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function addons()
+    {
+        return $this->hasMany(CartAddon::class, "cart_id");
+    }
 }

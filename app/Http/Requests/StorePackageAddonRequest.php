@@ -13,7 +13,7 @@ class StorePackageAddonRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,9 @@ class StorePackageAddonRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            "package_id" => ["required"],
+            "name" => ["required", "string", "max:255"],
+            "price" => ["required", "numeric"],
         ];
     }
 }

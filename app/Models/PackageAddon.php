@@ -8,4 +8,15 @@ use Illuminate\Database\Eloquent\Model;
 class PackageAddon extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'package_id',
+        'name',
+        'price',
+    ];
+
+    public function package()
+    {
+        return $this->belongsTo(Package::class);
+    }
 }

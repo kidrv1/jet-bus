@@ -6,6 +6,8 @@ use Exception;
 use App\Models\Cart;
 use App\Models\Status;
 use App\Models\Booking;
+use App\Models\BookingAddon;
+use App\Models\CartAddon;
 use App\Models\Package;
 use Illuminate\Http\Request;
 use App\Service\NotifService;
@@ -17,19 +19,29 @@ class CartController extends Controller
 {
     public function index(Request $request)
     {
-        $cartItems = Cart::with(['package'])->where('user_id', auth()->id())->oldest()->get();
+        $cartItems = Cart::with(['package', 'addons.addonRef'])->where('user_id', auth()->id())->oldest()->get();
         $add_total = 0;
         $sub_total = 0;
 
+
         if (count($cartItems) != 0) {
-            $sub_total = $cartItems[0]->package->package_rate;
+            // Add Initial Booking To Base Cost
+            $sub_total = (float) $cartItems[0]->package->package_rate;
 
             foreach ($cartItems as $index => $item) {
+                // Add Addons To Additional Cost
+
+                foreach ($item->addons as $addon) {
+                    $add_total += (float) $addon->addonRef->price;
+                }
+
+                // Dont Add Initial Booking To Additonal Cost
                 if ($index == 0) {
                     continue;
                 }
 
-                $add_total += $item->package->package_rate;
+                // Add Other Bookings Rate To Additional Cost
+                $add_total += (float) $item->package->package_rate;
             }
         }
 
@@ -56,6 +68,7 @@ class CartController extends Controller
                 'package_id' => ['required', 'integer'],
                 'booking_date' => ['required', 'date'],
                 'booking_date_end' => ['required', 'date'],
+                'addons' => ["array", "nullable"],
             ]);
 
             $cartItem = Cart::where('user_id', auth()->id())
@@ -73,7 +86,17 @@ class CartController extends Controller
                     "user_id" => auth()->id(),
                     "package_id" => $request->package_id,
                     "booking_date" => $request->booking_date,
+                    "booking_date_end" => $request->booking_date_end,
                 ]);
+
+                if (!empty($request->addons)) {
+                    foreach ($request->addons as $addon) {
+                        CartAddon::create([
+                            "cart_id" => $cartItem->id,
+                            "package_addon_id" => $addon,
+                        ]);
+                    }
+                }
             }
 
             return response()->json([
@@ -93,6 +116,7 @@ class CartController extends Controller
             $cartItem = Cart::find($id);
 
             if ($cartItem != null) {
+                CartAddon::where("cart_id", $cartItem->id)->delete();
                 $cartItem->delete();
             }
 
@@ -112,7 +136,7 @@ class CartController extends Controller
         DB::beginTransaction();
         try {
             $user_id = auth()->id();
-            $cartItems = Cart::with(['package'])->where('user_id', $user_id)->oldest()->get();
+            $cartItems = Cart::with(['package', "addons.addonRef"])->where('user_id', $user_id)->oldest()->get();
 
             if (count($cartItems) == 0) {
                 throw new Exception("No items in cart");
@@ -128,6 +152,16 @@ class CartController extends Controller
                 "parent_id" => null
             ]);
 
+            // Book Initial Addons
+            $baseBookingAddons = CartAddon::with(["addonRef"])->where("cart_id", $cartItems[0]->id)->get();
+            foreach ($baseBookingAddons as $addon) {
+                BookingAddon::create([
+                    "booking_id" => $baseBooking->id,
+                    "name" => $addon->addonRef->name,
+                    "price" => $addon->addonRef->price,
+                ]);
+            }
+
 
             (new NotifService())->sendNotification(
                 $user_id,
@@ -142,10 +176,18 @@ class CartController extends Controller
                         "user_id" => $user_id,
                         "package_id" => $item->package->id,
                         "booking_date" => $item->booking_date,
-                        "booking_date_end" => $cartItems->booking_date_end,
+                        "booking_date_end" => $item->booking_date_end,
                         "status_id" => Status::PENDING,
                         "parent_id" => $baseBooking->id
                     ]);
+
+                    foreach ($item->addons as $addon) {
+                        BookingAddon::create([
+                            "booking_id" => $booking->id,
+                            "name" => $addon->addonRef->name,
+                            "price" => $addon->addonRef->price,
+                        ]);
+                    }
 
                     (new NotifService())->sendNotification(
                         $user_id,
@@ -158,6 +200,7 @@ class CartController extends Controller
 
             // Clear Cart Item
             foreach ($cartItems as $item) {
+                CartAddon::where("cart_id", $item->id)->delete();
                 $item->delete();
             }
 

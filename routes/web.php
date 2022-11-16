@@ -10,6 +10,7 @@ use App\Http\Controllers\ContactMessageController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\PackageAddonController;
 use App\Http\Controllers\PackageController;
 use App\Http\Controllers\SatisfiedCustomerController;
 use App\Service\NotifService;
@@ -93,6 +94,12 @@ Route::group(['prefix' => 'dashboard', 'middleware' => ['auth']], function () {
     Route::post('/testimonials', [SatisfiedCustomerController::class, 'store'])->name('admin_testimonials_store');
     Route::post('/testimonials/delete', [SatisfiedCustomerController::class, 'destroy'])->name('admin_testimonials_delete');
 
+    // Package Addons
+    Route::get('/package-addons/{package_id?}', [PackageAddonController::class, 'index'])->name('admin_package_addons.index');
+    Route::get('/package-addons/create/{addon_id?}', [PackageAddonController::class, 'show'])->name('admin_package_addons.show');
+    Route::post('/package-addons', [PackageAddonController::class, 'store'])->name('admin_package_addons.create');
+    Route::put('/package-addons', [PackageAddonController::class, 'update'])->name('admin_package_addons.update');
+    Route::delete('/package-addons', [PackageAddonController::class, 'destroy'])->name('admin_package_addons.delete');
 
 
     //Customer

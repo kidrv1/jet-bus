@@ -17,8 +17,8 @@ class CreateCartsTable extends Migration
             $table->id();
             $table->foreignId("user_id");
             $table->foreignId("package_id");
-            $table->timestamp('booking_date')->nullable();
-            $table->timestamp('booking_date_end')->nullable();
+            $table->timestamp('booking_date');
+            $table->timestamp('booking_date_end');
             $table->timestamps();
         });
     }

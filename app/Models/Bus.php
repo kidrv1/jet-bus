@@ -17,6 +17,7 @@ class Bus extends Model
         'ac',
         'seaters',
         'fuel',
+        'isActive',
     ];
 
     public function user()

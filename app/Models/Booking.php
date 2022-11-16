@@ -24,6 +24,11 @@ class Booking extends Model
         'booking_date_end' => 'datetime',
     ];
 
+    public function payment()
+    {
+        return $this->hasOne(Payment::class, "book_id");
+    }
+
     public function parent()
     {
         return $this->belongsTo(Booking::class, 'parent_id');
@@ -52,5 +57,10 @@ class Booking extends Model
     public function cancelRequest()
     {
         return $this->hasOne(CancelRequest::class);
+    }
+
+    public function addons()
+    {
+        return $this->hasMany(BookingAddon::class);
     }
 }

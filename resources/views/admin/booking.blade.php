@@ -99,22 +99,30 @@
                                             <th
                                                 class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                                 Bus Plate</th>
-
                                             <th
                                                 class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                                 Package Name</th>
                                             <th
                                                 class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                                 Inclusions</th>
+                                                <th
+                                                class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                                Addons</th>
                                             <th
                                                 class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                                Tour Date</th>
+                                                Base Price</th>
+                                            <th
+                                                class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                                Total Price</th>
+                                            <th
+                                                class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                                Start Date</th>
+                                            <th
+                                                class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                                End Date</th>
                                             <th
                                                 class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                                 Created</th>
-                                            <th
-                                                class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                                Price</th>
                                             <th
                                                 class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                                 Status</th>
@@ -126,8 +134,127 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        @foreach ($bookings as $booking)
+                                        <tr>
+                                            <td class="align-middle text-center">
+                                                <details open>
+                                                    <summary
+                                                    class="text-secondary text-xs font-weight-bold">
+                                                    #{{ $booking->id }}
+                                                </summary>
+                                                @if($booking->parent != null)
+                                                    <sub>Addon For #{{ $booking->parent->id }}</sub>
+                                                @endif
 
-                                        @foreach ($packages as $package)
+                                                </details>
+                                            </td>
+                                            <td class="align-middle text-center">
+
+                                                <span class="text-secondary text-xs font-weight-bold">
+                                                    {{ $booking->user->first_name }}
+                                                    {{ $booking->user->last_name }}
+                                                </span>
+
+                                            </td>
+                                            <td class="align-middle text-center">
+                                                <span
+                                                    class="text-secondary text-xs font-weight-bold">{{ $booking->package->bus->plate }}</span>
+                                            </td>
+
+                                            <td class="align-middle text-center">
+                                                <span
+                                                    class="text-secondary text-xs font-weight-bold">{{ $booking->package->package_name }}</span>
+                                            </td>
+
+                                            <td class="align-middle text-center">
+                                                <span class="text-secondary text-xs font-weight-bold">
+                                                    <?php
+                                                    $inclusions = json_decode($booking->package->inclusion);
+                                                    ?>
+                                                    @foreach ($inclusions as $inc)
+                                                        {{ $inc }}<br>
+                                                    @endforeach
+                                                </span>
+                                            </td>
+                                            <td class="align-middle text-center">
+                                                <span
+                                                    class="text-secondary text-xs font-weight-bold">
+                                                    <?php $addonPrice = 0; ?>
+                                                    @if(!empty($booking->addons))
+                                                        @foreach ($booking->addons as $addons)
+                                                            <?php $addonPrice += (float) $addons->price ?>
+                                                            {{ $addons->price }} - {{ $addons->name }}<br>
+                                                        @endforeach
+                                                    @endif
+                                                </span>
+                                            </td>
+                                            <td class="align-middle text-center">
+                                                <span
+                                                    class="text-secondary text-xs font-weight-bold">{{ number_format($booking->package->package_rate) }}</span>
+                                            </td>
+                                            <td class="align-middle text-center">
+                                                <span
+                                                    class="text-secondary text-xs font-weight-bold">{{ number_format($booking->package->package_rate + $addonPrice) }}</span>
+                                            </td>
+                                            <td class="align-middle text-center">
+                                                <span
+                                                    class="text-secondary text-xs font-weight-bold">{{ $booking->booking_date->format("M d, Y") }}</span>
+                                            </td>
+                                            <td class="align-middle text-center">
+                                                <span
+                                                    class="text-secondary text-xs font-weight-bold">{{ $booking->booking_date_end->format("M d, Y") }}</span>
+                                            </td>
+                                            <td class="align-middle text-center">
+                                                <span
+                                                    class="text-secondary text-xs font-weight-bold">{{ $booking->created_at->format("M d, Y") }}</span>
+                                            </td>
+                                            <td class="align-middle text-center">
+                                                <span
+                                                    class="text-secondary text-xs font-weight-bold">{{ $booking->status->name }}</span>
+                                            </td>
+                                            <td class="text-center">
+                                                <button class="btn btn-warning btn-xs receipt"
+                                                    data-bs-toggle="modal" data-bs-target="#viewReceipt"
+                                                    value="{{ $booking->id }}">
+                                                    View Receipt
+                                                </button>
+                                                @if (!in_array($booking->status->id, [3, 4]))
+                                                    @if($booking->cancelRequest == null)
+                                                    <a
+                                                        href="{{ route('admin_booking_cancel', $booking->id) }}"
+                                                        class="btn btn-danger btn-xs">
+                                                        CANCEL
+                                                    </a>
+                                                    @else
+                                                    <button
+                                                        onclick="loadCancellationRequest('{{ $booking->id }}')"
+                                                        type="button"
+                                                        class="btn btn-danger btn-xs">CANCEL REQUEST
+                                                    </button>
+                                                    @endif
+                                                @endif
+                                                @if ($booking->status->id == 1)
+                                                    <a href="{{ route('admin_booking_approve', $booking->id) }}"
+                                                        class="btn btn-primary btn-xs">
+                                                        APPROVE
+                                                    </a>
+                                                @endif
+                                                @if ($booking->status->id == 2)
+                                                    <a href="{{ route('admin_booking_complete', $booking->id) }}"
+                                                        class="btn btn-success btn-xs">
+                                                        COMPLETE
+                                                    </a>
+                                                @endif
+                                                @if ($booking->status->id == 4)
+                                                    <a href="{{ route('feedback.create') }}{{ '?q=' . $booking->id }}"
+                                                        class="btn btn-success btn-xs">View Feedback
+                                                    </a>
+                                                @endif
+                                            </td>
+
+                                        </tr>
+                                    @endforeach
+                                        {{-- @foreach ($packages as $package)
                                             <tr>
                                                 <td class="align-middle text-center">
                                                     <details open>
@@ -226,7 +353,7 @@
                                                 </td>
 
                                             </tr>
-                                        @endforeach
+                                        @endforeach --}}
 
 
                                     </tbody>

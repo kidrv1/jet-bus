@@ -81,7 +81,7 @@
                 <div class="col-12">
                     <div class="card mb-4">
                         <div class="card-header pb-0">
-                            <h6>Bus Plate: {{ $bus->plate }} Package Lists</h6>
+                            <h6>Package: {{ $package->package_name }} Addons Lists</h6>
                             <button class="btn btn-info btn-xs edit" data-bs-toggle="modal"
                                 data-bs-target="#createModal">Create</button>
                             @include('shared.notification')
@@ -93,16 +93,10 @@
                                         <tr>
                                             <th
                                                 class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                                Package Name</th>
+                                                Name</th>
                                             <th
                                                 class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                                 Price</th>
-                                            <th
-                                                class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                                Inclusions</th>
-                                            <th
-                                                class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                                Time</th>
                                             <th
                                                 class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                                 Actions</th>
@@ -110,7 +104,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($packages as $package)
+                                        @foreach ($package->addons as $addon)
                                             <tr>
 
                                                 <td>
@@ -118,47 +112,20 @@
 
                                                         <div class="d-flex flex-column justify-content-center">
                                                             <span
-                                                                class="text-secondary text-xs font-weight-bold">{{ $package->package_name }}</span>
+                                                                class="text-secondary text-xs font-weight-bold">{{ $addon->name }}</span>
                                                         </div>
                                                     </div>
                                                 </td>
 
                                                 <td class="align-middle text-center">
                                                     <span
-                                                        class="text-secondary text-xs font-weight-bold">{{ $package->package_rate }}</span>
-                                                </td>
-
-                                                <td class="align-middle text-center">
-                                                    <span class="text-secondary text-xs font-weight-bold">
-                                                        <?php
-                                                        $inclusions = json_decode($package->inclusion);
-                                                        ?>
-                                                        @foreach ($inclusions as $inc)
-                                                            {{ $inc }}<br>
-                                                        @endforeach
-                                                    </span>
+                                                        class="text-secondary text-xs font-weight-bold">{{ $addon->price }}</span>
                                                 </td>
                                                 <td class="align-middle text-center">
-                                                    <span
-                                                        class="text-secondary text-xs font-weight-bold">{{ date('h:i A', strtotime($package->start_time)) }}
-                                                        - {{ date('h:i A', strtotime($package->end_time)) }}</span>
-                                                </td>
-                                                <td class="align-middle text-center">
-                                                    @if($bus->isActive)
-                                                        @if($package->isActive)
-                                                        <button onclick="toggleStatus('{{ $package->id }}', false)" class="btn btn-danger btn-xs">ARCHIVE</button>
-                                                        <a href="{{ route("admin_package_addons.index", ["package_id" => $package->id]) }}" class="btn btn-info btn-xs">ADDONS</a>
-                                                        @else
-                                                        <button onclick="toggleStatus('{{ $package->id }}', true)" class="btn btn-success btn-xs">RESTORE</button>
-                                                        @endif
-                                                    @else
-                                                        <button class="btn btn-danger btn-xs">BUS ARCHIVED</button>
-                                                    @endif
-                                                </td>
-
+                                                    <button onclick="editAddon('{{ $addon->id }}')" class="btn btn-warning btn-xs">EDIT</button>
+                                                    <button onclick="deleteAddon('{{ $addon->id }}')" class="btn btn-danger btn-xs">DELETE</button>                                                </td>
                                             </tr>
                                         @endforeach
-
                                     </tbody>
                                 </table>
                             </div>
@@ -176,53 +143,65 @@
 
                 <!-- Modal Header -->
                 <div class="modal-header">
-                    <h4 class="modal-title">Enter Package Informations</h4>
+                    <h4 class="modal-title">Enter Addon Informations</h4>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 
-                <form role="form" action="{{ route('admin_bus_package_check') }}" method="POST"
-                    enctype="multipart/form-data">
+                <form role="form" action="{{ route('admin_package_addons.create') }}" method="POST">
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        @csrf
+                        <input type="hidden" name="package_id" value="{{ $package->id }}">
+
+                        <div class="mb-3">
+                            <label>Addon Name</label>
+                            <input type="text" name="name" class="form-control" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label>Addon Price</label>
+                            <input type="number" name="price" class="form-control" required value="0">
+                        </div>
+                    </div>
+
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                        <button type="submit" class="btn bg-gradient-primary">Submit</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="edit-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Update Addon Informations</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <form role="form" action="{{ route('admin_package_addons.update') }}" method="POST">
                     <!-- Modal body -->
                     <div class="modal-body">
 
                         @csrf
-                        <input type="hidden" name="bus_id" id="bus_id" value="{{ Request::segment(3) }}">
+                        @method("PUT")
+                        <input type="hidden" name="addon_id" id="update-addon-id" required>
 
-                        <div class="row">
-                            <div class="col-6">
-                                <div class="mb-3">
-                                    <label>Depart Time</label>
-                                    <input type="time" class="form-control" name="start_time" required>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="mb-3">
-                                    <label>Arrive Time</label>
-                                    <input type="time" class="form-control" name="end_time" required>
-                                </div>
-                            </div>
+                        <div class="mb-3">
+                            <label>Addon Name</label>
+                            <input type="text" name="name" id="update-addon-name" class="form-control" required>
                         </div>
 
                         <div class="mb-3">
-                            <label>Package Name</label>
-                            <input type="text" name="package_name" class="form-control" required>
+                            <label>Addon Price</label>
+                            <input type="number" name="price" id="update-addon-price" class="form-control" required>
                         </div>
-
-                        <div class="mb-3">
-                            <label>Package Rate</label>
-                            <input type="number" name="package_rate" class="form-control" required value="10000">
-                        </div>
-
-                        <div class="mb-3">
-                            <label>Inclusions</label></br>
-                            <input type="checkbox" name="inclusion[]" value="Gas Fee" /> Gas Fee </br>
-                            <input type="checkbox" name="inclusion[]" value="Toll Gate Fee" /> Toll Gate Fee </br>
-                            <input type="checkbox" name="inclusion[]" value="Tour Fee (activities, itinerary)" />
-                            Tour Fee (activities, itinerary) </br>
-                            <input type="checkbox" name="inclusion[]" value="Driver Fee" /> Driver Fee </br>
-                        </div>
-
-
 
                     </div>
 
@@ -237,93 +216,22 @@
         </div>
     </div>
 
-    {{-- <div class="modal" id="editModal">
+    <div class="modal" id="delete-modal">
         <div class="modal-dialog">
             <div class="modal-content">
 
                 <!-- Modal Header -->
                 <div class="modal-header">
-                    <h4 class="modal-title">Update Bus Informations</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-
-                <form role="form" action="{{ route('admin_update_bus') }}" method="POST"
-                    enctype="multipart/form-data">
-                    <!-- Modal body -->
-                    <div class="modal-body">
-
-                        @csrf
-                        <input type="hidden" name="bus_id" id="bus_id">
-
-
-                        <div class="mb-3">
-                            <label>Air Condition</label>
-                            <select class="form-control" required name="ac" id="ac">
-                                <option value="YES">YES</option>
-                                <option value="NO">NO</option>
-
-                            </select>
-                        </div>
-
-                        <div class="mb-3">
-                            <label>Fuel Type</label>
-                            <select class="form-control" required name="fuel" id="fuel">
-                                <option value="GAS">GAS</option>
-                                <option value="DIESEL">DIESEL</option>
-
-                            </select>
-                        </div>
-
-
-
-                        <div class="mb-3">
-                            <label>Model</label>
-                            <input type="text" class="form-control" placeholder="Name" aria-label="Name"
-                                name="model" required id="model">
-                        </div>
-
-                        <div class="mb-3">
-                            <label>Plate No.</label>
-                            <input type="text" class="form-control" placeholder="Name" aria-label="Name"
-                                name="plate" required id="plate">
-                        </div>
-
-                        <div class="mb-3">
-                            <label>Number of Seats</label>
-                            <input type="number" class="form-control" placeholder="Name"
-                                aria-label="Total Number of Seats" name="seaters" required id="seaters"
-                                step="1" value="1">
-                        </div>
-
-                    </div>
-
-                    <!-- Modal footer -->
-                    <div class="modal-footer">
-                        <button type="submit" class="btn bg-gradient-primary">Submit</button>
-                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                    </div>
-                </form>
-
-            </div>
-        </div>
-    </div> --}}
-
-    <div class="modal" id="status-modal">
-        <div class="modal-dialog">
-            <div class="modal-content">
-
-                <!-- Modal Header -->
-                <div class="modal-header">
-                    <h4 class="modal-title" id="status-modal-title">Loading...</h4>
+                    <h4 class="modal-title" id="status-modal-title">Delete Addon</h4>
                     <button type="button" class="btn-close" data-bs-dismiss="modal">&times;</button>
                 </div>
 
-                <form role="form" action="{{ route("admin_update_package_status") }}" method="POST">
+                <form role="form" action="{{ route("admin_package_addons.delete") }}" method="POST">
                     <!-- Modal body -->
                     <div class="modal-body">
                         @csrf
-                        <input type="hidden" name="package_id" id="status-modal-id">
-                        <input type="hidden" name="status" id="status-modal-status">
+                        @method("DELETE")
+                        <input type="hidden" name="addon_id" id="delete-modal-id">
                         Are you sure?
                     </div>
 
@@ -360,75 +268,34 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
         integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script type="text/javascript">
-        const toggleStatus = async (busId, status) => {
-            const titleField = document.querySelector("#status-modal-title");
-            const idField = document.querySelector("#status-modal-id");
-            const statusField = document.querySelector("#status-modal-status");
+        const editAddon = async (addon_id) => {
+            const idField = document.querySelector("#update-addon-id");
+            const nameField = document.querySelector("#update-addon-name");
+            const priceField = document.querySelector("#update-addon-price");
 
-            idField.value = busId;
+            const res = await fetch(`{{ route("admin_package_addons.show") }}/${addon_id}`);
+            const data = await res.json();
 
-            if (status) {
-                titleField.innerText = "Restore Package"
-                statusField.value = 1;
-
-            } else {
-                titleField.innerText = "Archive Package"
-                statusField.value = 0;
+            if(!res.ok) {
+                alert(res.message ?? 'Error Loading Addon');
+                return;
             }
 
-            $('#status-modal').modal('show');
+            const addon = data.data;
+            idField.value = addon_id;
+            nameField.value = addon.name;
+            priceField.value = addon.price;
+
+
+            $('#edit-modal').modal('show');
         }
 
-        $(document).ready(function() {
-            var find_project_url = "{{ route('admin_find_bus') }}";
-            var token = "{{ Session::token() }}";
+        const deleteAddon = async (addon_id) => {
+            const idField = document.querySelector("#delete-modal-id");
+            idField.value = addon_id;
+            $('#delete-modal').modal('show');
+        }
 
-            $(".archive").click(function() {
-                var project_id = $(this).val();
-                $("#statusProjectId").val(project_id);
-
-            });
-
-            $(".completed").click(function() {
-                var project_id = $(this).val();
-                $("#completedProject").val(project_id);
-
-            });
-
-            $(".assign").click(function() {
-                var project_id = $(this).val();
-                $("#assignTask").val(project_id);
-
-            });
-
-            $(".updateBus").click(function() {
-                var bus_id = $(this).val();
-                $("#updateBus").val(bus_id);
-                $.ajax({
-                    type: 'POST',
-                    url: find_project_url,
-                    data: {
-                        _token: token,
-                        bus_id: bus_id
-                    },
-                    success: function(data) {
-                        console.log(data);
-                        $("#bus_id").val(data.id);
-
-                        $("#ac").val(data.ac);
-                        $("#fuel").val(data.fuel);
-                        $("#model").val(data.model);
-                        $("#plate").val(data.plate);
-                        $("#seaters").val(data.seaters);
-
-
-                    }
-                });
-
-
-            });
-
-        });
     </script>
 </body>
 

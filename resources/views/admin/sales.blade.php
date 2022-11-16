@@ -151,30 +151,91 @@
                                             </th>
                                             <th
                                                 class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                                Package Name
-                                            </th>
-                                            <th
-                                                class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                                 Customer
                                             </th>
                                             <th
                                                 class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                                Tour Date
+                                                Package Name
+                                            </th>
+                                            <th
+                                                class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                                Base Price
+                                            </th>
+                                            <th
+                                                class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                                Addons
+                                            </th>
+                                            <th
+                                                class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                                Total Price
+                                            </th>
+                                            <th
+                                                class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                                Start Date
+                                            </th>
+                                            <th
+                                                class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                                End Date
                                             </th>
                                             <th
                                                 class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                                 Created
-                                            </th>
-                                            <th
-                                                class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                                Price
                                             </th>
                                             <th class="text-secondary opacity-7"></th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php $total = 0; ?>
-                                        @foreach ($packages as $package)
+                                        @foreach ($bookings as $booking)
+                                            <tr>
+
+                                                <td>
+                                                    <div class="d-flex px-2 py-1">
+
+                                                        <div class="d-flex flex-column justify-content-center">
+                                                            <span
+                                                                class="text-secondary text-xs font-weight-bold">{{ $booking->package->bus->plate }}</span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="align-middle text-center">
+                                                    <span
+                                                        class="text-secondary text-xs font-weight-bold">{{ $booking->user->first_name }} {{ $booking->user->last_name ?? '' }}</span>
+                                                </td>
+                                                <td class="align-middle text-center">
+                                                    <span
+                                                        class="text-secondary text-xs font-weight-bold">{{ $booking->package->package_name }}</span>
+                                                </td>
+                                                <td class="align-middle text-center">
+                                                    <span
+                                                        class="text-secondary text-xs font-weight-bold">{{ number_format($booking->package->package_rate, 2) }}</span>
+                                                </td>
+                                                <td class="align-middle text-center">
+                                                    <span
+                                                        class="text-secondary text-xs font-weight-bold">{{ number_format($booking->addons->sum("price"), 2) }}</span>
+                                                </td>
+                                                <td class="align-middle text-center">
+                                                    <span
+                                                        class="text-secondary text-xs font-weight-bold">{{ number_format($booking->package->package_rate + $booking->addons->sum("price"), 2) }}</span>
+                                                </td>
+                                                <td class="align-middle text-center">
+                                                    <span
+                                                        class="text-secondary text-xs font-weight-bold">{{ $booking->booking_date->format("Y-m-d") }}</span>
+                                                </td>
+                                                <td class="align-middle text-center">
+                                                    <span
+                                                        class="text-secondary text-xs font-weight-bold">{{ $booking->booking_date_end->format("Y-m-d") }}</span>
+                                                </td>
+                                                <td class="align-middle text-center">
+                                                    <span
+                                                        class="text-secondary text-xs font-weight-bold">{{ $booking->created_at->format("Y-m-d") }}</span>
+                                                </td>
+                                                <?php $total += (float) $booking->package->package_rate + $booking->addons->sum("price"); ?>
+
+
+                                            </tr>
+                                        @endforeach
+                                        {{-- @foreach ($packages as $package)
                                             <tr>
 
                                                 <td>
@@ -213,7 +274,7 @@
 
 
                                             </tr>
-                                        @endforeach
+                                        @endforeach --}}
 
                                     </tbody>
 

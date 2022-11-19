@@ -52,7 +52,7 @@
 
                 <a href="" class="text-decoration-none d-flex align-items-center">
                     <div class="h2 mr-2 bg-none d-flex justify-content-center align-items-center p-1" style="border-radius: 50%">
-                        <img class="bg-dark m-1" src="{{ URL::to("logo.png") }}" width="50" height="50" alt="logo">
+                        <img class="bg-dark m-1" src="{{ URL::to("logo.png") }}" width="110" height="100" alt="logo">
                     </div>
                     <span class="h2 text-uppercase text-primary bg-dark px-2">Jet Bus</span>
                     <span class="h2 text-uppercase text-light bg-primary px-2 ml-n1">Travel and Tours</span>

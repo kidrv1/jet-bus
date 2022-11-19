@@ -96,10 +96,10 @@
                                     <thead>
                                         <tr>
                                             <th
-                                                class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                                class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                                 Image</th>
                                             <th
-                                                class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                                class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                                 Actions</th>
                                             <th class="text-secondary opacity-7"></th>
                                         </tr>
@@ -107,7 +107,7 @@
                                     <tbody>
                                         @foreach ($testimonials as $testimonial)
                                             <tr>
-                                                <td class="align-middle text-center text-sm">
+                                                <td class="text-center text-sm">
                                                     <a
                                                         href="{{ URL::to('/') }}/testimonials/{{ $testimonial->image }}"
                                                         target="_blank">

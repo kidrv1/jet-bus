@@ -1,16 +1,79 @@
 @extends('layout.layout')
 
 @section('custom_styles')
+{{-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"> --}}
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" integrity="sha512-mSYUmp1HYZDFaVKK//63EcZq4iFWFjxSL+Z3T/aCt4IO9Cejm03q3NKKYN6pFQzY0SBOr8h+eCIAZHPXcpZaNw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<style>
+.datepicker td,th{
+    text-align: center;
+    padding: 8px 12px;
+    font-size: 14px;
+}
+
+td.day{
+    position:relative;
+}
+
+td.day.disabled:hover:before {
+    content: 'Minimum 7 Days Advance';
+    color: var(--gray);
+    background-color: white;
+    top: -22px;
+    position: absolute;
+    width: 136px;
+    left: -34px;
+    z-index: 1000;
+    text-align: center;
+    padding: 2px;
+    border: 1px solid black;
+}
+
+td.day.disabled {
+    background: rgb(122, 118, 118) !important;
+}
+
+td.day.disabled-date:hover:before {
+    content: 'Not Available';
+    color: var(--gray);
+    background-color: white;
+    top: -22px;
+    position: absolute;
+    width: 136px;
+    left: -34px;
+    z-index: 1000;
+    text-align: center;
+    padding: 2px;
+}
+</style>
 @endsection
 
 @section('custom_scripts')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js" integrity="sha512-T/tUfKSV1bihCnd+MxKD0Hm1uBBroVYBOYSk1knyvQ9VyZJpc/ALb4P0r6ubwVPSGB2GvjeoMAJJImBG12TiaQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
+        const reservedDates = @json($reserved_dates);
         $(document).ready(function() {
             $('#addons-dropdown').select2();
+
+            $('#booking-date-input').datepicker({
+                format: 'mm/dd/yyyy',
+                startDate: "+7d",
+                uiLibrary: 'bootstrap4',
+                datesDisabled: reservedDates,
+                todayHighlight: true,
+            });
+
+            $('#booking-date-end-input').datepicker({
+                format: 'mm/dd/yyyy',
+                startDate: "+7d",
+                uiLibrary: 'bootstrap4',
+                todayHighlight: true,
+            });
         });
+
+
         const addToCart = async () => {
             const btn = document.querySelector("#add-to-cart-btn");
             const dateInput = document.querySelector("#booking-date-input");
@@ -108,10 +171,10 @@
                         <strong>Booking Start:</strong>
                         <input
                             id="booking-date-input"
-                            type="date"
-                            class="form-control form-control-sm bg-secondary border-0 text-center"
+                            class="datepicker form-control form-control-sm text-center"
                             @if ($inCart != null)
                                 readonly
+                                disabled
                                 value="{{ $inCart->booking_date->isoFormat('YYYY-MM-DD') }}"
                             @else
                                 min="{{ now()->addDays(7)->isoFormat('YYYY-MM-DD') }}"
@@ -122,10 +185,10 @@
                         <strong>Booking End:</strong>
                         <input
                             id="booking-date-end-input"
-                            type="date"
-                            class="form-control form-control-sm bg-secondary border-0 text-center"
+                            class="datepicker form-control form-control-sm text-center"
                             @if ($inCart != null)
                                 readonly
+                                disabled
                                 value="{{ $inCart->booking_date_end->isoFormat('YYYY-MM-DD') }}"
                             @else
                                 min="{{ now()->addDays(7)->isoFormat('YYYY-MM-DD') }}"
@@ -136,9 +199,11 @@
                         <label for="addons-dropdown">
                             <strong>Addons</strong>
                         </label>
-                        <select class="form-control" id="addons-dropdown" name="addons[]" multiple="multiple">
+                        <select class="form-control" id="addons-dropdown" name="addons[]" multiple="multiple" @if ($inCart != null) disabled @endif>
                             @foreach ($package->addons as $addon)
-                                <option value="{{ $addon->id }}">&#8369;{{ $addon->price }} - {{ $addon->name }}</option>
+                                <option
+                                    value="{{ $addon->id }}">&#8369;{{ $addon->price }} - {{ $addon->name }}
+                                </option>
                             @endforeach
                         </select>
                     </div>

@@ -30,11 +30,15 @@ td.day.disabled:hover:before {
 }
 
 td.day.disabled {
-    background: rgb(122, 118, 118) !important;
+    background: rgb(126, 121, 121) !important;
+}
+
+td.day.disabled-date {
+    background: rgb(168, 104, 104) !important;
 }
 
 td.day.disabled-date:hover:before {
-    content: 'Not Available';
+    content: 'Reserved';
     color: var(--gray);
     background-color: white;
     top: -22px;

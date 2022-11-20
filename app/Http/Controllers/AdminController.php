@@ -489,7 +489,29 @@ class AdminController extends Controller
             abort(404);
         }
 
-        $check->update(['status_id' => 2]);
+        $sameDatePackageBookingStart = Booking::with(['package'])
+            ->where("status_id", Status::APPROVED)
+            ->where("package_id", $check->package->id)
+            ->where("id", "!=", $check->id)
+            ->whereBetween("booking_date", [$check->booking_date, $check->booking_date_end])
+            ->first();
+
+        if ($sameDatePackageBookingStart != null) {
+            return back()->with('error', $sameDatePackageBookingStart->package->package_name . " Package Booking #$sameDatePackageBookingStart->id is already reserved on these dates");
+        }
+
+        $sameDatePackageBookingEnd = Booking::with(['package'])
+            ->where("status_id", Status::APPROVED)
+            ->where("package_id", $check->package->id)
+            ->where("id", "!=", $check->id)
+            ->whereBetween("booking_date_end", [$check->booking_date, $check->booking_date_end])
+            ->first();
+
+        if ($sameDatePackageBookingEnd != null) {
+            return back()->with('error', $sameDatePackageBookingEnd->package->package_name . " Package Booking #$sameDatePackageBookingEnd->id is already reserved on these dates");
+        }
+
+        $check->update(['status_id' => Status::APPROVED]);
 
         (new NotifService())->sendNotification(
             $check->user_id,

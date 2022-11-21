@@ -6,7 +6,7 @@
 
 
 @if(Session::has('error'))
-	<div class="alert alert-danger">
+	<div class="alert alert-danger text-white">
 		{{Session::get('error')}}
 	</div>
 @endif

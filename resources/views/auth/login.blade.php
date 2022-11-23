@@ -19,16 +19,34 @@
     <link href="{{URL::to('/assets/css/nucleo-svg.css')}}" rel="stylesheet" />
     <!-- CSS Files -->
     <link id="pagestyle" href="{{URL::to('/assets/css/argon-dashboard.css?v=2.0.4')}}" rel="stylesheet" />
+
+    <style>
+        .main-custom-bg {
+            background-image: url({{ URL::to('img/login-bg.png') }});
+            background-size: cover;
+            position: relative;
+            isolation: isolate;
+        }
+
+        .main-custom-bg::after {
+            content: "";
+            z-index: -1;
+            inset: 0;
+            position: absolute;
+            background: black;
+            opacity: 0.7;
+        }
+    </style>
 </head>
 
 <body class="">
-    <main class="main-content">
+    <main class="main-content main-custom-bg">
         <section>
             <div class="page-header min-vh-100">
                 <div class="container">
                     <div class="row">
                         <div class="col-md-6 offset-md-3">
-                            <div class="card card-plain">
+                            <div class="card">
                                 <div class="card-header pb-0 text-start">
                                     <a href="{{ route("home") }}">
                                         <center>

@@ -178,12 +178,15 @@
                                                     <button class="btn btn-info btn-xs edit" data-bs-toggle="modal"
                                                         data-bs-target="#editModal"
                                                         value="{{ $user->id }}">Edit</button>
+                                                    @if ($user->status_id == 1)
+                                                    <a href="{{ route('admin_user_approve', $user->id) }}"
+                                                        class="btn btn-warning btn-xs">Approve</a>
+                                                    @elseif($user->status_id == 2)
                                                     <button class="btn btn-danger btn-xs archive"
                                                         value="{{ $user->id }}" data-bs-toggle="modal"
                                                         data-bs-target="#deleteModal"
-                                                        value="{{ $user->id }}">Delete</button>
-                                                    <a href="{{ route('admin_user_approve', $user->id) }}"
-                                                        class="btn btn-warning btn-xs">Approve</a>
+                                                        value="{{ $user->id }}">Archive</button>
+                                                    @endif
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -280,7 +283,7 @@
 
                 <!-- Modal Header -->
                 <div class="modal-header">
-                    <h4 class="modal-title">Are you sure you want to delete?</h4>
+                    <h4 class="modal-title">Are you sure you want to deactivate this user?</h4>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 
@@ -293,7 +296,7 @@
 
                     <!-- Modal footer -->
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-success">Submit</button>
+                        <button type="submit" class="btn btn-success">Confirm</button>
                         <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
                     </div>
                 </form>

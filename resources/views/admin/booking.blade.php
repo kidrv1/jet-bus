@@ -81,7 +81,18 @@
                     <div class="card mb-4">
                         <div class="card-header pb-0">
                             <h6>Booking Lists</h6>
-
+                            <form method="GET">
+                                <input type="date" name="from_date">
+                                <input type="date" name="to_date">
+                                <select name="status" required>
+                                    <option value="0" selected>All</option>
+                                    <option value="1">Pending</option>
+                                    <option value="2">Approved</option>
+                                    <option value="3">Completed</option>
+                                    <option value="4">Cancelled</option>
+                                </select>
+                                <button type="submit">Submit</button>
+                            </form>
                             @include('shared.notification')
                         </div>
                         <div class="card-body px-0 pt-0 pb-2">
@@ -253,107 +264,6 @@
 
                                         </tr>
                                     @endforeach
-                                        {{-- @foreach ($packages as $package)
-                                            <tr>
-                                                <td class="align-middle text-center">
-                                                    <details open>
-                                                        <summary
-                                                        class="text-secondary text-xs font-weight-bold">
-                                                        #{{ $package->booking_id }}
-                                                    </summary>
-                                                    @isset($package->parent_id)
-                                                        <sub>Addon For #{{ $package->parent_id }}</sub>
-                                                    @endisset
-
-                                                    </details>
-                                                </td>
-                                                <td class="align-middle text-center">
-
-                                                    <span class="text-secondary text-xs font-weight-bold">
-                                                        {{ $package->first_name }}
-                                                        {{ $package->last_name }}
-                                                    </span>
-
-                                                </td>
-                                                <td class="align-middle text-center">
-                                                    <span
-                                                        class="text-secondary text-xs font-weight-bold">{{ $package->plate }}</span>
-                                                </td>
-
-                                                <td class="align-middle text-center">
-                                                    <span
-                                                        class="text-secondary text-xs font-weight-bold">{{ $package->package_name }}</span>
-                                                </td>
-
-                                                <td class="align-middle text-center">
-                                                    <span class="text-secondary text-xs font-weight-bold">
-                                                        <?php
-                                                        $inclusions = json_decode($package->inclusion);
-                                                        ?>
-                                                        @foreach ($inclusions as $inc)
-                                                            {{ $inc }}<br>
-                                                        @endforeach
-                                                    </span>
-                                                </td>
-                                                <td class="align-middle text-center">
-                                                    <span
-                                                        class="text-secondary text-xs font-weight-bold">{{ $package->booking_date }}</span>
-                                                </td>
-                                                <td class="align-middle text-center">
-                                                    <span
-                                                        class="text-secondary text-xs font-weight-bold">{{ $package->created_at }}</span>
-                                                </td>
-                                                <td class="align-middle text-center">
-                                                    <span
-                                                        class="text-secondary text-xs font-weight-bold">{{ number_format($package->package_rate) }}</span>
-                                                </td>
-                                                <td class="align-middle text-center">
-                                                    <span
-                                                        class="text-secondary text-xs font-weight-bold">{{ $package->status_name }}</span>
-                                                </td>
-                                                <td class="text-center">
-                                                    <button class="btn btn-warning btn-xs receipt"
-                                                        data-bs-toggle="modal" data-bs-target="#viewReceipt"
-                                                        value="{{ $package->booking_id }}">
-                                                        View Receipt
-                                                    </button>
-                                                    @if (!in_array($package->status_id, [3, 4]))
-                                                        @if(!$package->hasCancelRequest)
-                                                        <a
-                                                            href="{{ route('admin_booking_cancel', $package->booking_id) }}"
-                                                            class="btn btn-danger btn-xs">
-                                                            CANCEL
-                                                        </a>
-                                                        @else
-                                                        <button
-                                                            onclick="loadCancellationRequest('{{ $package->booking_id }}')"
-                                                            type="button"
-                                                            class="btn btn-danger btn-xs">CANCEL REQUEST
-                                                        </button>
-                                                        @endif
-                                                    @endif
-                                                    @if ($package->status_id == 1)
-                                                        <a href="{{ route('admin_booking_approve', $package->booking_id) }}"
-                                                            class="btn btn-primary btn-xs">
-                                                            APPROVE
-                                                        </a>
-                                                    @endif
-                                                    @if ($package->status_id == 2)
-                                                        <a href="{{ route('admin_booking_complete', $package->booking_id) }}"
-                                                            class="btn btn-success btn-xs">
-                                                            COMPLETE
-                                                        </a>
-                                                    @endif
-                                                    @if ($package->status_id == 4)
-                                                        <a href="{{ route('feedback.create') }}{{ '?q=' . $package->booking_id }}"
-                                                            class="btn btn-success btn-xs">View Feedback
-                                                        </a>
-                                                    @endif
-                                                </td>
-
-                                            </tr>
-                                        @endforeach --}}
-
 
                                     </tbody>
                                 </table>

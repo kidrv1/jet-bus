@@ -1,21 +1,24 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\CalendarController;
-use App\Http\Controllers\CancelRequestController;
-use App\Http\Controllers\CartController;
-use App\Http\Controllers\ContactMessageController;
-use App\Http\Controllers\FeedbackController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\NotificationController;
-use App\Http\Controllers\PackageAddonController;
-use App\Http\Controllers\PackageController;
-use App\Http\Controllers\SatisfiedCustomerController;
+use App\Mail\OTP;
+use Carbon\CarbonPeriod;
 use App\Service\NotifService;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Rap2hpoutre\FastExcel\FastExcel;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\PackageController;
+use App\Http\Controllers\CalendarController;
+use App\Http\Controllers\FeedbackController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\PackageAddonController;
+use App\Http\Controllers\CancelRequestController;
+use App\Http\Controllers\ContactMessageController;
+use App\Http\Controllers\SatisfiedCustomerController;
 
 
 Route::get('/', [HomeController::class, "index"])->name("home");
@@ -63,6 +66,8 @@ Route::group(['prefix' => 'dashboard', 'middleware' => ['auth']], function () {
 
     //packages
     Route::post('/bus-packge', [AdminController::class, 'busPackageCheck'])->name('admin_bus_package_check');
+    Route::post('/find-package', [PackageController::class, 'find'])->name('admin_find_package');
+    Route::post('/update-package', [PackageController::class, 'update'])->name('admin_update_package');
     Route::post('/update-package-status', [PackageController::class, 'updateStatus'])->name('admin_update_package_status');
 
     //Booking
@@ -125,22 +130,30 @@ Route::group(['prefix' => 'dashboard', 'middleware' => ['auth']], function () {
 // Test Routes
 
 Route::get("/testexcel", function () {
-    $arrayVal = [
-        0 => [
-            "id" => 1,
-            "name" => "popo"
-        ],
-        1 => [
-            "id" => 2,
-            "name" => "pepa"
-        ],
-        2 => [
-            "id" => 3,
-            "name" => "peems"
-        ]
-    ];
+    // $arrayVal = [
+    //     0 => [
+    //         "id" => 1,
+    //         "name" => "popo"
+    //     ],
+    //     1 => [
+    //         "id" => 2,
+    //         "name" => "pepa"
+    //     ],
+    //     2 => [
+    //         "id" => 3,
+    //         "name" => "peems"
+    //     ]
+    // ];
 
-    return (new FastExcel($arrayVal))->download('file.xlsx');
+    // return (new FastExcel($arrayVal))->download('file.xlsx');
+
+    $monthDays = [];
+    $monthPeriod = CarbonPeriod::create(now()->startOfMonth(), now()->endOfMonth());
+    foreach ($monthPeriod as $date) {
+        $monthDays[] = $date->format('d');
+    }
+
+    return response()->json(["days_in_month" => $monthDays], 200);
 });
 
 Route::get("/notif-me", function () {
@@ -162,4 +175,12 @@ Route::get("/month", function () {
     $month = now()->startOfYear()->format('m');
 
     return $month;
+});
+
+
+Route::get("/test-email", function () {
+    $email = "lowellshi@gmail.com";
+    Mail::to($email)->send(new OTP($email));
+
+    return response()->json(["message" => "test email sent"], 200);
 });

@@ -63,4 +63,36 @@ class PackageController extends Controller
 
         return back()->with("success", "Package status updated");
     }
+
+    public function find(Request $request)
+    {
+        $package = Package::find($request->package_id);
+        return response()->json($package, 200);
+    }
+
+    public function update(Request $request)
+    {
+        $validatedData = $request->validate([
+            'package_id' => ["required"],
+            'start_time'      => ['required'],
+            'end_time'      => ['required'],
+            'package_name'      => ['required'],
+            'package_rate'     => ['required'],
+            'inclusion'        => ['required'],
+        ]);
+
+        $validatedData['user_id'] = auth()->id();
+        $validatedData['inclusion'] = json_encode($validatedData['inclusion']);
+
+        Package::find($validatedData['package_id'])->update([
+            "user_id" => $validatedData['user_id'],
+            "start_time" => $validatedData['start_time'],
+            "end_time" => $validatedData['end_time'],
+            "package_name" => $validatedData['package_name'],
+            "package_rate" => $validatedData['package_rate'],
+            "inclusion" => $validatedData['inclusion'],
+        ]);
+
+        return back()->with('success', 'Bus Package Updated Successfully');
+    }
 }

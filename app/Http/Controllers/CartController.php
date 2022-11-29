@@ -6,9 +6,10 @@ use Exception;
 use App\Models\Cart;
 use App\Models\Status;
 use App\Models\Booking;
-use App\Models\BookingAddon;
-use App\Models\CartAddon;
 use App\Models\Package;
+use Carbon\CarbonPeriod;
+use App\Models\CartAddon;
+use App\Models\BookingAddon;
 use Illuminate\Http\Request;
 use App\Service\NotifService;
 use PhpParser\Node\Stmt\TryCatch;
@@ -140,6 +141,20 @@ class CartController extends Controller
 
             if (count($cartItems) == 0) {
                 throw new Exception("No items in cart");
+            }
+
+            // Validate no booking dates overlap
+            $reservedDates = [];
+            foreach ($cartItems as $booking) {
+                $period = CarbonPeriod::create($booking->booking_date, $booking->booking_date_end);
+                foreach ($period as $date) {
+                    array_push($reservedDates, $date->format('m/d/Y'));
+                }
+            }
+
+            $temp_array = array_unique($reservedDates);
+            if (sizeof($temp_array) != sizeof($reservedDates)) {
+                throw new Exception("One or more of your bookings have overlapping dates");
             }
 
             // Book Initial

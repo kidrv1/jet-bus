@@ -17,7 +17,7 @@ class CalendarController extends Controller
         $events = [];
         $bookings = Booking::with(["package.bus", "user"])
             ->where("status_id", Status::APPROVED)
-            ->whereBetween('booking_date', [now()->startOfMonth(), now()->endOfMonth()])
+            // ->whereBetween('booking_date', [now()->startOfMonth(), now()->endOfMonth()])
             ->get();
 
         foreach ($bookings as $index => $booking) {

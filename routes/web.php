@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\StatController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\PackageController;
 use App\Http\Controllers\CalendarController;
@@ -36,7 +37,12 @@ Route::get('/our-services', [HomeController::class, 'services'])->name('services
 Route::get("/packages/{id?}", [PackageController::class, "show"])->name("packages.show");
 Route::get("/packages_list", [AdminController::class, "public_packages"])->name("public.packages");
 
-Route::group(['prefix' => 'dashboard', 'middleware' => ['auth']], function () {
+// Email Verification
+Route::get('/email/verify', [AuthController::class, 'verify'])->middleware(['auth'])->name('verification.notice');
+Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verify_confirm'])->middleware(['auth', 'signed'])->name('verification.verify');
+Route::post('/email/verification-notification', [AuthController::class, 'verify_resend'])->middleware(['auth', 'throttle:6,1'])->name('verification.send');
+
+Route::group(['prefix' => 'dashboard', 'middleware' => ['auth', 'verified']], function () {
 
     Route::get("cart-count", [CartController::class, 'count'])->name("cart.count");
     Route::get("my-cart", [CartController::class, 'index'])->name("my_cart");
@@ -54,7 +60,6 @@ Route::group(['prefix' => 'dashboard', 'middleware' => ['auth']], function () {
     Route::get('/user-approve/{id}', [AdminController::class, 'userApprove'])->name('admin_user_approve')->middleware(['role:admin']);
 
     //Bus
-
     Route::get('/bus', [AdminController::class, 'bus'])->name('admin_bus');
     Route::get('/bus-package/{id}', [AdminController::class, 'busPackage'])->name('admin_bus_package');
     Route::post('/bus', [AdminController::class, 'bus_check'])->name('admin_bus_check');
@@ -106,6 +111,8 @@ Route::group(['prefix' => 'dashboard', 'middleware' => ['auth']], function () {
     Route::put('/package-addons', [PackageAddonController::class, 'update'])->name('admin_package_addons.update');
     Route::delete('/package-addons', [PackageAddonController::class, 'destroy'])->name('admin_package_addons.delete');
 
+    // Stats
+    Route::get('/stats', [StatController::class, 'index'])->name('admin_stats_index');
 
     //Customer
     // Booking Cancellation
@@ -129,58 +136,58 @@ Route::group(['prefix' => 'dashboard', 'middleware' => ['auth']], function () {
 
 // Test Routes
 
-Route::get("/testexcel", function () {
-    // $arrayVal = [
-    //     0 => [
-    //         "id" => 1,
-    //         "name" => "popo"
-    //     ],
-    //     1 => [
-    //         "id" => 2,
-    //         "name" => "pepa"
-    //     ],
-    //     2 => [
-    //         "id" => 3,
-    //         "name" => "peems"
-    //     ]
-    // ];
+// Route::get("/testexcel", function () {
+//     // $arrayVal = [
+//     //     0 => [
+//     //         "id" => 1,
+//     //         "name" => "popo"
+//     //     ],
+//     //     1 => [
+//     //         "id" => 2,
+//     //         "name" => "pepa"
+//     //     ],
+//     //     2 => [
+//     //         "id" => 3,
+//     //         "name" => "peems"
+//     //     ]
+//     // ];
 
-    // return (new FastExcel($arrayVal))->download('file.xlsx');
+//     // return (new FastExcel($arrayVal))->download('file.xlsx');
 
-    $monthDays = [];
-    $monthPeriod = CarbonPeriod::create(now()->startOfMonth(), now()->endOfMonth());
-    foreach ($monthPeriod as $date) {
-        $monthDays[] = $date->format('d');
-    }
+//     $monthDays = [];
+//     $monthPeriod = CarbonPeriod::create(now()->startOfMonth(), now()->endOfMonth());
+//     foreach ($monthPeriod as $date) {
+//         $monthDays[] = $date->format('d');
+//     }
 
-    return response()->json(["days_in_month" => $monthDays], 200);
-});
+//     return response()->json(["days_in_month" => $monthDays], 200);
+// });
 
-Route::get("/notif-me", function () {
+// Route::get("/notif-me", function () {
 
-    Log::debug("Accessed Notif Route");
-    if (auth()->check()) {
-        Log::debug("Created Notif");
-        (new NotifService())->sendNotification(
-            auth()->id(),
-            "Test Notif",
-            "This is a test notification"
-        );
-    }
+//     Log::debug("Accessed Notif Route");
+//     if (auth()->check()) {
+//         Log::debug("Created Notif");
+//         (new NotifService())->sendNotification(
+//             auth()->id(),
+//             "Test Notif",
+//             "This is a test notification"
+//         );
+//     }
 
-    return redirect()->home();
-});
+//     return redirect()->home();
+// });
 
-Route::get("/month", function () {
-    $month = now()->startOfYear()->format('m');
+// Route::get("/month", function () {
+//     $month = now()->startOfYear()->format('m');
 
-    return $month;
-});
+//     return $month;
+// });
 
 
-Route::get("/test-email", function () {
-    $email = "lowellshi@gmail.com";
-    Mail::to($email)->send(new OTP($email));
+// Route::get("/test-email", function () {
+//     $email = "youremailhere@example.com";
+//     Mail::to($email)->send(new OTP($email));
 
-    return response()->json(["message" => "test email sent"], 200);
-});
+//     return response()->json(["message" => "test email sent"], 200);
+// });

@@ -36,9 +36,27 @@ class PackageController extends Controller
             }
         }
 
+        $topBookings = Booking::with(["package", "addons"])
+            ->where("package_id", $package->id)
+            ->get();
+
+        $bookingAddons = [];
+        foreach ($topBookings as $booking) {
+            foreach ($booking->addons as $addon) {
+                array_push($bookingAddons, $addon->name);
+            }
+        }
+
+        if (!empty($bookingAddons)) {
+            $nameCount = array_count_values($bookingAddons);
+            $topAddon = array_keys($nameCount, max($nameCount));
+            $topAddon = $topAddon[0];
+        }
+
         $inCart = Cart::where('user_id', auth()->id())
             ->where('package_id', $package->id)
             ->first();
+
 
         return view("package.show")->with([
             "randomPackages" => $randomPackages ?? [],
@@ -46,6 +64,7 @@ class PackageController extends Controller
             "inclusions" => json_decode($package->inclusion),
             "inCart" => $inCart ?? null,
             "reserved_dates" => $reservedDates,
+            "top_addon" => $topAddon ?? null,
         ]);
     }
 

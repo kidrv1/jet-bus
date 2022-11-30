@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\User;
-use Illuminate\Support\Facades\Input;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
 class AuthController extends Controller
 {
@@ -103,6 +104,37 @@ class AuthController extends Controller
             return 'Invalid User Type';
         }
 
+        event(new Registered($user));
+
         return back()->with('success', 'Successfully Registered');
+    }
+
+    public function verify(Request $request)
+    {
+        if ($request->user()->email_verified_at != null) {
+            return redirect()->route('home');
+        }
+
+        return view('auth.email_verify');
+    }
+
+    public function verify_confirm(EmailVerificationRequest $request)
+    {
+        if ($request->user()->email_verified_at != null) {
+            return redirect()->route('home');
+        }
+
+        $request->fulfill();
+        return redirect()->intended('home');
+    }
+
+    public function verify_resend(Request $request)
+    {
+        if ($request->user()->email_verified_at != null) {
+            return redirect()->route('home');
+        }
+
+        $request->user()->sendEmailVerificationNotification();
+        return back()->with('success', 'Verification link sent!, Please check your email');
     }
 }

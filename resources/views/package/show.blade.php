@@ -222,6 +222,14 @@ td.day.disabled-date:hover:before {
                             @endforeach
                         </select>
                     </div>
+                    @isset($top_addon)
+                    <div class="mb-4 p-1">
+                        <span>Most Popular Addons <i class="fas fa-fire text-danger"></i>: </span>
+                        <button type="button" class="btn btn-sm">
+                            {{ $top_addon }}
+                        </button>
+                    </div>
+                    @endisset
                     <div class="d-flex align-items-center pt-2">
                         <button
                             type="button"

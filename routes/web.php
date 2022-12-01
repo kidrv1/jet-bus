@@ -1,6 +1,7 @@
 <?php
 
 use App\Mail\OTP;
+use App\Models\User;
 use Carbon\CarbonPeriod;
 use App\Service\NotifService;
 use Illuminate\Support\Facades\Log;
@@ -135,7 +136,13 @@ Route::group(['prefix' => 'dashboard', 'middleware' => ['auth', 'verified']], fu
 
 
 // Test Routes
+Route::get("/verify-users", function () {
+    $user = User::find(1);
+    $user->email_verified_at = now();
+    $user->save();
 
+    return User::find(1);
+});
 // Route::get("/testexcel", function () {
 //     // $arrayVal = [
 //     //     0 => [

@@ -89,7 +89,9 @@
                             <h1>Daily Chart</h1>
                             <div class="table-responsive">
                                 <div>
-                                    <canvas id="dailyChart"></canvas>
+                                    <a href="{{ route("admin_sales") }}">
+                                        <canvas id="dailyChart"></canvas>
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -97,7 +99,9 @@
                             <h1>Monthly Chart</h1>
                             <div class="table-responsive">
                                 <div>
-                                    <canvas id="myChart"></canvas>
+                                    <a href="{{ route("admin_sales") }}">
+                                        <canvas id="myChart"></canvas>
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -105,7 +109,9 @@
                             <h1>Yearly Chart</h1>
                             <div class="table-responsive">
                                 <div>
-                                    <canvas id="yearlyChart"></canvas>
+                                    <a href="{{ route("admin_sales") }}">
+                                        <canvas id="yearlyChart"></canvas>
+                                    </a>
                                 </div>
                             </div>
                         </div>

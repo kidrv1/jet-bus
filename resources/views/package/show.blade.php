@@ -296,7 +296,7 @@ td.day.disabled-date:hover:before {
                 <div class="owl-carousel related-carousel">
                     @forelse ($randomPackages as $pk)
                     <div class="product-item bg-light">
-                        <div class="product-img position-relative overflow-hidden" style="height: 250px;">
+                        <div class="product-img position-relative overflow-hidden" style="height: 200px;">
                             <img class="img-fluid w-100" src="/public/{{ $pk->bus->image}}" alt="Package image">
                             <div class="product-action">
                                 <a class="btn btn-outline-dark btn-square" href="{{ route('packages.show', ["id" => $pk->id]) }}">

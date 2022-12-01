@@ -148,7 +148,7 @@
             @forelse ($featuredPackages as $package)
                 <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
                     <div class="product-item bg-light mb-4">
-                        <div class="product-img position-relative overflow-hidden" style="height: 250px;">
+                        <div class="product-img position-relative overflow-hidden" style="height: 200px;">
                             <img class="img-fluid w-100" src="public/{{ $package->bus->image }}" alt="package picture">
                             <div class="product-action">
                                 <a class="btn btn-outline-dark" href="{{ route("packages.show", ['id' => $package->id]) }}">
@@ -249,7 +249,7 @@
         @forelse ($prevPackages as $package)
             <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
                 <div class="product-item bg-light mb-4">
-                    <div class="product-img position-relative overflow-hidden" style="height: 250px;">
+                    <div class="product-img position-relative overflow-hidden" style="height: 200px;">
                         <img class="img-fluid w-100" src="/public/{{ $package->package->bus->image }}" alt="package picture">
                         <div class="product-action">
                             <a class="btn btn-outline-dark" href="{{ route("customer_booking_list") }}">

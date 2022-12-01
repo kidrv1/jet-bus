@@ -16,7 +16,7 @@ td.day{
 }
 
 td.day.disabled:hover:before {
-    content: 'Minimum 7 Days Advance';
+    content: 'Not Available';
     color: var(--gray);
     background-color: white;
     top: -22px;
@@ -28,7 +28,6 @@ td.day.disabled:hover:before {
     padding: 2px;
     border: 1px solid black;
 }
-
 td.day.disabled {
     background: rgb(126, 121, 121) !important;
 }
@@ -56,27 +55,39 @@ td.day.disabled-date:hover:before {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js" integrity="sha512-T/tUfKSV1bihCnd+MxKD0Hm1uBBroVYBOYSk1knyvQ9VyZJpc/ALb4P0r6ubwVPSGB2GvjeoMAJJImBG12TiaQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
     <script>
         const reservedDates = @json($reserved_dates);
         $(document).ready(function() {
             $('#addons-dropdown').select2();
 
+            // Initialize Start Picker
             $('#booking-date-input').datepicker({
                 format: 'mm/dd/yyyy',
                 startDate: "+7d",
                 uiLibrary: 'bootstrap4',
                 datesDisabled: reservedDates,
                 todayHighlight: true,
+            }).on("changeDate", function(e) {
+                // Update Minimum End Date Based On Start Ddate
+                $('#booking-date-end-input').datepicker('clearDates');
+
+                const currentDate = moment();
+                const selectedDate = moment($('#booking-date-input').datepicker('getDate'));
+                const dateDiff = selectedDate.diff(currentDate, 'days');
+                const dateOffset = `+${dateDiff + 2}d`;
+
+                $('#booking-date-end-input').datepicker('setStartDate', dateOffset);
             });
 
+            // Initialize End Date Picker
             $('#booking-date-end-input').datepicker({
                 format: 'mm/dd/yyyy',
-                startDate: "+7d",
                 uiLibrary: 'bootstrap4',
+                datesDisabled: reservedDates,
                 todayHighlight: true,
             });
         });
-
 
         const addToCart = async () => {
             const btn = document.querySelector("#add-to-cart-btn");
@@ -211,6 +222,14 @@ td.day.disabled-date:hover:before {
                             @endforeach
                         </select>
                     </div>
+                    @isset($top_addon)
+                    <div class="mb-4 p-1">
+                        <span>Most Popular Addons <i class="fas fa-fire text-danger"></i>: </span>
+                        <button type="button" class="btn btn-sm">
+                            {{ $top_addon }}
+                        </button>
+                    </div>
+                    @endisset
                     <div class="d-flex align-items-center pt-2">
                         <button
                             type="button"
@@ -277,7 +296,7 @@ td.day.disabled-date:hover:before {
                 <div class="owl-carousel related-carousel">
                     @forelse ($randomPackages as $pk)
                     <div class="product-item bg-light">
-                        <div class="product-img position-relative overflow-hidden">
+                        <div class="product-img position-relative overflow-hidden" style="height: 250px;">
                             <img class="img-fluid w-100" src="/public/{{ $pk->bus->image}}" alt="Package image">
                             <div class="product-action">
                                 <a class="btn btn-outline-dark btn-square" href="{{ route('packages.show', ["id" => $pk->id]) }}">

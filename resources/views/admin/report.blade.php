@@ -86,21 +86,36 @@
                             @include('shared.notification')
                         </div>
                         <div class="card-body">
-                            <div class="table-responsive p-0">
+                            <h1>Daily Chart</h1>
+                            <div class="table-responsive">
                                 <div>
-                                    <canvas id="myChart"></canvas>
+                                    <a href="{{ route("admin_sales") }}">
+                                        <canvas id="dailyChart"></canvas>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h1>Monthly Chart</h1>
+                            <div class="table-responsive">
+                                <div>
+                                    <a href="{{ route("admin_sales") }}">
+                                        <canvas id="myChart"></canvas>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h1>Yearly Chart</h1>
+                            <div class="table-responsive">
+                                <div>
+                                    <a href="{{ route("admin_sales") }}">
+                                        <canvas id="yearlyChart"></canvas>
+                                    </a>
                                 </div>
                             </div>
                         </div>
                         <hr>
-                        <div class="card-body">
-                            <div class="table-responsive p-0">
-                                <div>
-                                    <canvas id="addonChart"></canvas>
-                                </div>
-                            </div>
-                        </div>
-
                     </div>
                 </div>
             </div>
@@ -110,40 +125,6 @@
 
         </div>
     </main>
-
-
-    <div class="modal" id="statusModal">
-        <div class="modal-dialog">
-            <div class="modal-content">
-
-                <!-- Modal Header -->
-                <div class="modal-header">
-                    <h4 class="modal-title">Change Status?</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-
-                <form role="form" action="#" method="POST">
-                    <!-- Modal body -->
-                    <div class="modal-body">
-
-                        @csrf
-                        <input type="hidden" name="project_id" id="statusProjectId">
-                    </div>
-
-                    <!-- Modal footer -->
-                    <div class="modal-footer">
-                        <button type="submit" class="btn bg-gradient-primary">Yes</button>
-                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                    </div>
-                </form>
-
-            </div>
-        </div>
-    </div>
-
-
-
-
 
     <!--   Core JS Files   -->
 
@@ -157,6 +138,14 @@
         var labels = {{ Js::from($labels) }};
         var users = {{ Js::from($data) }};
         const addonUsers = {{ Js::from($addonData) }};
+
+        const dayLabels = {{ Js::from($dayLabels) }};
+        const dayData = {{ Js::from($dayData) }};
+        const dayAddons = {{ Js::from($dayAddons) }};
+
+        const yearLabels = {{ Js::from($yearLabels) }};
+        const yearData = {{ Js::from($yearData) }};
+        const yearAddons = {{ Js::from($yearAddons) }};
 
         const data = {
             labels: labels,
@@ -187,7 +176,63 @@
             config
         );
 
+        const dayDataSet = {
+            labels: dayLabels,
+            datasets: [
+            {
+                label: 'Daily Sales',
+                backgroundColor: 'rgb(255, 99, 132)',
+                borderColor: 'rgb(255, 99, 132)',
+                data: dayData,
+            },
+            {
+                label: 'Daily Addons',
+                backgroundColor: 'rgb(132, 99, 255)',
+                borderColor: 'rgb(132, 99, 255)',
+                data: dayAddons,
+            }
+        ]
+        };
 
+        const dayConfig = {
+            type: 'line',
+            data: dayDataSet,
+            options: {}
+        };
+
+        const dailyChart = new Chart(
+            document.getElementById('dailyChart'),
+            dayConfig
+        );
+
+        const yearDataSet = {
+            labels: yearLabels,
+            datasets: [
+            {
+                label: 'Yearly Sales',
+                backgroundColor: 'rgb(255, 99, 132)',
+                borderColor: 'rgb(255, 99, 132)',
+                data: yearData,
+            },
+            {
+                label: 'Yearly Addons',
+                backgroundColor: 'rgb(132, 99, 255)',
+                borderColor: 'rgb(132, 99, 255)',
+                data: yearAddons,
+            }
+        ]
+        };
+
+        const yearConfig = {
+            type: 'line',
+            data: yearDataSet,
+            options: {}
+        };
+
+        const yearlyChart = new Chart(
+            document.getElementById('yearlyChart'),
+            yearConfig
+        );
     </script>
     <script>
         var win = navigator.platform.indexOf('Win') > -1;

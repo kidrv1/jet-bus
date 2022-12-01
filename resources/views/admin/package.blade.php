@@ -144,6 +144,7 @@
                                                         - {{ date('h:i A', strtotime($package->end_time)) }}</span>
                                                 </td>
                                                 <td class="align-middle text-center">
+                                                    <button onclick="editPackage('{{ $package->id }}')" class="btn btn-warning btn-xs">EDIT</button>
                                                     @if($bus->isActive)
                                                         @if($package->isActive)
                                                         <button onclick="toggleStatus('{{ $package->id }}', false)" class="btn btn-danger btn-xs">ARCHIVE</button>
@@ -170,6 +171,7 @@
 
         </div>
     </main>
+    {{-- Create Modal --}}
     <div class="modal" id="createModal">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -236,78 +238,74 @@
             </div>
         </div>
     </div>
-
-    {{-- <div class="modal" id="editModal">
+    {{-- Edit Modal --}}
+    <div class="modal" id="editModal">
         <div class="modal-dialog">
             <div class="modal-content">
 
                 <!-- Modal Header -->
                 <div class="modal-header">
-                    <h4 class="modal-title">Update Bus Informations</h4>
+                    <h4 class="modal-title">Update Package Informations</h4>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 
-                <form role="form" action="{{ route('admin_update_bus') }}" method="POST"
-                    enctype="multipart/form-data">
+                <form role="form" action="{{ route('admin_update_package') }}" method="POST">
                     <!-- Modal body -->
                     <div class="modal-body">
 
                         @csrf
-                        <input type="hidden" name="bus_id" id="bus_id">
+                        <input type="hidden" name="package_id" id="edit-package-id">
 
-
-                        <div class="mb-3">
-                            <label>Air Condition</label>
-                            <select class="form-control" required name="ac" id="ac">
-                                <option value="YES">YES</option>
-                                <option value="NO">NO</option>
-
-                            </select>
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="mb-3">
+                                    <label>Depart Time</label>
+                                    <input type="time" id="edit-package-depart" class="form-control" name="start_time" required>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="mb-3">
+                                    <label>Arrive Time</label>
+                                    <input type="time" id="edit-package-arrive" class="form-control" name="end_time" required>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="mb-3">
-                            <label>Fuel Type</label>
-                            <select class="form-control" required name="fuel" id="fuel">
-                                <option value="GAS">GAS</option>
-                                <option value="DIESEL">DIESEL</option>
-
-                            </select>
-                        </div>
-
-
-
-                        <div class="mb-3">
-                            <label>Model</label>
-                            <input type="text" class="form-control" placeholder="Name" aria-label="Name"
-                                name="model" required id="model">
+                            <label>Package Name</label>
+                            <input type="text" id="edit-package-name" name="package_name" class="form-control" required>
                         </div>
 
                         <div class="mb-3">
-                            <label>Plate No.</label>
-                            <input type="text" class="form-control" placeholder="Name" aria-label="Name"
-                                name="plate" required id="plate">
+                            <label>Package Rate</label>
+                            <input type="number" id="edit-package-rate" name="package_rate" class="form-control" required value="10000">
                         </div>
 
                         <div class="mb-3">
-                            <label>Number of Seats</label>
-                            <input type="number" class="form-control" placeholder="Name"
-                                aria-label="Total Number of Seats" name="seaters" required id="seaters"
-                                step="1" value="1">
+                            <label>Inclusions</label></br>
+                            <input id="edit-package-gas" type="checkbox" name="inclusion[]" value="Gas Fee" /> Gas Fee </br>
+                            <input id="edit-package-toll" type="checkbox" name="inclusion[]" value="Toll Gate Fee" /> Toll Gate Fee </br>
+                            <input id="edit-package-tour" type="checkbox" name="inclusion[]" value="Tour Fee (activities, itinerary)" />
+                            Tour Fee (activities, itinerary) </br>
+                            <input id="edit-package-driver" type="checkbox" name="inclusion[]" value="Driver Fee" /> Driver Fee </br>
                         </div>
+
+
 
                     </div>
 
                     <!-- Modal footer -->
                     <div class="modal-footer">
-                        <button type="submit" class="btn bg-gradient-primary">Submit</button>
+                        <button type="submit" class="btn bg-gradient-primary">Update</button>
                         <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
                     </div>
                 </form>
 
             </div>
         </div>
-    </div> --}}
+    </div>
 
+    {{-- Status Modal --}}
     <div class="modal" id="status-modal">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -377,6 +375,38 @@
             }
 
             $('#status-modal').modal('show');
+        }
+
+        const editPackage = async (id) => {
+            const res = await fetch("{{ route('admin_find_package') }}", {
+                method: "POST",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-type": "application/json",
+                    "X-CSRF-Token": '{{ Session::token() }}'
+                },
+                body: JSON.stringify({
+                    package_id: id
+                })
+            })
+            const data = await res.json();
+
+            document.querySelector("#edit-package-id").value = data.id;
+            document.querySelector("#edit-package-depart").value = data.start_time;
+            document.querySelector("#edit-package-arrive").value = data.end_time;
+            document.querySelector("#edit-package-name").value = data.package_name;
+            document.querySelector("#edit-package-rate").value = data.package_rate;
+
+            const inclusions = JSON.parse(data.inclusion);
+            for(const i of inclusions) {
+                if(i == "Gas Fee") document.querySelector("#edit-package-gas").checked = true;
+                if(i == "Toll Gate Fee") document.querySelector("#edit-package-toll").checked = true;
+                if(i == "Tour Fee (activities, itinerary)") document.querySelector("#edit-package-tour").checked = true;
+                if(i == "Driver Fee") document.querySelector("#edit-package-driver").checked = true;
+            }
+
+            $('#editModal').modal('show');
+
         }
 
         $(document).ready(function() {

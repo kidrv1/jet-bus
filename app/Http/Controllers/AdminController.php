@@ -5,12 +5,13 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use App\Models\Bus;
 use App\Models\User;
+use App\Models\Status;
 use App\Models\Booking;
-use App\Models\BookingAddon;
 use App\Models\Package;
 
 use App\Models\Payment;
-use App\Models\Status;
+use Carbon\CarbonPeriod;
+use App\Models\BookingAddon;
 use Illuminate\Http\Request;
 use App\Service\NotifService;
 use Illuminate\Support\Facades\DB;
@@ -107,10 +108,12 @@ class AdminController extends Controller
     {
         $find_user = User::find($request->user_id);
         if ($find_user) {
-            $find_user->delete();
+            // $find_user->delete();
+            $find_user->status_id = Status::PENDING;
+            $find_user->save();
         }
 
-        return back()->with('success', 'Deleted Successfully');
+        return back()->with('success', 'User Deactivated Successfully');
     }
 
     public function bus()
@@ -225,7 +228,7 @@ class AdminController extends Controller
         return back()->with('success', 'Bus Updated Successfully');
     }
 
-    public function bookingList()
+    public function bookingList(Request $request)
     {
         // $packages = DB::table('bookings')
         //     ->join('packages', 'packages.id', '=', 'bookings.package_id')
@@ -236,9 +239,35 @@ class AdminController extends Controller
         //     ->orderBy('bookings.id', 'DESC')
         //     ->get();
 
-        $bookings = Booking::with(['parent', "user", "package.bus", "status", "addons", "cancelRequest", "payment"])
-            ->latest()
-            ->get();
+        $bookings = Booking::with(['parent', "user", "package.bus", "status", "addons", "cancelRequest", "payment"]);
+
+        if ($request->has('status')) {
+            switch ($request->status) {
+                case '4':
+                    $bookings = $bookings->where("status_id", Status::CANCELED);
+                    break;
+                case '3':
+                    $bookings = $bookings->where("status_id", Status::COMPLETED);
+                    break;
+                case '2':
+                    $bookings = $bookings->where("status_id", Status::APPROVED);
+                    break;
+                case '1':
+                    $bookings = $bookings->where("status_id", Status::PENDING);
+                    break;
+                case '0':
+                default:
+                    break;
+            }
+        }
+
+        if ($request->has("from_date") && $request->from_date != null && $request->has("to_date") && $request->to_date != null) {
+            $from = Carbon::parse($request->from_date);
+            $to = Carbon::parse($request->to_date);
+            $bookings = $bookings->whereBetween('created_at', [$from->startOfDay(), $to->endOfDay()]);
+        }
+
+        $bookings = $bookings->latest()->get();
 
         return view('admin.booking', compact('bookings'));
     }
@@ -286,17 +315,20 @@ class AdminController extends Controller
 
     public function report()
     {
-        $baseBookings = Booking::with(['package'])->whereYear('created_at', Carbon::now()->year)
+        $baseBookings = Booking::with(['package'])
+            // ->whereYear('created_at', Carbon::now()->year)
             ->where('status_id', 4)
             ->whereNull('parent_id')
             ->get();
 
-        $addonBookings = Booking::with(['package'])->whereYear('created_at', Carbon::now()->year)
+        $addonBookings = Booking::with(['package'])
+            // ->whereYear('created_at', Carbon::now()->year)
             ->where('status_id', 4)
             ->whereNotNull('parent_id')
             ->get();
 
-        $addonAddons = Booking::with(['addons'])->whereYear('created_at', Carbon::now()->year)
+        $addonAddons = Booking::with(['addons'])
+            // ->whereYear('created_at', Carbon::now()->year)
             ->where('status_id', 4)
             ->get();
 
@@ -331,20 +363,75 @@ class AdminController extends Controller
             11 => 0,
         ];
 
+        // Get Days In The Current Month
+        $dayLabels = [];
+        $dayData = [];
+        $dayAddons = [];
+        $monthPeriod = CarbonPeriod::create(now()->startOfMonth(), now()->endOfMonth());
+        foreach ($monthPeriod as $idx => $date) {
+            $dayLabels[] = $date->format('d');
+            $dayData[$idx] = 0;
+            $dayAddons[$idx] = 0;
+        }
+
+        // Get Years
+        $yearLabels = [];
+        $yearData = [];
+        $yearAddons = [];
+        for ($i = 0; $i < 3; $i++) {
+            if ($i == 0) {
+                $year = now()->format("Y");
+            } else {
+                $year = now()->subYears($i)->format("Y");
+            }
+
+            $yearLabels[] = $year;
+            $yearData[] = 0;
+            $yearAddons[] = 0;
+        }
+
+        // dd($yearData);
         foreach ($baseBookings as $booking) {
             $month = ltrim($booking->created_at->format('m'), "0");
             $data[$month - 1] += (float) $booking->package->package_rate;
+
+            if (in_array($booking->created_at->format('d'), $dayLabels)) {
+                $dayData[$booking->created_at->format('d')] += (float) $booking->package->package_rate;
+            }
+
+            if (in_array($booking->created_at->format('Y'), $yearLabels)) {
+                $key = array_search($booking->created_at->format('Y'), $yearLabels);
+                $yearData[$key] += (float) $booking->package->package_rate;
+            }
         }
 
         foreach ($addonBookings as $booking) {
             $month = ltrim($booking->created_at->format('m'), "0");
             $addonData[$month - 1] += (float) $booking->package->package_rate;
+
+            if (in_array($booking->created_at->format('d'), $dayLabels)) {
+                $dayAddons[$booking->created_at->format('d')] += (float) $booking->package->package_rate;
+            }
+
+            if (in_array($booking->created_at->format('Y'), $yearLabels)) {
+                $key = array_search($booking->created_at->format('Y'), $yearLabels);
+                $yearAddons[$key] += (float) $booking->package->package_rate;
+            }
         }
 
         foreach ($addonAddons as $booking) {
             foreach ($booking->addons as $addon) {
                 $month = ltrim($booking->created_at->format('m'), "0");
                 $addonData[$month - 1] += (float) $addon->price;
+
+                if (in_array($booking->created_at->format('d'), $dayLabels)) {
+                    $dayAddons[$booking->created_at->format('d')] += (float) $addon->price;
+                }
+
+                if (in_array($booking->created_at->format('Y'), $yearLabels)) {
+                    $key = array_search($booking->created_at->format('Y'), $yearLabels);
+                    $yearAddons[$key] += (float) $addon->price;
+                }
             }
         }
 
@@ -363,7 +450,14 @@ class AdminController extends Controller
             'Dec',
         ];
 
-        return view('admin.report', compact('labels', 'data', 'addonData'));
+        $yearData = array_reverse($yearData);
+        $yearAddons = array_reverse($yearAddons);
+        $yearLabels = array_reverse($yearLabels);
+
+        // dd($yearLabels, $yearData, $yearAddons);
+        // dd($dayLabels, $dayData, $dayAddons);
+
+        return view('admin.report', compact('labels', 'data', 'addonData', 'dayData', 'dayLabels', 'dayAddons', 'yearData', 'yearLabels', 'yearAddons'));
     }
 
     public function busPackage($id)
@@ -382,7 +476,6 @@ class AdminController extends Controller
             'package_name'      => ['required'],
             'package_rate'     => ['required'],
             'inclusion'        => ['required']
-
         ]);
 
         $validatedData['user_id'] = Auth::id();

@@ -148,8 +148,8 @@
 
         $('#calendar').evoCalendar({
             calendarEvents: myEvents,
-            sidebarToggler: false,
-            sidebarDisplayDefault: false,
+            sidebarToggler: true,
+            sidebarDisplayDefault: true,
             eventListToggler: true,
             eventDisplayDefault: true,
             todayHighlight: true,

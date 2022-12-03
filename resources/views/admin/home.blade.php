@@ -82,6 +82,9 @@
                     <div class="card mb-4">
                         <div class="card-header pb-0">
                             <h6>Customer Table</h6>
+                            <div class="float-end">
+                                <h6>Total Users: {{count($users)}}</h6>
+                            </div>
                             <button class="btn btn-info btn-xs edit" data-bs-toggle="modal"
                                 data-bs-target="#createModal">Create</button>
                             @include('shared.notification')

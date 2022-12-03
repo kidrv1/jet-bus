@@ -37,33 +37,63 @@
                     </a>
                     <h4 class="font-weight-bolder text-center">Sign Up</h4>
                     @include('shared.notification')
-                    <form role="form" action="{{route('register')}}" method="POST" enctype="multipart/form-data">
+                    <form role="form" action="{{route('register')}}" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
                         @csrf
                         <div class="row">
                             <div class="col-6">
                                 <div class="mb-3">
                                     <label>VALID ID</label>
                                     <input type="file" class="form-control" name="valid_id" required>
+                                    <div class="valid-feedback">
+                                        Looks good!
+                                    </div>
+                                    <div class="invalid-feedback">
+                                        Please insert a valid ID
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-6">
                                 <div class="mb-3">
                                     <label>VACINATION ID</label>
                                     <input type="file" class="form-control" name="vaccine_id" required>
+                                    <div class="valid-feedback">
+                                        Looks good!
+                                    </div>
+                                    <div class="invalid-feedback">
+                                        Please insert a vaccination ID
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         <div class="mb-3">
                             <input type="text" class="form-control" placeholder="First Name" aria-label="Name"
-                                name="first_name" required id="first_name">
+                                name="first_name" required id="first_name" pattern="[A-Za-z]{2,}">
+                                <div class="valid-feedback">
+                                    Looks good!
+                                </div>
+                                <div class="invalid-feedback">
+                                        Please enter first name
+                                </div>
                         </div>
                         <div class="mb-3">
                             <input type="text" class="form-control" placeholder="Last Name" aria-label="Name"
-                                name="last_name" required id="last_name">
+                                name="last_name" required id="last_name" pattern="[A-Za-z]{2,}">
+                                <div class="valid-feedback">
+                                    Looks good!
+                                </div>
+                                <div class="invalid-feedback">
+                                        Please enter last name
+                                </div>
                         </div>
                         <div class="mb-3">
                             <input type="email" class="form-control" placeholder="Email" aria-label="Email" name="email"
-                                required id="email">
+                                required id="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
+                                <div class="valid-feedback">
+                                        Looks good!
+                                </div>
+                                <div class="invalid-feedback">
+                                        Please enter valid email addresss
+                                </div>   
                         </div>
 
                         <div class="mb-3">
@@ -71,8 +101,10 @@
                             <select class="form-control" name="gender" required>
                                 <option value="Female">Female</option>
                                 <option value="Male">Male</option>
-
                             </select>
+                            <div class="valid-feedback">
+                                Looks good!
+                            </div>
                         </div>
 
                         <div class="mb-3">
@@ -80,20 +112,34 @@
                             <select class="form-control" name="position" required>
                                 <option value="1">STAFF</option>
                                 <option value="2">CUSTOMER</option>
-
                             </select>
+                            <div class="valid-feedback">
+                                Looks good!
+                            </div>
                         </div>
 
                         <div class="mb-3">
                             <label>Mobile#</label>
                             <input type="text" class="form-control" placeholder="Mobile Number"
-                                aria-label="Mobile Number" name="mobile" maxlength="12">
+                                aria-label="Mobile Number" name="mobile" maxlength="11" pattern="[0-9]{11}" required>
+                            <div class="valid-feedback">
+                                Looks good!
+                            </div>
+                            <div class="invalid-feedback">
+                                Please enter valid mobile number
+                            </div>  
                         </div>
 
                         <div class="mb-3">
                             <label>Enter Password</label>
                             <input type="password" class="form-control" placeholder="Enter Password"
-                                aria-label="Password" name="password" required>
+                                aria-label="Password" name="password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required>
+                                <div class="valid-feedback">
+                                Looks good!
+                            </div>
+                            <div class="invalid-feedback">
+                            Must contain at least one  number and one uppercase and lowercase letter, and at least 8 or more characters
+                            </div> 
                         </div>
 
                         <div class="d-flex  justify-content-between align-items-center">
@@ -127,6 +173,28 @@
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
     <script src="{{URL::to('/assets/js/argon-dashboard.min.js?v=2.0.4')}}"></script>
+    <script>
+        // Example starter JavaScript for disabling form submissions if there are invalid fields
+        (function () {
+        'use strict'
+
+        // Fetch all the forms we want to apply custom validation styles to
+        var forms = document.querySelectorAll('.needs-validation')
+
+        // Loop over them and prevent submission
+        Array.prototype.slice.call(forms)
+            .forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                event.preventDefault()
+                event.stopPropagation()
+                }
+
+                form.classList.add('was-validated')
+            }, false)
+            })
+        })()
+    </script>
 </body>
 
 </html>

@@ -19,6 +19,50 @@
     <link href="{{ URL::to('/assets/css/nucleo-svg.css') }}" rel="stylesheet" />
     <!-- CSS Files -->
     <link id="pagestyle" href="{{ URL::to('/assets/css/argon-dashboard.css?v=2.0.4') }}" rel="stylesheet" />
+
+    <style>
+        .hidden-print {
+            display: none;
+        }
+
+        /* PRINT */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+
+            .print-area,
+            .print-area * {
+                visibility: visible;
+            }
+
+            .print-area-fixed {
+                position: absolute;
+                top: 0;
+                left: 0;
+                margin-top: -100px;
+            }
+
+            .hidden-print {
+                display: block;
+                visibility: visible;
+            }
+
+            .customer-btn{
+                display: none !important;
+            }
+
+            .customer-actions{
+                display: none !important;
+            }
+
+            /* .print-area {
+                position: absolute;
+                left: 0;
+                top: 0;
+            } */
+        }
+    </style>
 </head>
 
 <body class="g-sidenav-show   bg-gray-100">
@@ -90,7 +134,20 @@
                             @include('shared.notification')
                         </div>
                         <div class="card-body px-0 pt-0 pb-2">
-                            <div class="table-responsive p-0">
+                        <div class="table-responsive p-0 print-area print-area-fixed">
+                                <div class="print-header hidden-print text-dark text-center">
+                                    <p>Jet Bus Travel and Tours</p>
+                                    <p style="font-size: 0.5em; line-height: 0.5em;">
+                                        Sta. Maria 3022 Santa Maria, Philippines
+                                    </p>
+                                    <p style="font-size: 0.5em; line-height: 0.5em;">
+                                        09179072108
+                                    </p>
+                                    <p style="font-size: 0.5em; line-height: 0.5em;">
+                                        add.jetbustransport@yahoo.com
+
+                                    </p>
+                                </div>
                                 <table class="table align-items-center mb-0">
                                     <thead>
                                         <tr>
@@ -119,7 +176,7 @@
                                                 class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                                 Status</th>
                                             <th
-                                                class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                                class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 customer-actions">
                                                 Actions</th>
 
                                             <th class="text-secondary opacity-7"></th>
@@ -177,7 +234,7 @@
 
                                                 </td>
 
-                                                <td class="align-middle">
+                                                <td class="align-middle customer-btn">
                                                     <button class="btn btn-info btn-xs edit" data-bs-toggle="modal"
                                                         data-bs-target="#editModal"
                                                         value="{{ $user->id }}">Edit</button>
@@ -198,7 +255,11 @@
                                 </table>
                             </div>
                         </div>
+                        <div class="container-fluid">
+                            <button onclick="window.print()" class="btn btn-primary btn-xxs">Print</button>
+                        </div>
                     </div>
+                    
                 </div>
             </div>
 

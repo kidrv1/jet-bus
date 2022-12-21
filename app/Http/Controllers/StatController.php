@@ -61,7 +61,7 @@ class StatController extends Controller
             return $b["count"] - $a["count"];
         });
 
-        // dd($bookingData, $bookingAddons);
+         dd($bookingData, $bookingAddons);
 
         return view("admin.stats")->with(["bookingData" => $bookingData]);
     }

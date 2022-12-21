@@ -75,6 +75,8 @@
                 </div>
             </div>
         </nav>
+
+        
         <!-- End Navbar -->
         <div class="container-fluid py-4">
             <div class="row">
@@ -87,6 +89,10 @@
                         </div>
                         <div class="card-body">
                             <h1>Daily Chart</h1>
+                            <div class="container-fluid">
+                                <a href="{{ route('admin_latest_sale','daily')}}" target="_blank" class="btn btn-primary btn-xxs">Print</a>
+                                <a href="{{ route('admin_latest_sale_xls','daily')}}" target="_blank" class="btn btn-success btn-xxs">Export</a>
+                            </div>
                             <div class="table-responsive">
                                 <div>
                                     <a href="{{ route("admin_sales") }}">
@@ -97,6 +103,10 @@
                         </div>
                         <div class="card-body">
                             <h1>Monthly Chart</h1>
+                            <div class="container-fluid">
+                                <a href="{{ route('admin_latest_sale','monthly')}}" target="_blank" class="btn btn-primary btn-xxs">Print</a>
+                                <a href="{{ route('admin_latest_sale_xls','monthly')}}" target="_blank" class="btn btn-success btn-xxs">Export</a>
+                            </div>
                             <div class="table-responsive">
                                 <div>
                                     <a href="{{ route("admin_sales") }}">
@@ -107,6 +117,11 @@
                         </div>
                         <div class="card-body">
                             <h1>Yearly Chart</h1>
+                            <div class="container-fluid">
+                                <a href="{{ route('admin_latest_sale','yearly')}}" target="_blank" class="btn btn-primary btn-xxs">Print</a>
+                                <a href="{{ route('admin_latest_sale_xls','yearly')}}" target="_blank" class="btn btn-success btn-xxs">Export</a>
+                       
+                            </div>
                             <div class="table-responsive">
                                 <div>
                                     <a href="{{ route("admin_sales") }}">
@@ -124,6 +139,123 @@
 
 
         </div>
+
+        <div class="container-fluid py-4">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card mb-4">
+                        <div class="card-header pb-0">
+                            <h6>Register User</h6>
+
+                            @include('shared.notification')
+                        </div>
+                        <div class="card-body">
+                            <h1>Daily Chart</h1>
+                            <div class="container-fluid">
+                                <a href="{{ route('admin_latest_user','daily')}}" target="_blank" class="btn btn-primary btn-xxs">Print</a>
+                                <a href="{{ route('admin_latest_user_xls','daily')}}" target="_blank" class="btn btn-success btn-xxs">Export</a>
+                            </div>
+                            <div class="table-responsive">
+                                <div>
+                                    <a href="{{ route("home") }}">
+                                        <canvas id="dailyChart_cust"></canvas>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h1>Monthly Chart</h1>
+                            <div class="container-fluid">
+                                <a href="{{ route('admin_latest_user','monthly')}}" target="_blank" class="btn btn-primary btn-xxs">Print</a>
+                                <a href="{{ route('admin_latest_user_xls','monthly')}}" target="_blank" class="btn btn-success btn-xxs">Export</a>
+                            </div>
+                            <div class="table-responsive">
+                                <div>
+                                    <a href="{{ route("home") }}">
+                                        <canvas id="myChart_cust"></canvas>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="card-body">
+                            <h1>Yearly Chart</h1>
+                            <div class="container-fluid">
+                                <a href="{{ route('admin_latest_user','yearly')}}" target="_blank" class="btn btn-primary btn-xxs">Print</a>
+                                <a href="{{ route('admin_latest_user_xls','yearly')}}" target="_blank" class="btn btn-success btn-xxs">Export</a>
+                            </div>
+                            <div class="table-responsive">
+                                
+                                <div>
+                                    
+                                    <a href="{{ route("home") }}">
+                                        <canvas id="yearlyChart_cust"></canvas>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        
+                        <hr>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+        </div>
+        <div class="container-fluid py-4">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card mb-4">
+                        <div class="card-header pb-0">
+                            <h6>Popular Items</h6>
+
+                            @include('shared.notification')
+                        </div>
+                        
+
+                        <div class="card-body">
+                            <h1>Monthly Chart</h1>
+                            <div class="container-fluid">
+                                <a href="{{ route('admin_latest_popular','monthly')}}" target="_blank" class="btn btn-primary btn-xxs">Print</a>
+                                <a href="{{ route('admin_latest_popular_xls','monthly')}}" target="_blank" class="btn btn-success btn-xxs">Export</a>
+                            </div>
+                            <div class="table-responsive">
+                                <div>
+                                    <a href="{{ route("admin_stats_index") }}">
+                                        <canvas id="myChart_pop"></canvas>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h1>Yearly Chart</h1>
+                            <div class="container-fluid">
+                                <a href="{{ route('admin_latest_popular','yearly')}}" target="_blank" class="btn btn-primary btn-xxs">Print</a>
+                                <a href="{{ route('admin_latest_popular_xls','yearly')}}" target="_blank" class="btn btn-success btn-xxs">Export</a>
+                            </div>
+                            <div class="table-responsive">
+                                <div>
+                                    <a href="{{ route("admin_stats_index") }}">
+                                        <canvas id="yearChart_pop"></canvas>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+        </div>
+        
     </main>
 
     <!--   Core JS Files   -->
@@ -134,6 +266,9 @@
     <script src="{{ URL::to('/assets/js/plugins/smooth-scrollbar.min.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+    <script>
+        
+    </script>
     <script type="text/javascript">
         var labels = {{ Js::from($labels) }};
         var users = {{ Js::from($data) }};
@@ -233,6 +368,161 @@
             document.getElementById('yearlyChart'),
             yearConfig
         );
+
+    </script>
+    <script type="text/javascript">
+        var labels_cust = {{ Js::from($labels_cust) }};
+        var users_cust = {{ Js::from($data_cust) }};
+        
+
+        const dayLabels_cust = {{ Js::from($dayLabels_cust) }};
+        const dayData_cust = {{ Js::from($dayData_cust) }};
+       
+
+        const yearLabels_cust = {{ Js::from($yearLabels_cust) }};
+        const yearData_cust = {{ Js::from($yearData_cust) }};
+        
+        const data_cust = {
+            labels: labels_cust,
+            datasets: [
+            {
+                label: 'Monthly Registered ' + new Date().getFullYear(),
+                backgroundColor: 'rgb(255, 99, 132)',
+                borderColor: 'rgb(255, 99, 132)',
+                data: users_cust,
+            },
+           
+        ]
+        };
+
+        const config_cust = {
+            type: 'line',
+            data: data_cust,
+            options: {}
+        };
+
+        const myChart_cust = new Chart(
+            document.getElementById('myChart_cust'),
+            config_cust
+        );
+
+        const dayDataSet_cust = {
+            labels: dayLabels_cust,
+            datasets: [
+            {
+                label: 'Daily Registered',
+                backgroundColor: 'rgb(255, 99, 132)',
+                borderColor: 'rgb(255, 99, 132)',
+                data: dayData_cust,
+            },
+            
+        ]
+        };
+
+        const dayConfig_cust = {
+            type: 'line',
+            data: dayDataSet_cust,
+            options: {}
+        };
+
+        const dailyChart_cust = new Chart(
+            document.getElementById('dailyChart_cust'),
+            dayConfig_cust
+        );
+
+        const yearDataSet_cust = {
+            labels: yearLabels_cust,
+            datasets: [
+            {
+                label: 'Yearly Registered',
+                backgroundColor: 'rgb(255, 99, 132)',
+                borderColor: 'rgb(255, 99, 132)',
+                data: yearData_cust,
+            },
+            
+        ]
+        };
+
+
+
+        const yearConfig_cust = {
+            type: 'line',
+            data: yearDataSet_cust,
+            options: {}
+        };
+
+        const yearlyChart_cust = new Chart(
+            document.getElementById('yearlyChart_cust'),
+            yearConfig_cust
+        );
+
+        var labels_pop_m = {{ Js::from($package_labels_m) }};
+        var count_package_labels_pop_m = {{ Js::from($package_count_labels_m) }};
+        var count_addon_labels_pop_m = {{ Js::from($package_addoncount_labels_m) }};
+        const labels_pop = labels_pop_m;
+        const data_pop = {
+        labels: labels_pop,
+        
+        datasets: [{
+                data: count_package_labels_pop_m,
+                label: 'Package',
+                backgroundColor: 'rgb(255, 99, 132)',
+                borderColor: 'rgb(255, 99, 132)',
+            },{
+                data: count_addon_labels_pop_m,
+                label: 'Addons',
+                backgroundColor: 'rgb(132, 99, 255)',
+                borderColor: 'rgb(132, 99, 255)',
+            }]
+        };
+
+        const monthlyConfig_pop = {
+            type: 'bar',
+            data: data_pop,
+            options: {
+                indexAxis: 'y',
+            
+            }
+        };
+        const monthlyChart_pop = new Chart(
+            document.getElementById('myChart_pop'),
+            monthlyConfig_pop
+        );
+
+        
+        var labels_pop_y = {{ Js::from($package_labels_y) }};
+        var count_package_labels_pop_y = {{ Js::from($package_count_labels_y) }};
+        var count_addon_labels_pop_y = {{ Js::from($package_addoncount_labels_y) }};
+        const labels_pop_yy = labels_pop_y;
+        const data_pop_y = {
+        labels: labels_pop_yy,
+        
+        datasets: [{
+                data: count_package_labels_pop_y,
+                label: 'Package',
+                backgroundColor: 'rgb(255, 99, 132)',
+                borderColor: 'rgb(255, 99, 132)',
+            },{
+                data: count_addon_labels_pop_y,
+                label: 'Addons',
+                backgroundColor: 'rgb(132, 99, 255)',
+                borderColor: 'rgb(132, 99, 255)',
+            }]
+        };
+
+        const yearConfig_pop_y = {
+            type: 'bar',
+            data: data_pop_y,
+            options: {
+                indexAxis: 'y',
+            
+            }
+        };
+        const yearChart_pop = new Chart(
+            document.getElementById('yearChart_pop'),
+            yearConfig_pop_y
+        );
+
     </script>
     <script>
         var win = navigator.platform.indexOf('Win') > -1;

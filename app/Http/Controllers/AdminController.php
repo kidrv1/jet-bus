@@ -16,7 +16,7 @@ use Illuminate\Http\Request;
 use App\Service\NotifService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\Log;
 class AdminController extends Controller
 {
 
@@ -454,10 +454,260 @@ class AdminController extends Controller
         $yearAddons = array_reverse($yearAddons);
         $yearLabels = array_reverse($yearLabels);
 
+        $users = User::whereHas('roles', function ($query) {
+            $query->where('name', 'customer');
+        })->get();
+        
+        $data_cust = [
+            0 => 0,
+            1 => 0,
+            2 => 0,
+            3 => 0,
+            4 => 0,
+            5 => 0,
+            6 => 0,
+            7 => 0,
+            8 => 0,
+            9 => 0,
+            10 => 0,
+            11 => 0,
+        ];
+
+        
+
+        // Get Days In The Current Month
+        $dayLabels_cust = [];
+        $dayData_cust = [];
+       
+        $monthPeriod_cust = CarbonPeriod::create(now()->startOfMonth(), now()->endOfMonth());
+        foreach ($monthPeriod_cust as $idx => $date) {
+            $dayLabels_cust[] = $date->format('d');
+            $dayData_cust[$idx] = 0;
+           
+        }
+
+       
+        // Get Years
+        $yearLabels_cust = [];
+        $yearData_cust = [];
+       
+        for ($i = 0; $i < 3; $i++) {
+            if ($i == 0) {
+                $year = now()->format("Y");
+            } else {
+                $year = now()->subYears($i)->format("Y");
+            }
+
+            $yearLabels_cust[] = $year;
+            $yearData_cust[] = 0;
+           
+        }
+
+        // dd($yearData);
+        foreach ($users as $user) {
+            $month = ltrim($booking->created_at->format('m'), "0");
+            $data_cust[$month - 1] += 1;
+
+            Log::debug($user->created_at->format('d'));
+            if (in_array($user->created_at->format('d'), $dayLabels_cust)) {
+                $dayData_cust[(int)$user->created_at->format('d')] ++;
+            }
+           
+            if (in_array($user->created_at->format('Y'), $yearLabels_cust)) {
+                $key = array_search($user->created_at->format('Y'), $yearLabels_cust);
+                $yearData_cust[$key] += 1;
+            }
+        }
+
+        // dd($yearData);
+        // foreach ($baseBookings as $booking) {
+        //     $month = ltrim($booking->created_at->format('m'), "0");
+        //     $data[$month - 1] += (float) $booking->package->package_rate;
+
+        //     if (in_array($booking->created_at->format('d'), $dayLabels)) {
+        //         $dayData[$booking->created_at->format('d')] += (float) $booking->package->package_rate;
+        //     }
+
+        //     if (in_array($booking->created_at->format('Y'), $yearLabels)) {
+        //         $key = array_search($booking->created_at->format('Y'), $yearLabels);
+        //         $yearData[$key] += (float) $booking->package->package_rate;
+        //     }
+        // }
+
+
+        
+        $labels_cust = [
+            'Jan',
+            'Feb',
+            'Mar',
+            'Apr',
+            'May',
+            'Jun',
+            'Jul',
+            'Aug',
+            'Sep',
+            'Oct',
+            'Nov',
+            'Dec',
+        ];
+
+        $yearData_cust = array_reverse($yearData_cust);
+       
+        $yearLabels_cust = array_reverse($yearLabels_cust);
+
+
+        //////
+       
+
+
+        //////
+
+        //monthly
+         $bookings_m =Booking::with(["package", "addons"])->whereMonth('created_at',Carbon::now()->month)->get();
+         $bookingData_m = [];
+         $bookingAddons_m = [];
+
+          foreach ($bookings_m as $booking_m) {
+            // Check if already in array
+            if (array_key_exists($booking_m->package->id, $bookingData_m)) {
+                $bookingData_m[$booking_m->package->id]["count"] += 1;
+            } else {
+                $bookingData_m[$booking_m->package->id] = [
+                    "package_name" => $booking_m->package->package_name,
+                    "count" => 1,
+                    "top_addon" => null,
+                    "top_addon_count" => null,
+                ];
+            }
+
+            // Get Count Of Most Booked Addon
+            foreach ($booking_m->addons as $addon) {
+                if (!array_key_exists($addon->booking->package_id, $bookingAddons_m)) {
+                    $bookingAddons_m[$addon->booking->package_id] = [];
+                }
+                array_push($bookingAddons_m[$addon->booking->package_id], $addon->name);
+            }
+         }
+
+         // Calculate Most Popular Addon
+        foreach ($bookingAddons_m as $idx => $addonArray) {
+            $nameCount_m = array_count_values($addonArray);
+            $topAddon_m = array_keys($nameCount_m, max($nameCount_m));
+            $bookingData_m[$idx]["top_addon"] = $topAddon_m[0];
+            $bookingData_m[$idx]["top_addon_count"] = max($nameCount_m);
+            // dd($idx, $addonArray, $nameCount, $topAddon);
+        }
+        // Sort By Most Bookings
+        usort($bookingData_m, function ($a, $b) {
+            return $b["count"] - $a["count"];
+        });
+
+        $package_labels_m = [];
+        $package_addon_labels_m = [];
+        $package_count_labels_m = [];
+        $package_addoncount_labels_m = [];
+        foreach($bookingData_m as $idx => $package_name){
+            $package_labels_m[$idx] = [$package_name['package_name'],$package_name['top_addon'] ?? '' ];
+            $package_count_labels_m[$idx] = $package_name['count'];
+            $package_addoncount_labels_m[$idx] = $package_name['top_addon_count'];
+        }
+
+
+        //
+        //
+        //
+
+        //whole year
+        $bookings_y =Booking::with(["package", "addons"])->whereYear('created_at',Carbon::now()->year)->get();
+        $bookingData_y = [];
+        $bookingAddons_y = [];
+
+         foreach ($bookings_y as $booking_y) {
+           // Check if already in array
+           if (array_key_exists($booking_y->package->id, $bookingData_y)) {
+               $bookingData_y[$booking_y->package->id]["count"] += 1;
+           } else {
+               $bookingData_y[$booking_y->package->id] = [
+                   "package_name" => $booking_y->package->package_name,
+                   "count" => 1,
+                   "top_addon" => null,
+                   "top_addon_count" => null,
+               ];
+           }
+
+           // Get Count Of Most Booked Addon
+           foreach ($booking_y->addons as $addon) {
+                if (!array_key_exists($addon->booking->package_id, $bookingAddons_y)) {
+                    $bookingAddons_y[$addon->booking->package_id] = [];
+                }
+                array_push($bookingAddons_y[$addon->booking->package_id], $addon->name);
+            }
+            }
+
+        // Calculate Most Popular Addon
+            foreach ($bookingAddons_y as $idx => $addonArray) {
+                $nameCount_y = array_count_values($addonArray);
+                $topAddon_y = array_keys($nameCount_y, max($nameCount_y));
+                $bookingData_y[$idx]["top_addon"] = $topAddon_y[0];
+                $bookingData_y[$idx]["top_addon_count"] = max($nameCount_y);
+                // dd($idx, $addonArray, $nameCount, $topAddon);
+            }
+            // Sort By Most Bookings
+            usort($bookingData_y, function ($a, $b) {
+                return $b["count"] - $a["count"];
+            });
+
+            $package_labels_y = [];
+            $package_addon_labels_y = [];
+            $package_count_labels_y = [];
+            $package_addoncount_labels_y = [];
+            foreach($bookingData_y as $idx => $package_name){
+                $package_labels_y[$idx] = [$package_name['package_name'],$package_name['top_addon'] ?? '' ];
+                $package_count_labels_y[$idx] = $package_name['count'];
+                $package_addoncount_labels_y[$idx] = $package_name['top_addon_count'];
+            }
+
+ 
+      // dd($bookingData_m[0]['package_name']);
+        // foreach ($bookings as $booking) {
+        //     // Check if already in array
+        //     if (array_key_exists($booking->package->id, $bookingData)) {
+        //         $bookingData[$booking->package->id]["count"] += 1;
+        //     } else {
+        //         $bookingData[$booking->package->id] = [
+        //             "package_name" => $booking->package->package_name,
+        //             "count" => 1,
+        //             "top_addon" => null,
+        //             "top_addon_count" => null,
+        //         ];
+        //     }
+
+        //     // Get Count Of Most Booked Addon
+        //     foreach ($booking->addons as $addon) {
+        //         if (!array_key_exists($addon->booking->package_id, $bookingAddons)) {
+        //             $bookingAddons[$addon->booking->package_id] = [];
+        //         }
+        //         array_push($bookingAddons[$addon->booking->package_id], $addon->name);
+        //     }
+        // }
+
+        // // Calculate Most Popular Addon
+        // foreach ($bookingAddons as $idx => $addonArray) {
+        //     $nameCount = array_count_values($addonArray);
+        //     $topAddon = array_keys($nameCount, max($nameCount));
+        //     $bookingData[$idx]["top_addon"] = $topAddon[0];
+        //     $bookingData[$idx]["top_addon_count"] = max($nameCount);
+        //     // dd($idx, $addonArray, $nameCount, $topAddon);
+        // }
+
+        // // Sort By Most Bookings
+        // usort($bookingData, function ($a, $b) {
+        //     return $b["count"] - $a["count"];
+        // });
         // dd($yearLabels, $yearData, $yearAddons);
         // dd($dayLabels, $dayData, $dayAddons);
 
-        return view('admin.report', compact('labels', 'data', 'addonData', 'dayData', 'dayLabels', 'dayAddons', 'yearData', 'yearLabels', 'yearAddons'));
+        return view('admin.report', compact('labels', 'data', 'addonData', 'dayData', 'dayLabels', 'dayAddons', 'yearData', 'yearLabels', 'yearAddons','labels_cust', 'data_cust', 'dayData_cust', 'dayLabels_cust', 'yearData_cust', 'yearLabels_cust','package_labels_m','package_count_labels_m','package_addoncount_labels_m','package_labels_y','package_count_labels_y','package_addoncount_labels_y'));
     }
 
     public function busPackage($id)

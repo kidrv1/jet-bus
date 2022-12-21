@@ -21,7 +21,7 @@ use App\Http\Controllers\PackageAddonController;
 use App\Http\Controllers\CancelRequestController;
 use App\Http\Controllers\ContactMessageController;
 use App\Http\Controllers\SatisfiedCustomerController;
-
+use App\Http\Controllers\ReportPdfController;
 
 Route::get('/', [HomeController::class, "index"])->name("home");
 
@@ -132,6 +132,15 @@ Route::group(['prefix' => 'dashboard', 'middleware' => ['auth', 'verified']], fu
     Route::put("/notifications", [NotificationController::class, "update"])->name("notifications.update");
     Route::get("/notifications_count", [NotificationController::class, "unreadCount"])->name("notifications.unreadCount");
     Route::get("/notifications_unread", [NotificationController::class, "unread"])->name("notifications.unread");
+
+
+    Route::get("/latest-registered/{type}",[ReportPdfController::class,'LatestUsers'])->name('admin_latest_user');
+    Route::get("/latest-sales/{type}",[ReportPdfController::class,'salesReport'])->name('admin_latest_sale');
+    Route::get("/latest-popular/{type}",[ReportPdfController::class,'popularReport'])->name('admin_latest_popular');
+
+    Route::get("/latest-registered-xls/{type}",[ReportPdfController::class,'LatestUsersXLS'])->name('admin_latest_user_xls');
+    Route::get("/latest-sales-xls/{type}",[ReportPdfController::class,'salesReportXLS'])->name('admin_latest_sale_xls');
+    Route::get("/latest-popular-xls/{type}",[ReportPdfController::class,'popularReportXLS'])->name('admin_latest_popular_xls');
 });
 
 

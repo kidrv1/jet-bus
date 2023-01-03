@@ -396,7 +396,7 @@ class AdminController extends Controller
             $data[$month - 1] += (float) $booking->package->package_rate;
 
             if (in_array($booking->created_at->format('d'), $dayLabels)) {
-                $dayData[$booking->created_at->format('d')] += (float) $booking->package->package_rate;
+                $dayData[(int) $booking->created_at->format('d')] += (float) $booking->package->package_rate;
             }
 
             if (in_array($booking->created_at->format('Y'), $yearLabels)) {

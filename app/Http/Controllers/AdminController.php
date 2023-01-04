@@ -410,7 +410,7 @@ class AdminController extends Controller
             $addonData[$month - 1] += (float) $booking->package->package_rate;
 
             if (in_array($booking->created_at->format('d'), $dayLabels)) {
-                $dayAddons[$booking->created_at->format('d')] += (float) $booking->package->package_rate;
+                $dayAddons[(int) $booking->created_at->format('d')] += (float) $booking->package->package_rate;
             }
 
             if (in_array($booking->created_at->format('Y'), $yearLabels)) {

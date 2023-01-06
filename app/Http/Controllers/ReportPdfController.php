@@ -20,13 +20,13 @@ class ReportPdfController extends Controller
 
         if($type =='daily'){
             $users = User::whereHas('roles', function ($query) {
-                $query->where('name',  'customer')->whereMonth('created_at',Carbon::now()->month);
-            })->get();
+                $query->where('name',  'customer');
+            })->whereMonth('created_at',Carbon::now()->month)->get();
         }
         elseif($type == 'monthly'){
             $users = User::whereHas('roles', function ($query) {
-                $query->where('name',  'customer')->whereYear('created_at',Carbon::now()->year);
-            })->get();
+                $query->where('name',  'customer');
+            })->whereYear('created_at',Carbon::now()->year)->get();
         }
         else{
             $users = User::whereHas('roles', function ($query) {
@@ -134,13 +134,13 @@ class ReportPdfController extends Controller
 
         if($type =='daily'){
             $users = User::whereHas('roles', function ($query) {
-                $query->where('name',  'customer')->whereMonth('created_at',Carbon::now()->month);
-            })->get();
+                $query->where('name',  'customer');
+            })->whereMonth('created_at',Carbon::now()->month)->get();
         }
         elseif($type == 'monthly'){
             $users = User::whereHas('roles', function ($query) {
-                $query->where('name',  'customer')->whereYear('created_at',Carbon::now()->year);
-            })->get();
+                $query->where('name',  'customer');
+            })->whereYear('created_at',Carbon::now()->year)->get();
         }
         else{
             $users = User::whereHas('roles', function ($query) {

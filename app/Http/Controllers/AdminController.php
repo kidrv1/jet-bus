@@ -396,7 +396,7 @@ class AdminController extends Controller
             $data[$month - 1] += (float) $booking->package->package_rate;
 
             if (in_array($booking->created_at->format('d'), $dayLabels)) {
-                $dayData[(int) $booking->created_at->format('d')] += (float) $booking->package->package_rate;
+                $dayData[(int) $booking->created_at->format('d')-1] += (float) $booking->package->package_rate;
             }
 
             if (in_array($booking->created_at->format('Y'), $yearLabels)) {
@@ -410,7 +410,7 @@ class AdminController extends Controller
             $addonData[$month - 1] += (float) $booking->package->package_rate;
 
             if (in_array($booking->created_at->format('d'), $dayLabels)) {
-                $dayAddons[(int) $booking->created_at->format('d')] += (float) $booking->package->package_rate;
+                $dayAddons[(int) $booking->created_at->format('d')-1] += (float) $booking->package->package_rate;
             }
 
             if (in_array($booking->created_at->format('Y'), $yearLabels)) {
@@ -425,7 +425,7 @@ class AdminController extends Controller
                 $addonData[$month - 1] += (float) $addon->price;
 
                 if (in_array($booking->created_at->format('d'), $dayLabels)) {
-                    $dayData[(int) $booking->created_at->format('d')] += (float) $addon->price;
+                    $dayData[(int) $booking->created_at->format('d')-1] += (float) $addon->price;
                 }
 
                 if (in_array($booking->created_at->format('Y'), $yearLabels)) {
@@ -510,7 +510,7 @@ class AdminController extends Controller
 
             Log::debug($user->created_at->format('d'));
             if (in_array($user->created_at->format('d'), $dayLabels_cust)) {
-                $dayData_cust[(int)$user->created_at->format('d')] ++;
+                $dayData_cust[(int)$user->created_at->format('d')-1] ++;
             }
            
             if (in_array($user->created_at->format('Y'), $yearLabels_cust)) {

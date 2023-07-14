@@ -121,7 +121,7 @@
                                                     <div class="d-flex px-2 py-1">
 
                                                         <div class="d-flex flex-column justify-content-center">
-                                                            <img src="/public/{{ $bus->image }}"
+                                                            <img src="/public/public/{{ $bus->image }}"
                                                                 width="100px" height="80px">
 
                                                         </div>

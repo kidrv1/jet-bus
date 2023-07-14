@@ -61,7 +61,7 @@
                         @forelse ($cartItems as $item)
                             <tr>
                                 <td class="align-middle">
-                                    <img src="/public/{{ $item->package->bus->image }}" alt="package picture"
+                                    <img src="/public/public/{{ $item->package->bus->image }}" alt="package picture"
                                         style="width: 50px;">
                                     {{ $item->package->package_name }}
                                 </td>

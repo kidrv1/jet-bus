@@ -32,7 +32,7 @@
         <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4"><span class="bg-secondary pr-3">Our Services</span></h2>
         <div class="row px-xl-5 mb-4">
             <div class="col-lg-5 px-0">
-                <img class="img-fluid" src="/public/about-img-1.jpg" alt="Image">
+                <img class="img-fluid" src="/public/public/about-img-1.jpg" alt="Image">
             </div>
             <div class="col-lg-7 h-auto px-0">
                 <div class="h-100 bg-light p-30 d-flex flex-column justify-content-center">
@@ -53,12 +53,12 @@
                 </div>
             </div>
             <div class="col-lg-5 px-0">
-                <img class="img-fluid" src="/public/about-img-5.webp" alt="Image">
+                <img class="img-fluid" src="/public/public/about-img-5.webp" alt="Image">
             </div>
         </div>
         <div class="row px-xl-5 mb-4">
             <div class="col-lg-5 px-0">
-                <img class="img-fluid" src="/public/about-img-4.jpg" alt="Image">
+                <img class="img-fluid" src="/public/public/about-img-4.jpg" alt="Image">
             </div>
             <div class="col-lg-7 h-auto px-0">
                 <div class="h-100 bg-light p-30 d-flex flex-column justify-content-center">
@@ -79,7 +79,7 @@
                 </div>
             </div>
             <div class="col-lg-5 px-0">
-                <img class="img-fluid" src="/public/about-img-3.jpg" alt="Image">
+                <img class="img-fluid" src="/public/public/about-img-3.jpg" alt="Image">
             </div>
         </div>
     </div>

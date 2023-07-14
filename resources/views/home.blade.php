@@ -149,7 +149,7 @@
                 <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
                     <div class="product-item bg-light mb-4">
                         <div class="product-img position-relative overflow-hidden" style="height: 200px;">
-                            <img class="img-fluid w-100" src="public/{{ $package->bus->image }}" alt="package picture">
+                            <img class="img-fluid w-100" src="/public/public/{{ $package->bus->image }}" alt="package picture">
                             <div class="product-action">
                                 <a class="btn btn-outline-dark" href="{{ route("packages.show", ['id' => $package->id]) }}">
                                     <i class="fa fa-shopping-cart mr-1"></i>

@@ -83,7 +83,7 @@
                 @if(count($randomPackages) >= 2)
                     @if ($randomPackages[0] != null)
                     <div class="product-offer mb-30" style="height: 200px;">
-                    <img class="img-fluid" src="{{/public/{{ $randomPackages[1]['bus']->image}}" alt="package image">
+                        <img class="img-fluid" src="public/{{ $randomPackages[0]['bus']->image}}" alt="package image">
                         <div class="offer-text">
                             {{-- <h6 class="text-white text-uppercase">Save 20%</h6> --}}
                             <h3 class="text-white mb-3">{{ $randomPackages[0]->package_name }}</h3>
@@ -93,7 +93,7 @@
                     @endif
                     @if ($randomPackages[1] != null)
                         <div class="product-offer mb-30" style="height: 200px;">
-                            <img class="img-fluid" src="/public/{{ $randomPackages[1]['bus']->image}}" alt="package image">
+                            <img class="img-fluid" src="public/{{ $randomPackages[1]['bus']->image}}" alt="package image">
                             <div class="offer-text">
                                 <h3 class="text-white mb-3">{{ $randomPackages[1]->package_name }}</h3>
                                 <a href="{{ route("packages.show", ['id' => $randomPackages[1]->id]) }}" class="btn btn-primary">Book Now</a>
